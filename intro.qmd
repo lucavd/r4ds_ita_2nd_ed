@@ -1,19 +1,19 @@
-# Introduction {#sec-intro .unnumbered}
+# Introduzione {#sec-intro .unnumbered}
 
 ```{r}
 #| echo: false
 source("_common.R")
 ```
 
-Data science is an exciting discipline that allows you to transform raw data into understanding, insight, and knowledge.
-The goal of "R for Data Science" is to help you learn the most important tools in R that will allow you to do data science efficiently and reproducibly, and to have some fun along the way 😃.
-After reading this book, you'll have the tools to tackle a wide variety of data science challenges using the best parts of R.
+La scienza dei dati è una disciplina entusiasmante che ti permette di trasformare dati grezzi in comprensione, intuizione e conoscenza.
+L'obiettivo di "R for Data Science" è aiutarti a imparare gli strumenti più importanti di R che ti permetteranno di fare data science in modo efficiente e riproducibile, divertendoti lungo il percorso 😃.
+Dopo aver letto questo libro, avrai gli strumenti per affrontare un'ampia varietà di sfide di data science usando le parti migliori di R.
 
-## What you will learn
+## Cosa imparerai
 
-Data science is a vast field, and there's no way you can master it all by reading a single book.
-This book aims to give you a solid foundation in the most important tools and enough knowledge to find the resources to learn more when necessary.
-Our model of the steps of a typical data science project looks something like @fig-ds-diagram.
+La scienza dei dati è un campo vasto e non c'è modo di padroneggiarlo completamente leggendo un solo libro.
+Questo libro vuole darti una solida base nei principali strumenti e conoscenze sufficienti a trovare le risorse per imparare di più quando necessario.
+Il nostro modello delle fasi di un tipico progetto di data science è illustrato in @fig-ds-diagram.
 
 ```{r}
 #| label: fig-ds-diagram
@@ -31,119 +31,110 @@ Our model of the steps of a typical data science project looks something like @f
 knitr::include_graphics("diagrams/data-science/base.png", dpi = 270)
 ```
 
-First, you must **import** your data into R.
-This typically means that you take data stored in a file, database, or web application programming interface (API) and load it into a data frame in R.
-If you can't get your data into R, you can't do data science on it!
+Per prima cosa devi **importare** i tuoi dati in R.
+Questo in genere significa prendere dati memorizzati in un file, in un database o in un'interfaccia di programmazione web (API) e caricarli in un data frame in R.
+Se non riesci a portare i dati in R, non potrai farci data science!
 
-Once you've imported your data, it is a good idea to **tidy** it.
-Tidying your data means storing it in a consistent form that matches the semantics of the dataset with how it is stored.
-In brief, when your data is tidy, each column is a variable and each row is an observation.
-Tidy data is important because the consistent structure lets you focus your efforts on answering questions about the data, not fighting to get the data into the right form for different functions.
+Una volta importati i dati, è buona norma **riordinarli**.
+Riordinare i dati significa conservarli in una forma coerente che faccia combaciare la semantica del dataset con il modo in cui è archiviato.
+In breve, quando i dati sono ordinati, ogni colonna rappresenta una variabile e ogni riga un'osservazione.
+I dati ordinati sono importanti perché una struttura coerente ti permette di concentrarti sulle domande da porre ai dati, invece di lottare per metterli nella forma giusta per le diverse funzioni.
 
-Once you have tidy data, a common next step is to **transform** it.
-Transformation includes narrowing in on observations of interest (like all people in one city or all data from the last year), creating new variables that are functions of existing variables (like computing speed from distance and time), and calculating a set of summary statistics (like counts or means).
-Together, tidying and transforming are called **wrangling** because getting your data in a form that's natural to work with often feels like a fight!
+Dopo aver ordinato i dati, un passo successivo comune è **trasformarli**.
+La trasformazione include la selezione di osservazioni di interesse (ad esempio tutte le persone di una città o tutti i dati dell'ultimo anno), la creazione di nuove variabili come funzioni di quelle esistenti (ad esempio calcolare la velocità a partire da distanza e tempo) e il calcolo di statistiche riassuntive (come conteggi o medie).
+Riordinare e trasformare insieme costituiscono la cosiddetta **wrangling**, perché mettere i dati in una forma naturale con cui lavorare spesso sembra una lotta!
 
-Once you have tidy data with the variables you need, there are two main engines of knowledge generation: visualization and modeling.
-These have complementary strengths and weaknesses, so any real data analysis will iterate between them many times.
+Una volta che hai dati ordinati con le variabili di cui hai bisogno, esistono due principali motori di generazione della conoscenza: la visualizzazione e la modellazione.
+Ciascuno ha punti di forza e debolezza complementari, perciò ogni analisi reale passerà molte volte dall'uno all'altro.
 
-**Visualization** is a fundamentally human activity.
-A good visualization will show you things you did not expect or raise new questions about the data.
-A good visualization might also hint that you're asking the wrong question or that you need to collect different data.
-Visualizations can surprise you, but they don't scale particularly well because they require a human to interpret them.
+**La visualizzazione** è un'attività fondamentalmente umana.
+Una buona visualizzazione ti mostrerà cose inaspettate o ti solleverà nuove domande sui dati.
+Una buona visualizzazione potrebbe anche suggerirti che stai ponendo la domanda sbagliata o che devi raccogliere dati differenti.
+Le visualizzazioni possono stupirti, ma non scalano molto bene perché richiedono l'interpretazione umana.
 
-**Models** are complementary tools to visualization.
-Once you have made your questions sufficiently precise, you can use a model to answer them.
-Models are fundamentally mathematical or computational tools, so they generally scale well.
-Even when they don't, it's usually cheaper to buy more computers than it is to buy more brains!
-But every model makes assumptions, and by its very nature, a model cannot question its own assumptions.
-That means a model cannot fundamentally surprise you.
+I **modelli** sono strumenti complementari alla visualizzazione.
+Una volta formulate in modo sufficientemente preciso le domande, puoi usare un modello per rispondervi.
+I modelli sono strumenti fondamentalmente matematici o computazionali, per cui generalmente scalano bene.
+Anche quando non lo fanno, di solito è più economico comprare altri computer che altre menti!
+Ma ogni modello fa delle assunzioni e, per sua natura, non può metterle in discussione.
+Ciò significa che un modello non può sorprenderti in modo fondamentale.
 
-The last step of data science is **communication**, an absolutely critical part of any data analysis project.
-It doesn't matter how well your models and visualization have led you to understand the data unless you can also communicate your results to others.
+L'ultimo passo della scienza dei dati è la **comunicazione**, una parte assolutamente cruciale di ogni progetto di analisi.
+Non importa quanto bene modelli e visualizzazioni ti abbiano fatto comprendere i dati, se non riesci anche a comunicare i risultati agli altri.
 
-Surrounding all these tools is **programming**.
-Programming is a cross-cutting tool that you use in nearly every part of a data science project.
-You don't need to be an expert programmer to be a successful data scientist, but learning more about programming pays off because becoming a better programmer allows you to automate common tasks and solve new problems with greater ease.
+A circondare tutti questi strumenti c'è la **programmazione**.
+La programmazione è uno strumento trasversale che utilizzi in quasi ogni parte di un progetto di data science.
+Non serve essere programmatori esperti per essere bravi data scientist, ma approfondire la programmazione ripaga perché diventare programmatori migliori permette di automatizzare attività frequenti e risolvere nuovi problemi con maggior facilità.
 
-You'll use these tools in every data science project, but they're not enough for most projects.
-There's a rough 80/20 rule at play: you can tackle about 80% of every project using the tools you'll learn in this book, but you'll need other tools to tackle the remaining 20%.
-Throughout this book, we'll point you to resources where you can learn more.
+Userai questi strumenti in ogni progetto di data science, ma non sono sufficienti per la maggior parte dei progetti.
+Vale una sorta di regola dell'80/20: puoi affrontare circa l'80% di ogni progetto con gli strumenti che imparerai in questo libro, ma ti serviranno altri strumenti per affrontare il restante 20%.
+Nel corso del libro ti indicheremo risorse dove potrai approfondire.
 
-## How this book is organized
+## Come è organizzato questo libro
 
-The previous description of the tools of data science is organized roughly according to the order in which you use them in an analysis (although, of course, you'll iterate through them multiple times).
-In our experience, however, learning data importing and tidying first is suboptimal because, 80% of the time, it's routine and boring, and the other 20% of the time, it's weird and frustrating.
-That's a bad place to start learning a new subject!
-Instead, we'll start with visualization and transformation of data that's already been imported and tidied.
-That way, when you ingest and tidy your own data, your motivation will stay high because you know the pain is worth the effort.
+La precedente descrizione degli strumenti della scienza dei dati è organizzata approssimativamente secondo l'ordine in cui li utilizzeresti in un'analisi (anche se, ovviamente, ci tornerai sopra più volte).
+Dalla nostra esperienza, però, iniziare imparando a importare e riordinare i dati è poco ideale: per l'80% del tempo è routine noiosa, per il restante 20% è strano e frustrante.
+Non è un buon modo per iniziare a imparare qualcosa di nuovo!
+Invece cominceremo dalla visualizzazione e trasformazione di dati che sono già stati importati e riordinati.
+In questo modo, quando dovrai importare e riordinare i tuoi dati, la motivazione resterà alta perché saprai che la fatica vale lo sforzo.
 
-Within each chapter, we try to adhere to a consistent pattern: start with some motivating examples so you can see the bigger picture, and then dive into the details.
-Each section of the book is paired with exercises to help you practice what you've learned.
-Although it can be tempting to skip the exercises, there's no better way to learn than by practicing on real problems.
+All'interno di ciascun capitolo cerchiamo di seguire uno schema coerente: iniziamo con alcuni esempi motivanti che ti permettono di cogliere il quadro generale, per poi addentrarci nei dettagli.
+Ogni sezione del libro è accompagnata da esercizi che ti aiutano a mettere in pratica ciò che hai imparato.
+Per quanto possa essere allettante saltarli, non c'è modo migliore di imparare che esercitarsi su problemi reali.
 
-## What you won't learn
+## Cosa non imparerai
 
-There are several important topics that this book doesn't cover.
-We believe it's important to stay ruthlessly focused on the essentials so you can get up and running as quickly as possible.
-That means this book can't cover every important topic.
-
-### Modeling
-
-Modeling is super important for data science, but it's a big topic, and unfortunately, we just don't have the space to give it the coverage it deserves here.
-To learn more about modeling, we highly recommend [Tidy Modeling with R](https://www.tmwr.org) by our colleagues Max Kuhn and Julia Silge.
-This book will teach you the tidymodels family of packages, which, as you might guess from the name, share many conventions with the tidyverse packages we use in this book.
+Ci sono diversi argomenti importanti che questo libro non tratta.
+Riteniamo fondamentale rimanere ferocemente concentrati sugli aspetti essenziali per poter partire il più rapidamente possibile.
+Questo significa che il libro non può approfondire ogni tema rilevante.
+### Modellazione
+La modellazione è un aspetto fondamentale della scienza dei dati, ma è un argomento vasto e, purtroppo, non abbiamo lo spazio necessario per trattarlo come meriterebbe.
+Per saperne di più ti consigliamo caldamente [Tidy Modeling with R](https://www.tmwr.org) dei nostri colleghi Max Kuhn e Julia Silge.
+Questo libro ti insegnerà la famiglia di pacchetti **tidymodels** che, come suggerisce il nome, condividono molte convenzioni con i pacchetti del tidyverse utilizzati in questo volume.
 
 ### Big data
-
-This book proudly and primarily focuses on small, in-memory datasets.
-This is the right place to start because you can't tackle big data unless you have experience with small data.
-The tools you'll learn throughout the majority of this book will easily handle hundreds of megabytes of data, and with a bit of care, you can typically use them to work with a few gigabytes of data.
-We'll also show you how to get data out of databases and parquet files, both of which are often used to store big data.
-You won't necessarily be able to work with the entire dataset, but that's not a problem because you only need a subset or subsample to answer the question that you're interested in.
-
-If you're routinely working with larger data (10--100 GB, say), we recommend learning more about [data.table](https://github.com/Rdatatable/data.table).
-We don't teach it here because it uses a different interface than the tidyverse and requires you to learn some different conventions.
-However, it is incredibly faster, and the performance payoff is worth investing some time in learning it if you're working with large data.
-
+Questo libro si concentra con orgoglio soprattutto su dataset di piccole dimensioni caricati in memoria.
+È il punto di partenza ideale, perché non si può affrontare il big data senza esperienza con i dati di piccole dimensioni.
+Gli strumenti che imparerai nella maggior parte del libro gestiranno senza problemi centinaia di megabyte di dati e, con un po' di cura, potrai usarli anche con qualche gigabyte.
+Ti mostreremo inoltre come leggere dati da database e file parquet, entrambi spesso utilizzati per archiviare grandi moli di dati.
+Non sempre avrai bisogno di lavorare con l'intero dataset: per rispondere alla tua domanda basta spesso un sottoinsieme o un campione dei dati.
+Se ti capita spesso di lavorare con dataset ancora più grandi (10--100 GB, ad esempio), ti consigliamo di approfondire [data.table](https://github.com/Rdatatable/data.table).
+Non lo insegniamo qui perché utilizza un'interfaccia diversa dal tidyverse e richiede di imparare convenzioni differenti.
+Tuttavia è incredibilmente più veloce e, se lavori con dati molto grandi, dedicare un po' di tempo a impararlo ripaga in termini di prestazioni.
 ### Python, Julia, and friends
-
-In this book, you won't learn anything about Python, Julia, or any other programming language useful for data science.
-This isn't because we think these tools are bad.
-They're not!
-And in practice, most data science teams use a mix of languages, often at least R and Python.
-But we strongly believe that it's best to master one tool at a time, and R is a great place to start.
+### Python, Julia e altri linguaggi
+In questo libro non imparerai nulla su Python, Julia o altri linguaggi di programmazione utili per la data science.
+Non perché li riteniamo strumenti scadenti -- tutt'altro!
+Nella pratica, molti team di data science usano un mix di linguaggi, spesso almeno R e Python.
+Siamo però convinti che sia meglio padroneggiare un solo strumento alla volta, e R è un ottimo punto di partenza.
 
 ## Prerequisites
-
-We've made a few assumptions about what you already know to get the most out of this book.
-You should be generally numerically literate, and it's helpful if you have some basic programming experience already.
-If you've never programmed before, you might find [Hands on Programming with R](https://rstudio-education.github.io/hopr/) by Garrett to be a valuable adjunct to this book.
-
-You need four things to run the code in this book: R, RStudio, a collection of R packages called the **tidyverse**, and a handful of other packages.
-Packages are the fundamental units of reproducible R code.
-They include reusable functions, documentation that describes how to use them, and sample data.
-
+## Prerequisiti
+Abbiamo fatto alcune ipotesi su ciò che sai già per trarre il massimo da questo libro.
+Dovresti avere una buona familiarità con i numeri e può essere utile possedere qualche esperienza di programmazione.
+Se non hai mai programmato, potresti trovare utile affiancare a questo testo [Hands on Programming with R](https://rstudio-education.github.io/hopr/) di Garrett.
+Per eseguire il codice di questo libro ti servono quattro cose: R, RStudio, un insieme di pacchetti chiamato **tidyverse** e qualche altro pacchetto.
+I pacchetti sono le unità fondamentali di codice R riproducibile.
+Contengono funzioni riutilizzabili, documentazione che spiega come usarle e dati di esempio.
 ### R
-
 To download R, go to CRAN, the **c**omprehensive **R** **a**rchive **n**etwork, <https://cloud.r-project.org>.
-A new major version of R comes out once a year, and there are 2-3 minor releases each year.
-It's a good idea to update regularly.
-Upgrading can be a bit of a hassle, especially for major versions that require you to re-install all your packages, but putting it off only makes it worse.
-We recommend R 4.2.0 or later for this book.
-
+Per scaricare R visita CRAN, il **c**omprehensive **R** **a**rchive **n**etwork, all'indirizzo <https://cloud.r-project.org>.
+Ogni anno esce una nuova versione principale di R e durante l'anno 2-3 versioni minori.
+È consigliabile aggiornare con regolarità.
+L'aggiornamento può essere un po' fastidioso, soprattutto per le versioni principali che richiedono di reinstallare tutti i pacchetti, ma rimandare non fa che peggiorare le cose.
+Per questo libro consigliamo R 4.2.0 o successivi.
 ### RStudio
-
+### RStudio
 RStudio is an integrated development environment, or IDE, for R programming, which you can download from <https://posit.co/download/rstudio-desktop/>.
-RStudio is updated a couple of times a year, and it will automatically let you know when a new version is out, so there's no need to check back.
-It's a good idea to upgrade regularly to take advantage of the latest and greatest features.
-For this book, make sure you have at least RStudio 2022.02.0.
-
+RStudio è un ambiente di sviluppo integrato, o IDE, per programmare in R, che puoi scaricare da <https://posit.co/download/rstudio-desktop/>.
+RStudio viene aggiornato un paio di volte all'anno e ti avviserà automaticamente quando esce una nuova versione, quindi non serve controllare periodicamente.
+È consigliabile aggiornare con regolarità per sfruttare le funzionalità più recenti.
+Per seguire questo libro assicurati di avere almeno RStudio 2022.02.0.
 When you start RStudio, @fig-rstudio-console, you'll see two key regions in the interface: the console pane and the output pane.
-For now, all you need to know is that you type the R code in the console pane and press enter to run it.
-You'll learn more as we go along![^intro-1]
-
-[^intro-1]: If you'd like a comprehensive overview of all of RStudio's features, see the RStudio User Guide at <https://docs.posit.co/ide/user>.
+Avviando RStudio, come mostrato in @fig-rstudio-console, vedrai due aree principali dell'interfaccia: il pannello della console e quello dei risultati.
+Per il momento tutto ciò che devi sapere è che il codice R si digita nella console e si esegue premendo invio.
+Imparerai il resto strada facendo![^intro-1]
+[^intro-1]: Se vuoi una panoramica completa di tutte le funzionalità di RStudio, consulta la guida utente all'indirizzo <https://docs.posit.co/ide/user>.
 
 ```{r}
 #| label: fig-rstudio-console
@@ -157,46 +148,44 @@ You'll learn more as we go along![^intro-1]
 knitr::include_graphics("diagrams/rstudio/console.png", dpi = 270)
 ```
 
-### The tidyverse
+### Il tidyverse
 
-You'll also need to install some R packages.
-An R **package** is a collection of functions, data, and documentation that extends the capabilities of base R.
-Using packages is key to the successful use of R.
-The majority of the packages that you will learn in this book are part of the so-called tidyverse.
-All packages in the tidyverse share a common philosophy of data and R programming and are designed to work together.
+Avrai anche bisogno di installare alcuni pacchetti R.
+Un **pacchetto** R è un insieme di funzioni, dati e documentazione che estende le capacità di R base.
+L'uso dei pacchetti è fondamentale per sfruttare al meglio R.
+La maggior parte dei pacchetti che imparerai in questo libro fa parte del cosiddetto tidyverse.
+Tutti i pacchetti del tidyverse condividono una filosofia comune di gestione dei dati e di programmazione in R e sono progettati per funzionare insieme.
 
-You can install the complete tidyverse with a single line of code:
+Puoi installare l'intero tidyverse con una sola riga di codice:
 
 ```{r}
 #| eval: false
 install.packages("tidyverse")
 ```
-
-On your computer, type that line of code in the console, and then press enter to run it.
+Sul tuo computer digita quella riga di codice nella console e premi invio per eseguirla.
+R scaricherà i pacchetti da CRAN e li installerà sul tuo computer.
 R will download the packages from CRAN and install them on your computer.
-
-You will not be able to use the functions, objects, or help files in a package until you load it with `library()`.
+Non potrai usare funzioni, oggetti o file di aiuto di un pacchetto finché non lo carichi con `library()`.
+Una volta installato un pacchetto, puoi caricarlo con la funzione `library()`:
 Once you have installed a package, you can load it using the `library()` function:
 
 ```{r}
-library(tidyverse)
-```
+Vedrai che tidyverse carica nove pacchetti: dplyr, forcats, ggplot2, lubridate, purrr, readr, stringr, tibble e tidyr.
+Sono considerati il **core** del tidyverse perché li userai in quasi tutte le analisi.
 
-This tells you that tidyverse loads nine packages: dplyr, forcats, ggplot2, lubridate, purrr, readr, stringr, tibble, tidyr.
-These are considered the **core** of the tidyverse because you'll use them in almost every analysis.
+I pacchetti del tidyverse si aggiornano piuttosto di frequente.
+Puoi verificare se ci sono nuove versioni eseguendo `tidyverse_update()`.
 
-Packages in the tidyverse change fairly frequently.
-You can see if updates are available by running `tidyverse_update()`.
 
-### Other packages
+### Altri pacchetti
 
-There are many other excellent packages that are not part of the tidyverse because they solve problems in a different domain or are designed with a different set of underlying principles.
-This doesn't make them better or worse; it just makes them different.
-In other words, the complement to the tidyverse is not the messyverse but many other universes of interrelated packages.
-As you tackle more data science projects with R, you'll learn new packages and new ways of thinking about data.
+Esistono molti altri pacchetti eccellenti che non fanno parte del tidyverse perché risolvono problemi in domini differenti o sono progettati con principi diversi.
+Questo non li rende migliori o peggiori: semplicemente, sono diversi.
+In altre parole, il complemento del tidyverse non è il "messyverse" ma molti altri universi di pacchetti interconnessi.
+Man mano che affronterai nuovi progetti di data science con R imparerai nuovi pacchetti e nuovi modi di pensare ai dati.
 
-We'll use many packages from outside the tidyverse in this book.
-For example, we'll use the following packages because they provide interesting datasets for us to work with in the process of learning R:
+In questo libro useremo molti pacchetti esterni al tidyverse.
+Per esempio, adotteremo i seguenti pacchetti perché ci offrono dataset interessanti con cui esercitarci nell'apprendimento di R:
 
 ```{r}
 #| eval: false
@@ -204,56 +193,48 @@ install.packages(
   c("arrow", "babynames", "curl", "duckdb", "gapminder", 
     "ggrepel", "ggridges", "ggthemes", "hexbin", "janitor", "Lahman", 
     "leaflet", "maps", "nycflights13", "openxlsx", "palmerpenguins", 
-    "repurrrsive", "tidymodels", "writexl")
-  )
+Useremo inoltre alcuni altri pacchetti per singoli esempi.
+Non è necessario installarli subito: ricorda solo che quando ti appare un errore del tipo:
 ```
 
-We'll also use a selection of other packages for one off examples.
-You don't need to install them now, just remember that whenever you see an error like this:
 
-```{r}
+devi eseguire `install.packages("ggrepel")` per installare il pacchetto.
 #| eval: false
 library(ggrepel)
 #> Error in library(ggrepel) : there is no package called ‘ggrepel’
 ```
 
-You need to run `install.packages("ggrepel")` to install the package.
 
-## Running R code
+## Eseguire codice R
 
-The previous section showed you several examples of running R code.
-The code in the book looks like this:
+## Eseguire codice R
+La sezione precedente ti ha mostrato diversi esempi di esecuzione di codice R.
+Il codice nel libro appare così:
 
 ```{r}
 #| eval: true
 1 + 2
 ```
 
-If you run the same code in your local console, it will look like this:
+Se esegui lo stesso codice nella tua console otterrai qualcosa del genere:
 
-```         
+```
 > 1 + 2
 [1] 3
 ```
 
-There are two main differences.
-In your console, you type after the `>`, called the **prompt**; we don't show the prompt in the book.
-In the book, the output is commented out with `#>`; in your console, it appears directly after your code.
-These two differences mean that if you're working with an electronic version of the book, you can easily copy code out of the book and paste it into the console.
+Ci sono due differenze principali.
+Nella console digiti dopo il `>`\, detto **prompt**; nel libro non mostriamo il prompt.
+Nel testo l'output è preceduto da `#>`; nella console appare subito dopo il codice.
+Queste differenze ti permettono, se stai leggendo una versione elettronica del libro, di copiare facilmente il codice e incollarlo nella console.
 
-Throughout the book, we use a consistent set of conventions to refer to code:
-
--   Functions are displayed in a code font and followed by parentheses, like `sum()` or `mean()`.
-
--   Other R objects (such as data or function arguments) are in a code font, without parentheses, like `flights` or `x`.
-
--   Sometimes, to make it clear which package an object comes from, we'll use the package name followed by two colons, like `dplyr::mutate()` or `nycflights13::flights`.
-    This is also valid R code.
-
-## Acknowledgments
-
-This book isn't just the product of Hadley, Mine, and Garrett but is the result of many conversations (in person and online) that we've had with many people in the R community.
-We're incredibly grateful for all the conversations we've had with y'all; thank you so much!
+In tutto il libro usiamo un insieme coerente di convenzioni per riferirci al codice:
+-   Le funzioni sono mostrate con il font del codice e seguite dalle parentesi, come `sum()` o `mean()`.
+-   Gli altri oggetti R (come dati o argomenti di funzione) sono in font codice senza parentesi, ad esempio `flights` o `x`.
+-   A volte, per chiarire da quale pacchetto provenga un oggetto, usiamo il nome del pacchetto seguito da due punti, come `dplyr::mutate()` o `nycflights13::flights`.
+Anche questo è codice R valido.
+## Ringraziamenti
+Questo libro non è solo opera di Hadley, Mine e Garrett, ma il frutto di molte conversazioni (dal vivo e online) con numerose persone della comunità R.
 
 ```{r}
 #| eval: false
@@ -314,10 +295,10 @@ cat(".\n")
 
 ## Colophon
 
-An online version of this book is available at <https://r4ds.hadley.nz>.
-It will continue to evolve in between reprints of the physical book.
-The source of the book is available at <https://github.com/hadley/r4ds>.
-The book is powered by [Quarto](https://quarto.org), which makes it easy to write books that combine text and executable code.
+Una versione online di questo libro è disponibile su <https://r4ds.hadley.nz>.
+Continuerà a evolversi tra una ristampa e l'altra del volume cartaceo.
+Il codice sorgente del libro è disponibile su <https://github.com/hadley/r4ds>.
+Il libro è realizzato con [Quarto](https://quarto.org), che facilita la stesura di testi integrando codice eseguibile.
 
 ```{r}
 #| eval: false
