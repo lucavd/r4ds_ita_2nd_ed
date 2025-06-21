@@ -1,36 +1,31 @@
-# Visualize {#sec-visualize .unnumbered}
+# Visualizzare {#sec-visualizzare .unnumbered}
 
 ```{r}
 #| echo: false
 source("_common.R")
 ```
 
-After reading the first part of the book, you understand (at least superficially) the most important tools for doing data science.
-Now it's time to start diving into the details.
-In this part of the book, you'll learn about visualizing data in further depth.
+Dopo aver letto la prima parte del libro, hai compreso (almeno in modo superficiale) i principali strumenti per fare data science. Ora è il momento di addentrarti nei dettagli. In questa parte del libro, imparerai a visualizzare i dati in modo più approfondito.
 
 ```{r}
 #| label: fig-ds-visualize
 #| echo: false
 #| fig-cap: |
-#|   Data visualization is often the first step in data exploration.
+#|   La visualizzazione dei dati è spesso il primo passo nell'esplorazione dei dati.
 #| fig-alt: |
-#|   Our data science model, with visualize highlighted in blue.
+#|   Il nostro modello di data science, con la parte di visualizzazione evidenziata in blu.
 #| out.width: NULL
 knitr::include_graphics("diagrams/data-science/visualize.png", dpi = 270)
 ```
 
-Each chapter addresses one to a few aspects of creating a data visualization.
+Ogni capitolo affronta uno o più aspetti della creazione di una visualizzazione dei dati.
 
--   In @sec-layers you will learn about the layered grammar of graphics.
+- In @sec-layers imparerai la grammatica a strati dei grafici.
+- In @sec-exploratory-data-analysis combinerai la visualizzazione con la tua curiosità e il tuo scetticismo per porre e rispondere a domande interessanti sui dati.
+- Infine, in @sec-communication apprenderai come trasformare i grafici esplorativi in grafici esplicativi, ovvero grafici che aiutano chi si avvicina alla tua analisi a comprendere in modo rapido e semplice cosa sta succedendo.
 
--   In @sec-exploratory-data-analysis, you'll combine visualization with your curiosity and skepticism to ask and answer interesting questions about data.
+Questi tre capitoli ti introducono nel mondo della visualizzazione, ma c'è ancora molto da imparare.
 
--   Finally, in @sec-communication you will learn how to take your exploratory graphics, elevate them, and turn them into expository graphics, graphics that help the newcomer to your analysis understand what's going on as quickly and easily as possible.
+Il posto migliore per approfondire è il libro ggplot2: [*ggplot2: Elegant graphics for data analysis*](https://ggplot2-book.org/). Esso analizza in maniera molto più approfondita la teoria sottostante e offre numerosi esempi su come combinare i singoli elementi per risolvere problemi pratici.
 
-These three chapters get you started in the world of visualization, but there is much more to learn.
-The absolute best place to learn more is the ggplot2 book: [*ggplot2: Elegant graphics for data analysis*](https://ggplot2-book.org/).
-It goes into much more depth about the underlying theory, and has many more examples of how to combine the individual pieces to solve practical problems.
-Another great resource is the ggplot2 extensions gallery <https://exts.ggplot2.tidyverse.org/gallery/>.
-This site lists many of the packages that extend ggplot2 with new geoms and scales.
-It's a great place to start if you're trying to do something that seems hard with ggplot2.
+Un'altra ottima risorsa è la galleria delle estensioni di ggplot2 (<https://exts.ggplot2.tidyverse.org/gallery/>), che elenca molti dei pacchetti che estendono ggplot2 con nuove geom e scale. È un ottimo punto di partenza se stai cercando di fare qualcosa che sembra complicato con ggplot2.

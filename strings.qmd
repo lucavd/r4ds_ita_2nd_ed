@@ -5,7 +5,7 @@
 source("_common.R")
 ```
 
-## Introduction
+## Introduzione
 
 So far, you've used a bunch of strings without learning much about the details.
 Now it's time to dive into them, learn what makes strings tick, and master some of the powerful string manipulation tools you have at your disposal.

@@ -1,53 +1,53 @@
-# Workflow: getting help {#sec-workflow-getting-help}
+# Workflow: ottenere aiuto {#sec-workflow-ottenere-aiuto}
 
 ```{r}
 #| echo: false
 source("_common.R")
 ```
 
-This book is not an island; there is no single resource that will allow you to master R.
-As you begin to apply the techniques described in this book to your own data, you will soon find questions that we do not answer.
-This section describes a few tips on how to get help and to help you keep learning.
+Questo libro non è un'isola; non esiste una singola risorsa che ti permetta di padroneggiare R.
+Man mano che inizi ad applicare le tecniche descritte in questo libro ai tuoi dati, ti troverai presto di fronte a domande alle quali non forniamo risposte.
+Questa sezione descrive alcuni suggerimenti su come ottenere aiuto e continuare a imparare.
 
-## Google is your friend
+## Google è il tuo amico
 
-If you get stuck, start with Google.
-Typically adding "R" to a query is enough to restrict it to relevant results: if the search isn't useful, it often means that there aren't any R-specific results available.
-Additionally, adding package names like "tidyverse" or "ggplot2" will help narrow down the results to code that will feel more familiar to you as well, e.g., "how to make a boxplot in R" vs. "how to make a boxplot in R with ggplot2".
-Google is particularly useful for error messages.
-If you get an error message and you have no idea what it means, try googling it!
-Chances are that someone else has been confused by it in the past, and there will be help somewhere on the web.
-(If the error message isn't in English, run `Sys.setenv(LANGUAGE = "en")` and re-run the code; you're more likely to find help for English error messages.)
+Se ti ritrovi in difficoltà, inizia con Google.
+In genere, aggiungere "R" a una query è sufficiente per restringere i risultati a quelli pertinenti: se la ricerca non risulta utile, spesso significa che non ci sono risultati specifici per R disponibili.
+Inoltre, aggiungere i nomi dei pacchetti, come "tidyverse" o "ggplot2", aiuterà a restringere i risultati a codice che ti sembrerà più familiare, ad esempio: "come fare un boxplot in R" contro "come fare un boxplot in R con ggplot2".
+Google è particolarmente utile per i messaggi di errore.
+Se ricevi un messaggio di errore e non hai idea di cosa significhi, prova a cercarlo su Google!
+È probabile che qualcun altro sia già stato confuso da esso in passato, e ci sarà aiuto da qualche parte sul web.
+(Se il messaggio di errore non è in inglese, esegui `Sys.setenv(LANGUAGE = "en")` e riesegui il codice; è più probabile trovare aiuto per i messaggi di errore in inglese.)
 
-If Google doesn't help, try [Stack Overflow](https://stackoverflow.com).
-Start by spending a little time searching for an existing answer, including `[R]`, to restrict your search to questions and answers that use R.
+Se Google non ti aiuta, prova [Stack Overflow](https://stackoverflow.com).
+Inizia dedicando un po' di tempo a cercare una risposta esistente, includendo `[R]`, per limitare la ricerca a domande e risposte relative a R.
 
-## Making a reprex
+## Creare un reprex
 
-If your googling doesn't find anything useful, it's a really good idea to prepare a **reprex,** short for minimal **repr**oducible **ex**ample.
-A good reprex makes it easier for other people to help you, and often you'll figure out the problem yourself in the course of making it.
-There are two parts to creating a reprex:
+Se la tua ricerca su Google non trova nulla di utile, è davvero una buona idea preparare un **reprex**, abbreviazione di **repr**oducible **ex**ample.
+Un buon reprex rende più facile per gli altri aiutarti, e spesso scoprirai da solo qual è il problema durante il processo di creazione.
+Ci sono due aspetti nella creazione di un reprex:
 
--   First, you need to make your code reproducible.
-    This means that you need to capture everything, i.e. include any `library()` calls and create all necessary objects.
-    The easiest way to make sure you've done this is using the reprex package.
+- Prima di tutto, devi rendere il tuo codice riproducibile.
+  Questo significa che devi includere tutto, ad esempio le chiamate a `library()` e la creazione di tutti gli oggetti necessari.
+  Il modo più semplice per assicurarti di aver fatto tutto ciò è utilizzare il pacchetto reprex.
 
--   Second, you need to make it minimal.
-    Strip away everything that is not directly related to your problem.
-    This usually involves creating a much smaller and simpler R object than the one you're facing in real life or even using built-in data.
+- In secondo luogo, devi renderlo minimale.
+  Rimuovi tutto ciò che non è direttamente collegato al tuo problema.
+  Questo di solito implica creare un oggetto R molto più piccolo e semplice rispetto a quello che stai utilizzando nella realtà, oppure usare dati predefiniti.
 
-That sounds like a lot of work!
-And it can be, but it has a great payoff:
+Sembra molto lavoro!
+E può esserlo, ma porta grandi benefici:
 
--   80% of the time, creating an excellent reprex reveals the source of your problem.
-    It's amazing how often the process of writing up a self-contained and minimal example allows you to answer your own question.
+- L'80% delle volte, creare un reprex eccellente rivela la causa del tuo problema.
+  È sorprendente come il processo di scrivere un esempio autonomo e minimale ti permetta spesso di risolvere il tuo stesso problema.
 
--   The other 20% of the time, you will have captured the essence of your problem in a way that is easy for others to play with.
-    This substantially improves your chances of getting help!
+- Nel restante 20% delle volte, avrai catturato l'essenza del tuo problema in modo tale che sia facile per gli altri esaminarlo.
+  Questo migliora notevolmente le possibilità di ottenere aiuto!
 
-When creating a reprex by hand, it's easy to accidentally miss something, meaning your code can't be run on someone else's computer.
-Avoid this problem by using the reprex package, which is installed as part of the tidyverse.
-Let's say you copy this code onto your clipboard (or, on RStudio Server or Cloud, select it):
+Quando crei un reprex manualmente, è facile trascurare qualcosa accidentalmente, il che significa che il tuo codice potrebbe non essere eseguibile su un altro computer.
+Evita questo problema utilizzando il pacchetto reprex, che fa parte del tidyverse.
+Supponiamo che tu copi questo codice negli appunti (oppure, su RStudio Server o Cloud, lo selezioni):
 
 ```{r}
 #| eval: false
@@ -55,14 +55,14 @@ y <- 1:4
 mean(y)
 ```
 
-Then call `reprex()`, where the default output is formatted for GitHub:
+Poi chiama `reprex()`, il cui output predefinito è formattato per GitHub:
 
 ``` r
 reprex::reprex()
 ```
 
-A nicely rendered HTML preview will display in RStudio's Viewer (if you're in RStudio) or your default browser otherwise.
-The reprex is automatically copied to your clipboard (on RStudio Server or Cloud, you will need to copy this yourself):
+Una bella anteprima HTML verrà visualizzata nel Viewer di RStudio (se usi RStudio) oppure nel tuo browser predefinito.
+Il reprex viene automaticamente copiato negli appunti (su RStudio Server o Cloud, dovrai copiarlo manualmente):
 
 ````         
 ``` r
@@ -72,8 +72,8 @@ mean(y)
 ```
 ````
 
-This text is formatted in a special way, called Markdown, which can be pasted to sites like StackOverflow or Github and they will automatically render it to look like code.
-Here's what that Markdown would look like rendered on GitHub:
+Questo testo è formattato in uno stile particolare, chiamato Markdown, che può essere incollato in siti come StackOverflow o GitHub, i quali lo interpreteranno automaticamente come codice.
+Ecco come quel Markdown verrebbe visualizzato su GitHub:
 
 ```{r}
 #| eval: false
@@ -82,49 +82,44 @@ mean(y)
 #> [1] 2.5
 ```
 
-Anyone else can copy, paste, and run this immediately.
+Chiunque può copiare, incollare ed eseguire questo codice immediatamente.
 
-There are three things you need to include to make your example reproducible: required packages, data, and code.
+Ci sono tre cose che devi includere per rendere il tuo esempio riproducibile: pacchetti necessari, dati e codice.
 
-1.  **Packages** should be loaded at the top of the script so it's easy to see which ones the example needs.
-    This is a good time to check that you're using the latest version of each package; you may have discovered a bug that's been fixed since you installed or last updated the package.
-    For packages in the tidyverse, the easiest way to check is to run `tidyverse_update()`.
+1.  **Pacchetti**: dovrebbero essere caricati in cima allo script, così da rendere evidente quali sono necessari per l'esempio.
+    Questo è un buon momento per verificare di usare l'ultima versione di ciascun pacchetto; potresti aver scoperto un bug che è stato corretto dopo l'installazione o l'ultimo aggiornamento.
+    Per i pacchetti del tidyverse, il modo più semplice per verificare è eseguire `tidyverse_update()`.
 
-2.  The easiest way to include **data** is to use `dput()` to generate the R code needed to recreate it.
-    For example, to recreate the `mtcars` dataset in R, perform the following steps:
+2.  Il modo più semplice per includere **dati** è utilizzare `dput()` per generare il codice R necessario alla loro ricreazione.
+    Ad esempio, per ricreare il dataset `mtcars` in R, segui questi passaggi:
 
-    1.  Run `dput(mtcars)` in R
-    2.  Copy the output
-    3.  In reprex, type `mtcars <-`, then paste.
+    1. Esegui `dput(mtcars)` in R
+    2. Copia l'output
+    3. In reprex, digita `mtcars <-` e poi incolla.
+    
+    Cerca di utilizzare il sottoinsieme più piccolo dei tuoi dati che riveli comunque il problema.
 
-    Try to use the smallest subset of your data that still reveals the problem.
+3.  Dedica un po' di tempo per assicurarti che il tuo **codice** sia facilmente leggibile dagli altri:
+    - Assicurati di aver usato spazi e che i nomi delle variabili siano concisi ma informativi.
+    - Usa commenti per indicare dove sorge il problema.
+    - Fai del tuo meglio per rimuovere tutto ciò che non è correlato al problema.
+    
+    Più il tuo codice è breve, più è facile da comprendere e da correggere.
 
-3.  Spend a little bit of time ensuring that your **code** is easy for others to read:
+Termina verificando di aver creato effettivamente un esempio riproducibile, avviando una nuova sessione R e copiando-incollando il tuo script.
+Creare reprexes non è banale, e ci vorrà pratica per imparare a realizzare esempi davvero minimali e di qualità.
+Tuttavia, imparare a porre domande includendo il codice, e dedicare tempo a renderlo riproducibile, continuerà a ripagare nel tempo man mano che impari e padroneggi R.
 
-    -   Make sure you've used spaces and your variable names are concise yet informative.
+## Investire in te stesso
 
-    -   Use comments to indicate where your problem lies.
+Dovresti anche dedicare del tempo a prepararti a risolvere i problemi prima che si presentino.
+Investire un po' di tempo ogni giorno per imparare R porterà grandi benefici nel lungo termine.
+Un modo per farlo è seguire ciò che il team del tidyverse sta facendo sul [blog del tidyverse](https://www.tidyverse.org/blog/).
+Per rimanere aggiornato con la community R in senso lato, consigliamo di leggere [R Weekly](https://rweekly.org): è una collaborazione comunitaria che raccoglie le notizie più interessanti nel mondo R ogni settimana.
 
-    -   Do your best to remove everything that is not related to the problem.
+## Riepilogo
 
-    The shorter your code is, the easier it is to understand and the easier it is to fix.
-
-Finish by checking that you have actually made a reproducible example by starting a fresh R session and copying and pasting your script.
-
-Creating reprexes is not trivial, and it will take some practice to learn to create good, truly minimal reprexes.
-However, learning to ask questions that include the code, and investing the time to make it reproducible will continue to pay off as you learn and master R.
-
-## Investing in yourself
-
-You should also spend some time preparing yourself to solve problems before they occur.
-Investing a little time in learning R each day will pay off handsomely in the long run.
-One way is to follow what the tidyverse team is doing on the [tidyverse blog](https://www.tidyverse.org/blog/).
-To keep up with the R community more broadly, we recommend reading [R Weekly](https://rweekly.org): it's a community effort to aggregate the most interesting news in the R community each week.
-
-## Summary
-
-This chapter concludes the Whole Game part of the book.
-You've now seen the most important parts of the data science process: visualization, transformation, tidying and importing.
-Now you've got a holistic view of the whole process, and we start to get into the details of small pieces.
-
-The next part of the book, Visualize, does a deeper dive into the grammar of graphics and creating data visualizations with ggplot2, showcases how to use the tools you've learned so far to conduct exploratory data analysis, and introduces good practices for creating plots for communication.
+Questo capitolo conclude la parte "Whole Game" del libro.
+Hai appena visto le parti più importanti del processo di data science: visualizzazione, trasformazione, tidying e importazione.
+Ora hai una visione d'insieme dell'intero processo, e iniziamo ad approfondire i dettagli dei singoli elementi.
+La parte successiva del libro, "Visualize", approfondisce la grammatica dei grafici e la creazione di visualizzazioni dei dati con ggplot2, mostra come utilizzare gli strumenti appresi finora per eseguire un'analisi esplorativa dei dati, e introduce buone pratiche per creare grafici a scopo comunicativo.
