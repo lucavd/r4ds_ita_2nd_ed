@@ -1,30 +1,30 @@
-# Data tidying {#sec-data-tidy}
+# Ordinare i dati {#sec-data-tidy}
 
 ```{r}
 #| echo: false
 source("_common.R")
 ```
 
-## Introduction
+## Introduzione
 
-> "Happy families are all alike; every unhappy family is unhappy in its own way."\
+> "Le famiglie felici sono tutte uguali; ogni famiglia infelice è infelice a modo suo."\
 > --- Leo Tolstoy
 
-> "Tidy datasets are all alike, but every messy dataset is messy in its own way."\
+> "I dataset ordinati sono tutti uguali, ma ogni dataset disordinato è disordinato a modo suo."\
 > --- Hadley Wickham
 
-In this chapter, you will learn a consistent way to organize your data in R using a system called **tidy data**.
-Getting your data into this format requires some work up front, but that work pays off in the long term.
-Once you have tidy data and the tidy tools provided by packages in the tidyverse, you will spend much less time munging data from one representation to another, allowing you to spend more time on the data questions you care about.
+In questo capitolo, imparerai un modo consistente per organizzare i tuoi dati in R usando un sistema chiamato **dati ordinati**.
+Portare i tuoi dati in questo formato richiede un po' di lavoro iniziale, ma quel lavoro ripaga nel lungo termine.
+Una volta che hai dati ordinati e gli strumenti ordinati forniti dai pacchetti nel tidyverse, spenderai molto meno tempo a manipolare dati da una rappresentazione all'altra, permettendoti di spendere più tempo sulle domande sui dati che ti interessano.
 
-In this chapter, you'll first learn the definition of tidy data and see it applied to a simple toy dataset.
-Then we'll dive into the primary tool you'll use for tidying data: pivoting.
-Pivoting allows you to change the form of your data without changing any of the values.
+In questo capitolo, prima imparerai la definizione di dati ordinati e la vedrai applicata a un semplice dataset di esempio.
+Poi ci immergeremo nello strumento principale che userai per ordinare i dati: il pivoting.
+Il pivoting ti permette di cambiare la forma dei tuoi dati senza cambiare nessuno dei valori.
 
-### Prerequisites
+### Prerequisiti
 
-In this chapter, we'll focus on tidyr, a package that provides a bunch of tools to help tidy up your messy datasets.
-tidyr is a member of the core tidyverse.
+In questo capitolo, ci concentreremo su tidyr, un pacchetto che fornisce un gruppo di strumenti per aiutare a ordinare i tuoi dataset disordinati.
+tidyr è un membro del tidyverse principale.
 
 ```{r}
 #| label: setup
@@ -32,13 +32,13 @@ tidyr is a member of the core tidyverse.
 library(tidyverse)
 ```
 
-From this chapter on, we'll suppress the loading message from `library(tidyverse)`.
+Da questo capitolo in poi, sopprimeremo il messaggio di caricamento da `library(tidyverse)`.
 
-## Tidy data {#sec-tidy-data}
+## Dati ordinati {#sec-tidy-data}
 
-You can represent the same underlying data in multiple ways.
-The example below shows the same data organized in three different ways.
-Each dataset shows the same values of four variables: *country*, *year*, *population*, and number of documented *cases* of TB (tuberculosis), but each dataset organizes the values in a different way.
+Puoi rappresentare gli stessi dati sottostanti in modi multipli.
+L'esempio sotto mostra gli stessi dati organizzati in tre modi diversi.
+Ogni dataset mostra gli stessi valori di quattro variabili: *paese*, *anno*, *popolazione*, e numero di *casi* documentati di TB (tubercolosi), ma ogni dataset organizza i valori in modo diverso.
 
 ```{r}
 table1
@@ -48,14 +48,14 @@ table2
 table3
 ```
 
-These are all representations of the same underlying data, but they are not equally easy to use.
-One of them, `table1`, will be much easier to work with inside the tidyverse because it's **tidy**.
+Queste sono tutte rappresentazioni degli stessi dati sottostanti, ma non sono ugualmente facili da usare.
+Una di esse, `table1`, sarà molto più facile da lavorare dentro il tidyverse perché è **ordinata**.
 
-There are three interrelated rules that make a dataset tidy:
+Ci sono tre regole interconnesse che rendono un dataset ordinato:
 
-1.  Each variable is a column; each column is a variable.
-2.  Each observation is a row; each row is an observation.
-3.  Each value is a cell; each cell is a single value.
+1.  Ogni variabile è una colonna; ogni colonna è una variabile.
+2.  Ogni osservazione è una riga; ogni riga è un'osservazione.
+3.  Ogni valore è una cella; ogni cella è un singolo valore.
 
 @fig-tidy-structure shows the rules visually.
 
@@ -63,109 +63,109 @@ There are three interrelated rules that make a dataset tidy:
 #| label: fig-tidy-structure
 #| echo: false
 #| fig-cap: | 
-#|   The following three rules make a dataset tidy: variables are columns,
-#|   observations are rows, and values are cells.
+#|   Le seguenti tre regole rendono un dataset ordinato: le variabili sono colonne,
+#|   le osservazioni sono righe, e i valori sono celle.
 #| fig-alt: | 
-#|   Three panels, each representing a tidy data frame. The first panel
-#|   shows that each variable is a column. The second panel shows that each
-#|   observation is a row. The third panel shows that each value is
-#|   a cell.
+#|   Tre pannelli, ognuno che rappresenta un data frame ordinato. Il primo pannello
+#|   mostra che ogni variabile è una colonna. Il secondo pannello mostra che ogni
+#|   osservazione è una riga. Il terzo pannello mostra che ogni valore è
+#|   una cella.
 knitr::include_graphics("images/tidy-1.png", dpi = 270)
 ```
 
-Why ensure that your data is tidy?
-There are two main advantages:
+Perché assicurarsi che i tuoi dati siano ordinati?
+Ci sono due vantaggi principali:
 
-1.  There's a general advantage to picking one consistent way of storing data.
-    If you have a consistent data structure, it's easier to learn the tools that work with it because they have an underlying uniformity.
+1.  C'è un vantaggio generale nel scegliere un modo consistente di memorizzare dati.
+    Se hai una struttura dati consistente, è più facile imparare gli strumenti che lavorano con essa perché hanno un'uniformità sottostante.
 
-2.  There's a specific advantage to placing variables in columns because it allows R's vectorized nature to shine.
-    As you learned in @sec-mutate and @sec-summarize, most built-in R functions work with vectors of values.
-    That makes transforming tidy data feel particularly natural.
+2.  C'è un vantaggio specifico nel posizionare variabili in colonne perché permette alla natura vettorizzata di R di brillare.
+    Come hai imparato in @sec-mutate e @sec-summarize, la maggior parte delle funzioni R integrate lavorano con vettori di valori.
+    Questo rende la trasformazione di dati ordinati particolarmente naturale.
 
-dplyr, ggplot2, and all the other packages in the tidyverse are designed to work with tidy data.
-Here are a few small examples showing how you might work with `table1`.
+dplyr, ggplot2, e tutti gli altri pacchetti nel tidyverse sono progettati per lavorare con dati ordinati.
+Ecco alcuni piccoli esempi che mostrano come potresti lavorare con `table1`.
 
 ```{r}
 #| fig-width: 5
 #| fig-alt: |
-#|   This figure shows the number of cases in 1999 and 2000 for 
-#|   Afghanistan, Brazil, and China, with year on the x-axis and number 
-#|   of cases on the y-axis. Each point on the plot represents the number 
-#|   of cases in a given country in a given year. The points for each
-#|   country are differentiated from others by color and shape and connected
-#|   with a line, resulting in three, non-parallel, non-intersecting lines.
-#|   The numbers of cases in China are highest for both 1999 and 2000, with
-#|   values above 200,000 for both years. The number of cases in Brazil is
-#|   approximately 40,000 in 1999 and approximately 75,000 in 2000. The
-#|   numbers of cases in Afghanistan are lowest for both 1999 and 2000, with
-#|   values that appear to be very close to 0 on this scale.
-# Compute rate per 10,000
+#|   Questa figura mostra il numero di casi nel 1999 e 2000 per 
+#|   Afghanistan, Brasile, e Cina, con l'anno sull'asse x e il numero 
+#|   di casi sull'asse y. Ogni punto sul grafico rappresenta il numero 
+#|   di casi in un dato paese in un dato anno. I punti per ogni
+#|   paese sono differenziati dagli altri per colore e forma e collegati
+#|   con una linea, risultando in tre linee non parallele e non intersecanti.
+#|   I numeri di casi in Cina sono i più alti sia per il 1999 che per il 2000, con
+#|   valori sopra i 200.000 per entrambi gli anni. Il numero di casi in Brasile è
+#|   circa 40.000 nel 1999 e circa 75.000 nel 2000. I
+#|   numeri di casi in Afghanistan sono i più bassi sia per il 1999 che per il 2000, con
+#|   valori che appaiono molto vicini a 0 su questa scala.
+# Calcola tasso per 10.000
 table1 |>
   mutate(rate = cases / population * 10000)
 
-# Compute total cases per year
+# Calcola casi totali per anno
 table1 |> 
   group_by(year) |> 
   summarize(total_cases = sum(cases))
 
-# Visualize changes over time
+# Visualizza cambiamenti nel tempo
 ggplot(table1, aes(x = year, y = cases)) +
   geom_line(aes(group = country), color = "grey50") +
   geom_point(aes(color = country, shape = country)) +
-  scale_x_continuous(breaks = c(1999, 2000)) # x-axis breaks at 1999 and 2000
+  scale_x_continuous(breaks = c(1999, 2000)) # interruzioni asse x a 1999 e 2000
 ```
 
-### Exercises
+### Esercizi
 
-1.  For each of the sample tables, describe what each observation and each column represents.
+1.  Per ognuna delle tabelle di esempio, descrivi cosa rappresenta ogni osservazione e ogni colonna.
 
-2.  Sketch out the process you'd use to calculate the `rate` for `table2` and `table3`.
-    You will need to perform four operations:
+2.  Abbozza il processo che useresti per calcolare il `rate` per `table2` e `table3`.
+    Dovrai eseguire quattro operazioni:
 
-    a.  Extract the number of TB cases per country per year.
-    b.  Extract the matching population per country per year.
-    c.  Divide cases by population, and multiply by 10000.
-    d.  Store back in the appropriate place.
+    a.  Estrarre il numero di casi TB per paese per anno.
+    b.  Estrarre la popolazione corrispondente per paese per anno.
+    c.  Dividere i casi per la popolazione, e moltiplicare per 10000.
+    d.  Memorizzare nel posto appropriato.
 
-    You haven't yet learned all the functions you'd need to actually perform these operations, but you should still be able to think through the transformations you'd need.
+    Non hai ancora imparato tutte le funzioni di cui avresti bisogno per eseguire effettivamente queste operazioni, ma dovresti essere ancora in grado di pensare alle trasformazioni di cui avresti bisogno.
 
-## Lengthening data {#sec-pivoting}
+## Allungare i dati {#sec-pivoting}
 
-The principles of tidy data might seem so obvious that you wonder if you'll ever encounter a dataset that isn't tidy.
-Unfortunately, however, most real data is untidy.
-There are two main reasons:
+I principi dei dati ordinati potrebbero sembrare così ovvi che ti chiedi se incontrerai mai un dataset che non è ordinato.
+Sfortunatamente, tuttavia, la maggior parte dei dati reali non è ordinata.
+Ci sono due ragioni principali:
 
-1.  Data is often organized to facilitate some goal other than analysis.
-    For example, it's common for data to be structured to make data entry, not analysis, easy.
+1.  I dati sono spesso organizzati per facilitare qualche obiettivo diverso dall'analisi.
+    Per esempio, è comune che i dati siano strutturati per rendere facile l'inserimento dei dati, non l'analisi.
 
-2.  Most people aren't familiar with the principles of tidy data, and it's hard to derive them yourself unless you spend a lot of time working with data.
+2.  La maggior parte delle persone non è familiare con i principi dei dati ordinati, ed è difficile derivarli da soli a meno che tu non spenda molto tempo lavorando con i dati.
 
-This means that most real analyses will require at least a little tidying.
-You'll begin by figuring out what the underlying variables and observations are.
-Sometimes this is easy; other times you'll need to consult with the people who originally generated the data.
-Next, you'll **pivot** your data into a tidy form, with variables in the columns and observations in the rows.
+Questo significa che la maggior parte delle analisi reali richiederà almeno un po' di ordinamento.
+Inizirai capendo quali sono le variabili e osservazioni sottostanti.
+A volte questo è facile; altre volte dovrai consultare le persone che hanno originariamente generato i dati.
+Successivamente, farai il **pivot** dei tuoi dati in una forma ordinata, con variabili nelle colonne e osservazioni nelle righe.
 
-tidyr provides two functions for pivoting data: `pivot_longer()` and `pivot_wider()`.
-We'll first start with `pivot_longer()` because it's the most common case.
-Let's dive into some examples.
+tidyr fornisce due funzioni per il pivot dei dati: `pivot_longer()` e `pivot_wider()`.
+Iniziamo prima con `pivot_longer()` perché è il caso più comune.
+Immergiamoci in alcuni esempi.
 
-### Data in column names {#sec-billboard}
+### Dati nei nomi delle colonne {#sec-billboard}
 
-The `billboard` dataset records the billboard rank of songs in the year 2000:
+Il dataset `billboard` registra la classifica billboard delle canzoni nell'anno 2000:
 
 ```{r}
 billboard
 ```
 
-In this dataset, each observation is a song.
-The first three columns (`artist`, `track` and `date.entered`) are variables that describe the song.
-Then we have 76 columns (`wk1`-`wk76`) that describe the rank of the song in each week[^data-tidy-1].
-Here, the column names are one variable (the `week`) and the cell values are another (the `rank`).
+In questo dataset, ogni osservazione è una canzone.
+Le prime tre colonne (`artist`, `track` e `date.entered`) sono variabili che descrivono la canzone.
+Poi abbiamo 76 colonne (`wk1`-`wk76`) che descrivono la classifica della canzone in ogni settimana[^data-tidy-1].
+Qui, i nomi delle colonne sono una variabile (la `week`) e i valori delle celle sono un'altra (il `rank`).
 
-[^data-tidy-1]: The song will be included as long as it was in the top 100 at some point in 2000, and is tracked for up to 72 weeks after it appears.
+[^data-tidy-1]: La canzone sarà inclusa finché era nella top 100 a un certo punto nel 2000, ed è tracciata per fino a 72 settimane dopo che appare.
 
-To tidy this data, we'll use `pivot_longer()`:
+Per ordinare questi dati, useremo `pivot_longer()`:
 
 ```{r, R.options=list(pillar.print_min = 10)}
 billboard |> 
@@ -176,16 +176,16 @@ billboard |>
   )
 ```
 
-After the data, there are three key arguments:
+Dopo i dati, ci sono tre argomenti chiave:
 
--   `cols` specifies which columns need to be pivoted, i.e. which columns aren't variables. This argument uses the same syntax as `select()` so here we could use `!c(artist, track, date.entered)` or `starts_with("wk")`.
--   `names_to` names the variable stored in the column names, we named that variable `week`.
--   `values_to` names the variable stored in the cell values, we named that variable `rank`.
+-   `cols` specifica quali colonne devono essere ruotate, cioè quali colonne non sono variabili. Questo argomento usa la stessa sintassi di `select()` quindi qui potremmo usare `!c(artist, track, date.entered)` o `starts_with("wk")`.
+-   `names_to` nomina la variabile memorizzata nei nomi delle colonne, abbiamo nominato quella variabile `week`.
+-   `values_to` nomina la variabile memorizzata nei valori delle celle, abbiamo nominato quella variabile `rank`.
 
-Note that in the code `"week"` and `"rank"` are quoted because those are new variables we're creating, they don't yet exist in the data when we run the `pivot_longer()` call.
+Nota che nel codice `"week"` e `"rank"` sono tra virgolette perché sono nuove variabili che stiamo creando, non esistono ancora nei dati quando eseguiamo la chiamata `pivot_longer()`.
 
-Now let's turn our attention to the resulting, longer data frame.
-What happens if a song is in the top 100 for less than 76 weeks?
+Ora rivolgiamo la nostra attenzione al data frame risultante, più lungo.
+Cosa succede se una canzone è nella top 100 per meno di 76 settimane?
 Take 2 Pac's "Baby Don't Cry", for example.
 The above output suggests that it was only in the top 100 for 7 weeks, and all the remaining weeks are filled in with missing values.
 These `NA`s don't really represent unknown observations; they were forced to exist by the structure of the dataset[^data-tidy-2], so we can ask `pivot_longer()` to get rid of them by setting `values_drop_na = TRUE`:
@@ -245,12 +245,12 @@ billboard_longer |>
   scale_y_reverse()
 ```
 
-### How does pivoting work?
+### Come funziona il pivoting?
 
-Now that you've seen how we can use pivoting to reshape our data, let's take a little time to gain some intuition about what pivoting does to the data.
-Let's start with a very simple dataset to make it easier to see what's happening.
-Suppose we have three patients with `id`s A, B, and C, and we take two blood pressure measurements on each patient.
-We'll create the data with `tribble()`, a handy function for constructing small tibbles by hand:
+Ora che hai visto come possiamo usare il pivoting per rimodellare i nostri dati, prendiamo un po' di tempo per acquisire un'intuizione su cosa fa il pivoting ai dati.
+Iniziamo con un dataset molto semplice per rendere più facile vedere cosa sta succedendo.
+Supponi di avere tre pazienti con `id` A, B, e C, e prendiamo due misurazioni della pressione sanguigna su ogni paziente.
+Creeremo i dati con `tribble()`, una funzione pratica per costruire piccoli tibble a mano:
 
 ```{r}
 df <- tribble(
@@ -261,8 +261,8 @@ df <- tribble(
 )
 ```
 
-We want our new dataset to have three variables: `id` (already exists), `measurement` (the column names), and `value` (the cell values).
-To achieve this, we need to pivot `df` longer:
+Vogliamo che il nostro nuovo dataset abbia tre variabili: `id` (esiste già), `measurement` (i nomi delle colonne), e `value` (i valori delle celle).
+Per ottenere questo, dobbiamo fare il pivot di `df` più lungo:
 
 ```{r}
 df |> 
@@ -273,26 +273,26 @@ df |>
   )
 ```
 
-How does the reshaping work?
-It's easier to see if we think about it column by column.
-As shown in @fig-pivot-variables, the values in a column that was already a variable in the original dataset (`id`) need to be repeated, once for each column that is pivoted.
+Come funziona il rimodellamento?
+È più facile da vedere se ci pensiamo colonna per colonna.
+Come mostrato in @fig-pivot-variables, i valori in una colonna che era già una variabile nel dataset originale (`id`) devono essere ripetuti, una volta per ogni colonna che viene ruotata.
 
 ```{r}
 #| label: fig-pivot-variables
 #| echo: false
 #| fig-cap: | 
-#|   Columns that are already variables need to be repeated, once for
-#|   each column that is pivoted.
+#|   Le colonne che sono già variabili devono essere ripetute, una volta per
+#|   ogni colonna che viene ruotata.
 #| fig-alt: | 
-#|   A diagram showing how `pivot_longer()` transforms a simple
-#|   dataset, using color to highlight how the values in the `id` column
-#|   ("A", "B", "C") are each repeated twice in the output because there are
-#|   two columns being pivoted ("bp1" and "bp2").
+#|   Un diagramma che mostra come `pivot_longer()` trasforma un semplice
+#|   dataset, usando il colore per evidenziare come i valori nella colonna `id`
+#|   ("A", "B", "C") sono ognuno ripetuti due volte nell'output perché ci sono
+#|   due colonne che vengono ruotate ("bp1" e "bp2").
 knitr::include_graphics("diagrams/tidy-data/variables.png", dpi = 270)
 ```
 
-The column names become values in a new variable, whose name is defined by `names_to`, as shown in @fig-pivot-names.
-They need to be repeated once for each row in the original dataset.
+I nomi delle colonne diventano valori in una nuova variabile, il cui nome è definito da `names_to`, come mostrato in @fig-pivot-names.
+Devono essere ripetuti una volta per ogni riga nel dataset originale.
 
 ```{r}
 #| label: fig-pivot-names
@@ -424,30 +424,30 @@ When you use `".value"` in `names_to`, the column names in the input contribute 
 knitr::include_graphics("diagrams/tidy-data/names-and-values.png", dpi = 270)
 ```
 
-## Widening data
+## Allargare i dati
 
-So far we've used `pivot_longer()` to solve the common class of problems where values have ended up in column names.
-Next we'll pivot (HA HA) to `pivot_wider()`, which makes datasets **wider** by increasing columns and reducing rows and helps when one observation is spread across multiple rows.
-This seems to arise less commonly in the wild, but it does seem to crop up a lot when dealing with governmental data.
+Finora abbiamo usato `pivot_longer()` per risolvere la classe comune di problemi dove i valori sono finiti nei nomi delle colonne.
+Successivamente ruoteremo (AH AH) a `pivot_wider()`, che rende i dataset **più larghi** aumentando le colonne e riducendo le righe e aiuta quando un'osservazione è distribuita su più righe.
+Questo sembra emergere meno comunemente in natura, ma sembra comparire molto quando si ha a che fare con dati governativi.
 
-We'll start by looking at `cms_patient_experience`, a dataset from the Centers of Medicare and Medicaid services that collects data about patient experiences:
+Inizieremo guardando `cms_patient_experience`, un dataset dai Centers of Medicare and Medicaid services che raccoglie dati sulle esperienze dei pazienti:
 
 ```{r}
 cms_patient_experience
 ```
 
-The core unit being studied is an organization, but each organization is spread across six rows, with one row for each measurement taken in the survey organization.
-We can see the complete set of values for `measure_cd` and `measure_title` by using `distinct()`:
+L'unità principale studiata è un'organizzazione, ma ogni organizzazione è distribuita su sei righe, con una riga per ogni misurazione presa nell'organizzazione del sondaggio.
+Possiamo vedere l'insieme completo di valori per `measure_cd` e `measure_title` usando `distinct()`:
 
 ```{r}
 cms_patient_experience |> 
   distinct(measure_cd, measure_title)
 ```
 
-Neither of these columns will make particularly great variable names: `measure_cd` doesn't hint at the meaning of the variable and `measure_title` is a long sentence containing spaces.
-We'll use `measure_cd` as the source for our new column names for now, but in a real analysis you might want to create your own variable names that are both short and meaningful.
+Nessuna di queste colonne farà nomi di variabile particolarmente ottimi: `measure_cd` non accenna al significato della variabile e `measure_title` è una lunga frase contenente spazi.
+Useremo `measure_cd` come fonte per i nostri nuovi nomi di colonna per ora, ma in un'analisi reale potresti voler creare i tuoi nomi di variabile che sono sia corti che significativi.
 
-`pivot_wider()` has the opposite interface to `pivot_longer()`: instead of choosing new column names, we need to provide the existing columns that define the values (`values_from`) and the column name (`names_from`):
+`pivot_wider()` ha l'interfaccia opposta a `pivot_longer()`: invece di scegliere nuovi nomi di colonna, dobbiamo fornire le colonne esistenti che definiscono i valori (`values_from`) e il nome della colonna (`names_from`):
 
 ```{r}
 cms_patient_experience |> 
@@ -457,8 +457,8 @@ cms_patient_experience |>
   )
 ```
 
-The output doesn't look quite right; we still seem to have multiple rows for each organization.
-That's because, we also need to tell `pivot_wider()` which column or columns have values that uniquely identify each row; in this case those are the variables starting with `"org"`:
+L'output non sembra del tutto giusto; sembra che abbiamo ancora righe multiple per ogni organizzazione.
+Questo perché, dobbiamo anche dire a `pivot_wider()` quale colonna o colonne hanno valori che identificano univocamente ogni riga; in questo caso sono le variabili che iniziano con `"org"`:
 
 ```{r}
 cms_patient_experience |> 
@@ -469,11 +469,11 @@ cms_patient_experience |>
   )
 ```
 
-This gives us the output that we're looking for.
+Questo ci dà l'output che stiamo cercando.
 
-### How does `pivot_wider()` work?
+### Come funziona `pivot_wider()`?
 
-To understand how `pivot_wider()` works, let's again start with a very simple dataset.
+Per capire come funziona `pivot_wider()`, iniziamo di nuovo con un dataset molto semplice.
 This time we have two patients with `id`s A and B, we have three blood pressure measurements on patient A and two on patient B:
 
 ```{r}
@@ -564,19 +564,19 @@ df |>
 
 It's then up to you to figure out what's gone wrong with your data and either repair the underlying damage or use your grouping and summarizing skills to ensure that each combination of row and column values only has a single row.
 
-## Summary
+## Riassunto
 
-In this chapter you learned about tidy data: data that has variables in columns and observations in rows.
-Tidy data makes working in the tidyverse easier, because it's a consistent structure understood by most functions, the main challenge is transforming the data from whatever structure you receive it in to a tidy format.
-To that end, you learned about `pivot_longer()` and `pivot_wider()` which allow you to tidy up many untidy datasets.
-The examples we presented here are a selection of those from `vignette("pivot", package = "tidyr")`, so if you encounter a problem that this chapter doesn't help you with, that vignette is a good place to try next.
+In questo capitolo hai imparato sui dati ordinati: dati che hanno variabili nelle colonne e osservazioni nelle righe.
+I dati ordinati rendono il lavoro nel tidyverse più facile, perché è una struttura consistente capita dalla maggior parte delle funzioni, la sfida principale è trasformare i dati da qualsiasi struttura tu li riceva in un formato ordinato.
+A tal fine, hai imparato su `pivot_longer()` e `pivot_wider()` che ti permettono di ordinare molti dataset disordinati.
+Gli esempi che abbiamo presentato qui sono una selezione di quelli da `vignette("pivot", package = "tidyr")`, quindi se incontri un problema che questo capitolo non ti aiuta a risolvere, quella vignette è un buon posto da provare successivamente.
 
-Another challenge is that, for a given dataset, it can be impossible to label the longer or the wider version as the "tidy" one.
-This is partly a reflection of our definition of tidy data, where we said tidy data has one variable in each column, but we didn't actually define what a variable is (and it's surprisingly hard to do so).
-It's totally fine to be pragmatic and to say a variable is whatever makes your analysis easiest.
-So if you're stuck figuring out how to do some computation, consider switching up the organisation of your data; don't be afraid to untidy, transform, and re-tidy as needed!
+Un'altra sfida è che, per un dato dataset, può essere impossibile etichettare la versione più lunga o più larga come quella "ordinata".
+Questo è in parte un riflesso della nostra definizione di dati ordinati, dove abbiamo detto che i dati ordinati hanno una variabile in ogni colonna, ma non abbiamo effettivamente definito cosa sia una variabile (ed è sorprendentemente difficile farlo).
+È totalmente giusto essere pragmatici e dire che una variabile è qualsiasi cosa renda la tua analisi più facile.
+Quindi se sei bloccato nel capire come fare qualche calcolo, considera di cambiare l'organizzazione dei tuoi dati; non aver paura di disordinare, trasformare, e riordinare secondo necessità!
 
-If you enjoyed this chapter and want to learn more about the underlying theory, you can learn more about the history and theoretical underpinnings in the [Tidy Data](https://www.jstatsoft.org/article/view/v059i10) paper published in the Journal of Statistical Software.
+Se ti è piaciuto questo capitolo e vuoi imparare di più sulla teoria sottostante, puoi imparare di più sulla storia e i fondamenti teorici nel paper [Tidy Data](https://www.jstatsoft.org/article/view/v059i10) pubblicato nel Journal of Statistical Software.
 
-Now that you're writing a substantial amount of R code, it's time to learn more about organizing your code into files and directories.
-In the next chapter, you'll learn all about the advantages of scripts and projects, and some of the many tools that they provide to make your life easier.
+Ora che stai scrivendo una quantità sostanziale di codice R, è ora di imparare di più sull'organizzare il tuo codice in file e directory.
+Nel prossimo capitolo, imparerai tutto sui vantaggi di script e progetti, e alcuni dei molti strumenti che forniscono per rendere la tua vita più facile.

@@ -1,26 +1,26 @@
-# Welcome {.unnumbered}
+# Benvenuto {.unnumbered}
 
-This is the website for the 2nd edition of **"R for Data Science"**.
-This book will teach you how to do data science with R: You'll learn how to get your data into R, get it into the most useful structure, transform it and visualize.
+Questo è il sito web della seconda edizione di **"R for Data Science"**.
+Questo libro ti insegnerà come fare data science con R: imparerai come inserire i tuoi dati in R, come strutturarli nel modo più utile, trasformarli e visualizzarli.
 
-In this book, you will find a practicum of skills for data science.
-Just as a chemist learns how to clean test tubes and stock a lab, you'll learn how to clean data and draw plots---and many other things besides.
-These are the skills that allow data science to happen, and here you will find the best practices for doing each of these things with R.
-You'll learn how to use the grammar of graphics, literate programming, and reproducible research to save time.
-You'll also learn how to manage cognitive resources to facilitate discoveries when wrangling, visualizing, and exploring data.
+In questo libro troverai un percorso pratico di competenze per la data science.
+Proprio come un chimico impara a pulire le provette e organizzare un laboratorio, tu imparerai a pulire i dati e creare grafici---e molte altre cose oltre a queste.
+Queste sono le competenze che permettono alla data science di funzionare, e qui troverai le migliori pratiche per fare ciascuna di queste cose con R.
+Imparerai come usare la grammar of graphics, la programmazione letterata e la ricerca riproducibile per risparmiare tempo.
+Imparerai anche come gestire le risorse cognitive per facilitare le scoperte durante il wrangling, la visualizzazione e l'esplorazione dei dati.
 
-This website is and will always be free, licensed under the [CC BY-NC-ND 3.0](https://creativecommons.org/licenses/by-nc-nd/3.0/us/) License.
-If you'd like a physical copy of the book, you can order it on [Amazon](https://www.amazon.com/dp/1492097403?&tag=hadlwick-20).
-If you appreciate reading the book for free and would like to give back, please make a donation to [Kākāpō Recovery](https://www.doc.govt.nz/kakapo-donate): the [kākāpō](https://www.youtube.com/watch?v=9T1vfsHYiKY) (which appears on the cover of R4DS) is a critically endangered parrot native to New Zealand; there are only 244 left.
+Questo sito web è e sarà sempre gratuito, sotto licenza [CC BY-NC-ND 3.0](https://creativecommons.org/licenses/by-nc-nd/3.0/us/).
+Se desideri una copia fisica del libro, puoi ordinarla su [Amazon](https://www.amazon.com/dp/1492097403?&tag=hadlwick-20).
+Se apprezzi leggere il libro gratuitamente e vorresti ricambiare, per favore fai una donazione a [Kākāpō Recovery](https://www.doc.govt.nz/kakapo-donate): il [kākāpō](https://www.youtube.com/watch?v=9T1vfsHYiKY) (che appare sulla copertina di R4DS) è un pappagallo gravemente minacciato di estinzione originario della Nuova Zelanda; ne sono rimasti solo 244.
 
-If you speak another language, you might be interested in the freely available translations of the 1st edition:
+Se parli un'altra lingua, potresti essere interessato alle traduzioni disponibili gratuitamente della prima edizione:
 
--   [Spanish](http://es.r4ds.hadley.nz)
--   [Italian](https://it.r4ds.hadley.nz)
--   [Turkish](https://tr.r4ds.hadley.nz)
--   [Portuguese](https://pt.r4ds.hadley.nz)
+-   [Spagnolo](http://es.r4ds.hadley.nz)
+-   [Italiano](https://it.r4ds.hadley.nz)
+-   [Turco](https://tr.r4ds.hadley.nz)
+-   [Portoghese](https://pt.r4ds.hadley.nz)
 
-You can find suggested answers to exercises in the book at <https://mine-cetinkaya-rundel.github.io/r4ds-solutions>.
+Puoi trovare le soluzioni suggerite agli esercizi del libro su <https://mine-cetinkaya-rundel.github.io/r4ds-solutions>.
 
-Please note that R4DS uses a [Contributor Code of Conduct](https://contributor-covenant.org/version/2/0/CODE_OF_CONDUCT.html).
-By contributing to this book, you agree to abide by its terms.
+Si prega di notare che R4DS utilizza un [Codice di Condotta per Contributori](https://contributor-covenant.org/version/2/0/CODE_OF_CONDUCT.html).
+Contribuendo a questo libro, accetti di rispettarne i termini.

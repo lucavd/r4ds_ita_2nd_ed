@@ -19,14 +19,14 @@ Il nostro modello delle fasi di un tipico progetto di data science è illustrato
 #| label: fig-ds-diagram
 #| echo: false
 #| fig-cap: |
-#|   In our model of the data science process, you start with data import
-#|   and tidying. Next, you understand your data with an iterative cycle of
-#|   transforming, visualizing, and modeling. You finish the process 
-#|   by communicating your results to other humans.
+#|   Nel nostro modello del processo di data science, si inizia con l'importazione
+#|   e il riordino dei dati. Poi si comprende i dati con un ciclo iterativo di
+#|   trasformazione, visualizzazione e modellazione. Si conclude il processo
+#|   comunicando i risultati ad altri.
 #| fig-alt: |
-#|   A diagram displaying the data science cycle: Import -> Tidy -> Understand 
-#|   (which has the phases Transform -> Visualize -> Model in a cycle) -> 
-#|   Communicate. Surrounding all of these is Program.
+#|   Un diagramma che mostra il ciclo della data science: Import -> Tidy -> Understand
+#|   (che ha le fasi Transform -> Visualize -> Model in un ciclo) ->
+#|   Communicate. Intorno a tutto questo c'è Program.
 #| out.width: NULL
 knitr::include_graphics("diagrams/data-science/base.png", dpi = 270)
 ```
@@ -88,11 +88,13 @@ Ci sono diversi argomenti importanti che questo libro non tratta.
 Riteniamo fondamentale rimanere ferocemente concentrati sugli aspetti essenziali per poter partire il più rapidamente possibile.
 Questo significa che il libro non può approfondire ogni tema rilevante.
 ### Modellazione
+
 La modellazione è un aspetto fondamentale della scienza dei dati, ma è un argomento vasto e, purtroppo, non abbiamo lo spazio necessario per trattarlo come meriterebbe.
 Per saperne di più ti consigliamo caldamente [Tidy Modeling with R](https://www.tmwr.org) dei nostri colleghi Max Kuhn e Julia Silge.
 Questo libro ti insegnerà la famiglia di pacchetti **tidymodels** che, come suggerisce il nome, condividono molte convenzioni con i pacchetti del tidyverse utilizzati in questo volume.
 
 ### Big data
+
 Questo libro si concentra con orgoglio soprattutto su dataset di piccole dimensioni caricati in memoria.
 È il punto di partenza ideale, perché non si può affrontare il big data senza esperienza con i dati di piccole dimensioni.
 Gli strumenti che imparerai nella maggior parte del libro gestiranno senza problemi centinaia di megabyte di dati e, con un po' di cura, potrai usarli anche con qualche gigabyte.
@@ -101,15 +103,15 @@ Non sempre avrai bisogno di lavorare con l'intero dataset: per rispondere alla t
 Se ti capita spesso di lavorare con dataset ancora più grandi (10--100 GB, ad esempio), ti consigliamo di approfondire [data.table](https://github.com/Rdatatable/data.table).
 Non lo insegniamo qui perché utilizza un'interfaccia diversa dal tidyverse e richiede di imparare convenzioni differenti.
 Tuttavia è incredibilmente più veloce e, se lavori con dati molto grandi, dedicare un po' di tempo a impararlo ripaga in termini di prestazioni.
-### Python, Julia, and friends
 ### Python, Julia e altri linguaggi
+
 In questo libro non imparerai nulla su Python, Julia o altri linguaggi di programmazione utili per la data science.
 Non perché li riteniamo strumenti scadenti -- tutt'altro!
 Nella pratica, molti team di data science usano un mix di linguaggi, spesso almeno R e Python.
 Siamo però convinti che sia meglio padroneggiare un solo strumento alla volta, e R è un ottimo punto di partenza.
 
-## Prerequisites
 ## Prerequisiti
+
 Abbiamo fatto alcune ipotesi su ciò che sai già per trarre il massimo da questo libro.
 Dovresti avere una buona familiarità con i numeri e può essere utile possedere qualche esperienza di programmazione.
 Se non hai mai programmato, potresti trovare utile affiancare a questo testo [Hands on Programming with R](https://rstudio-education.github.io/hopr/) di Garrett.
@@ -117,34 +119,32 @@ Per eseguire il codice di questo libro ti servono quattro cose: R, RStudio, un i
 I pacchetti sono le unità fondamentali di codice R riproducibile.
 Contengono funzioni riutilizzabili, documentazione che spiega come usarle e dati di esempio.
 ### R
-To download R, go to CRAN, the **c**omprehensive **R** **a**rchive **n**etwork, <https://cloud.r-project.org>.
+
 Per scaricare R visita CRAN, il **c**omprehensive **R** **a**rchive **n**etwork, all'indirizzo <https://cloud.r-project.org>.
 Ogni anno esce una nuova versione principale di R e durante l'anno 2-3 versioni minori.
 È consigliabile aggiornare con regolarità.
 L'aggiornamento può essere un po' fastidioso, soprattutto per le versioni principali che richiedono di reinstallare tutti i pacchetti, ma rimandare non fa che peggiorare le cose.
 Per questo libro consigliamo R 4.2.0 o successivi.
 ### RStudio
-### RStudio
-RStudio is an integrated development environment, or IDE, for R programming, which you can download from <https://posit.co/download/rstudio-desktop/>.
+
 RStudio è un ambiente di sviluppo integrato, o IDE, per programmare in R, che puoi scaricare da <https://posit.co/download/rstudio-desktop/>.
 RStudio viene aggiornato un paio di volte all'anno e ti avviserà automaticamente quando esce una nuova versione, quindi non serve controllare periodicamente.
 È consigliabile aggiornare con regolarità per sfruttare le funzionalità più recenti.
 Per seguire questo libro assicurati di avere almeno RStudio 2022.02.0.
-When you start RStudio, @fig-rstudio-console, you'll see two key regions in the interface: the console pane and the output pane.
 Avviando RStudio, come mostrato in @fig-rstudio-console, vedrai due aree principali dell'interfaccia: il pannello della console e quello dei risultati.
 Per il momento tutto ciò che devi sapere è che il codice R si digita nella console e si esegue premendo invio.
-Imparerai il resto strada facendo![^intro-1]
-[^intro-1]: Se vuoi una panoramica completa di tutte le funzionalità di RStudio, consulta la guida utente all'indirizzo <https://docs.posit.co/ide/user>.
+Imparerai il resto strada facendo\![
+\^intro-1\] \[\^intro-1\]: Se vuoi una panoramica completa di tutte le funzionalità di RStudio, consulta la guida utente all'indirizzo <https://docs.posit.co/ide/user>.
 
 ```{r}
 #| label: fig-rstudio-console
 #| echo: false
 #| out-width: ~
 #| fig-cap: |
-#|   The RStudio IDE has two key regions: type R code in the console pane
-#|   on the left, and look for plots in the output pane on the right.
+#|   L'IDE di RStudio ha due aree principali: si digita il codice R nel pannello
+#|   della console a sinistra e si visualizzano i grafici nel pannello dei risultati a destra.
 #| fig-alt: |
-#|   The RStudio IDE with the panes Console and Output highlighted.
+#|   L'IDE di RStudio con i pannelli Console e Output evidenziati.
 knitr::include_graphics("diagrams/rstudio/console.png", dpi = 270)
 ```
 
@@ -162,20 +162,21 @@ Puoi installare l'intero tidyverse con una sola riga di codice:
 #| eval: false
 install.packages("tidyverse")
 ```
+
 Sul tuo computer digita quella riga di codice nella console e premi invio per eseguirla.
 R scaricherà i pacchetti da CRAN e li installerà sul tuo computer.
-R will download the packages from CRAN and install them on your computer.
-Non potrai usare funzioni, oggetti o file di aiuto di un pacchetto finché non lo carichi con `library()`.
+R scaricherà i pacchetti da CRAN e li installerà sul tuo computer.
 Una volta installato un pacchetto, puoi caricarlo con la funzione `library()`:
-Once you have installed a package, you can load it using the `library()` function:
 
 ```{r}
+library(tidyverse)
+```
+
 Vedrai che tidyverse carica nove pacchetti: dplyr, forcats, ggplot2, lubridate, purrr, readr, stringr, tibble e tidyr.
 Sono considerati il **core** del tidyverse perché li userai in quasi tutte le analisi.
 
 I pacchetti del tidyverse si aggiornano piuttosto di frequente.
 Puoi verificare se ci sono nuove versioni eseguendo `tidyverse_update()`.
-
 
 ### Altri pacchetti
 
@@ -193,21 +194,23 @@ install.packages(
   c("arrow", "babynames", "curl", "duckdb", "gapminder", 
     "ggrepel", "ggridges", "ggthemes", "hexbin", "janitor", "Lahman", 
     "leaflet", "maps", "nycflights13", "openxlsx", "palmerpenguins", 
+    "repurrrsive", "tidymodels", "writexl")
+)
+```
+
 Useremo inoltre alcuni altri pacchetti per singoli esempi.
 Non è necessario installarli subito: ricorda solo che quando ti appare un errore del tipo:
-```
 
-
-devi eseguire `install.packages("ggrepel")` per installare il pacchetto.
+```{r}
 #| eval: false
 library(ggrepel)
-#> Error in library(ggrepel) : there is no package called ‘ggrepel’
+#> Error in library(ggrepel) : there is no package called 'ggrepel'
 ```
 
+devi eseguire `install.packages("ggrepel")` per installare il pacchetto.
 
 ## Eseguire codice R
 
-## Eseguire codice R
 La sezione precedente ti ha mostrato diversi esempi di esecuzione di codice R.
 Il codice nel libro appare così:
 
@@ -218,22 +221,26 @@ Il codice nel libro appare così:
 
 Se esegui lo stesso codice nella tua console otterrai qualcosa del genere:
 
-```
+```         
 > 1 + 2
 [1] 3
 ```
 
 Ci sono due differenze principali.
-Nella console digiti dopo il `>`\, detto **prompt**; nel libro non mostriamo il prompt.
+Nella console digiti dopo il `>`, detto **prompt**; nel libro non mostriamo il prompt.
 Nel testo l'output è preceduto da `#>`; nella console appare subito dopo il codice.
 Queste differenze ti permettono, se stai leggendo una versione elettronica del libro, di copiare facilmente il codice e incollarlo nella console.
 
 In tutto il libro usiamo un insieme coerente di convenzioni per riferirci al codice:
--   Le funzioni sono mostrate con il font del codice e seguite dalle parentesi, come `sum()` o `mean()`.
--   Gli altri oggetti R (come dati o argomenti di funzione) sono in font codice senza parentesi, ad esempio `flights` o `x`.
--   A volte, per chiarire da quale pacchetto provenga un oggetto, usiamo il nome del pacchetto seguito da due punti, come `dplyr::mutate()` o `nycflights13::flights`.
+
+- Le funzioni sono mostrate con il font del codice e seguite dalle parentesi, come `sum()` o `mean()`.
+- Gli altri oggetti R (come dati o argomenti di funzione) sono in font codice senza parentesi, ad esempio `flights` o `x`.
+- A volte, per chiarire da quale pacchetto provenga un oggetto, usiamo il nome del pacchetto seguito da due punti, come `dplyr::mutate()` o `nycflights13::flights`.
+
 Anche questo è codice R valido.
+
 ## Ringraziamenti
+
 Questo libro non è solo opera di Hadley, Mine e Garrett, ma il frutto di molte conversazioni (dal vivo e online) con numerose persone della comunità R.
 
 ```{r}
