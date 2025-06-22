@@ -1,46 +1,46 @@
-# Quarto formats {#sec-quarto-formats}
+# Formati Quarto {#sec-quarto-formats}
 
 ```{r}
 #| echo: false
 source("_common.R")
 ```
 
-## Introduction
+## Introduzione
 
-So far, you've seen Quarto used to produce HTML documents.
-This chapter gives a brief overview of some of the many other types of output you can produce with Quarto.
+Finora, avete visto Quarto usato per produrre documenti HTML.
+Questo capitolo dà una breve panoramica di alcuni dei molti altri tipi di output che potete produrre con Quarto.
 
-There are two ways to set the output of a document:
+Ci sono due modi per impostare l'output di un documento:
 
-1.  Permanently, by modifying the YAML header:
+1.  Permanentemente, modificando l'header YAML:
 
     ``` yaml
     title: "Diamond sizes"
     format: html
     ```
 
-2.  Transiently, by calling `quarto::quarto_render()` by hand:
+2.  Temporaneamente, chiamando `quarto::quarto_render()` manualmente:
 
     ```{r}
     #| eval: false
     quarto::quarto_render("diamond-sizes.qmd", output_format = "docx")
     ```
 
-    This is useful if you want to programmatically produce multiple types of output since the `output_format` argument can also take a list of values.
+    Questo è utile se volete produrre programmaticamente tipi multipli di output poiché l'argomento `output_format` può anche prendere una lista di valori.
 
     ```{r}
     #| eval: false
     quarto::quarto_render("diamond-sizes.qmd", output_format = c("docx", "pdf"))
     ```
 
-## Output options
+## Opzioni di output
 
-Quarto offers a wide range of output formats.
-You can find the complete list at <https://quarto.org/docs/output-formats/all-formats.html>.
-Many formats share some output options (e.g., `toc: true` for including a table of contents), but others have options that are format specific (e.g., `code-fold: true` collapses code chunks into a `<details>` tag for HTML output so the user can display it on demand, it's not applicable in a PDF or Word document).
+Quarto offre una vasta gamma di formati di output.
+Potete trovare la lista completa su <https://quarto.org/docs/output-formats/all-formats.html>.
+Molti formati condividono alcune opzioni di output (ad es., `toc: true` per includere un indice), ma altri hanno opzioni che sono specifiche del formato (ad es., `code-fold: true` collassa i chunk di codice in un tag `<details>` per l'output HTML così l'utente può visualizzarlo su richiesta, non è applicabile in un documento PDF o Word).
 
-To override the default options, you need to use an expanded `format` field.
-For example, if you wanted to render an `html` with a floating table of contents, you'd use:
+Per sovrascrivere le opzioni predefinite, dovete usare un campo `format` espanso.
+Per esempio, se voleste renderizzare un `html` con un indice flottante, usereste:
 
 ``` yaml
 format:
@@ -49,7 +49,7 @@ format:
     toc_float: true
 ```
 
-You can even render to multiple outputs by supplying a list of formats:
+Potete anche renderizzare a output multipli fornendo una lista di formati:
 
 ``` yaml
 format:
@@ -60,42 +60,42 @@ format:
   docx: default
 ```
 
-Note the special syntax (`pdf: default`) if you don't want to override any default options.
+Notate la sintassi speciale (`pdf: default`) se non volete sovrascrivere alcuna opzione predefinita.
 
-To render to all formats specified in the YAML of a document, you can use `output_format = "all"`.
+Per renderizzare a tutti i formati specificati nello YAML di un documento, potete usare `output_format = "all"`.
 
 ```{r}
 #| eval: false
 quarto::quarto_render("diamond-sizes.qmd", output_format = "all")
 ```
 
-## Documents
+## Documenti
 
-The previous chapter focused on the default `html` output.
-There are several basic variations on that theme, generating different types of documents.
-For example:
+Il capitolo precedente si è concentrato sull'output `html` predefinito.
+Ci sono diverse variazioni di base su quel tema, generando diversi tipi di documenti.
+Per esempio:
 
--   `pdf` makes a PDF with LaTeX (an open-source document layout system), which you'll need to install.
-    RStudio will prompt you if you don't already have it.
+-   `pdf` crea un PDF con LaTeX (un sistema di layout di documenti open-source), che dovrete installare.
+    RStudio vi avviserà se non lo avete già.
 
--   `docx` for Microsoft Word (`.docx`) documents.
+-   `docx` per documenti Microsoft Word (`.docx`).
 
--   `odt` for OpenDocument Text (`.odt`) documents.
+-   `odt` per documenti OpenDocument Text (`.odt`).
 
--   `rtf` for Rich Text Format (`.rtf`) documents.
+-   `rtf` per documenti Rich Text Format (`.rtf`).
 
--   `gfm` for a GitHub Flavored Markdown (`.md`) document.
+-   `gfm` per un documento GitHub Flavored Markdown (`.md`).
 
--   `ipynb` for Jupyter Notebooks (`.ipynb`).
+-   `ipynb` per Jupyter Notebook (`.ipynb`).
 
-Remember, when generating a document to share with decision-makers, you can turn off the default display of code by setting global options in the document YAML:
+Ricordate, quando generate un documento da condividere con i decisori, potete disattivare la visualizzazione predefinita del codice impostando opzioni globali nello YAML del documento:
 
 ``` yaml
 execute:
   echo: false
 ```
 
-For `html` documents another option is to make the code chunks hidden by default, but visible with a click:
+Per i documenti `html` un'altra opzione è rendere i chunk di codice nascosti per default, ma visibili con un click:
 
 ``` yaml
 format:
@@ -105,35 +105,35 @@ format:
 
 ## Presentations
 
-You can also use Quarto to produce presentations.
-You get less visual control than with a tool like Keynote or PowerPoint, but automatically inserting the results of your R code into a presentation can save a huge amount of time.
-Presentations work by dividing your content into slides, with a new slide beginning at each second (`##`) level header.
-Additionally, first (`#`) level headers indicate the beginning of a new section with a section title slide that is, by default, centered in the middle.
+Potete anche usare Quarto per produrre presentazioni.
+Avete meno controllo visuale rispetto a uno strumento come Keynote o PowerPoint, ma inserire automaticamente i risultati del vostro codice R in una presentazione può far risparmiare un'enorme quantità di tempo.
+Le presentazioni funzionano dividendo il vostro contenuto in slide, con una nuova slide che inizia a ogni header di secondo (`##`) livello.
+Inoltre, gli header di primo (`#`) livello indicano l'inizio di una nuova sezione con una slide di titolo della sezione che è, per default, centrata nel mezzo.
 
-Quarto supports a variety of presentation formats, including:
+Quarto supporta una varietà di formati di presentazione, inclusi:
 
-1.  `revealjs` - HTML presentation with revealjs
+1.  `revealjs` - presentazione HTML con revealjs
 
-2.  `pptx` - PowerPoint presentation
+2.  `pptx` - presentazione PowerPoint
 
-3.  `beamer` - PDF presentation with LaTeX Beamer.
+3.  `beamer` - presentazione PDF con LaTeX Beamer.
 
-You can read more about creating presentations with Quarto at [https://quarto.org/docs/presentations](https://quarto.org/docs/presentations/).
+Potete leggere di più sulla creazione di presentazioni con Quarto su [https://quarto.org/docs/presentations](https://quarto.org/docs/presentations/).
 
-## Interactivity
+## Interattività
 
-Just like any HTML document, HTML documents created with Quarto can contain interactive components as well.
-Here we introduce two options for including interactivity in your Quarto documents: htmlwidgets and Shiny.
+Proprio come qualsiasi documento HTML, i documenti HTML creati con Quarto possono contenere anche componenti interattivi.
+Qui introduciamo due opzioni per includere interattività nei vostri documenti Quarto: htmlwidgets e Shiny.
 
 ### htmlwidgets
 
-HTML is an interactive format, and you can take advantage of that interactivity with **htmlwidgets**, R functions that produce interactive HTML visualizations.
-For example, take the **leaflet** map below.
-If you're viewing this page on the web, you can drag the map around, zoom in and out, etc.
-You obviously can't do that in a book, so Quarto automatically inserts a static screenshot for you.
+HTML è un formato interattivo, e potete sfruttare quell'interattività con **htmlwidgets**, funzioni R che producono visualizzazioni HTML interattive.
+Per esempio, prendete la mappa **leaflet** qui sotto.
+Se state visualizzando questa pagina sul web, potete trascinare la mappa in giro, zoomare in avanti e indietro, ecc.
+Obviamente non potete farlo in un libro, quindi Quarto inserisce automaticamente uno screenshot statico per voi.
 
 ```{r}
-#| fig-alt: Leaflet map of Maungawhau / Mount Eden.
+#| fig-alt: Mappa Leaflet di Maungawhau / Mount Eden.
 library(leaflet)
 leaflet() |>
   setView(174.764, -36.877, zoom = 16) |> 
@@ -141,29 +141,29 @@ leaflet() |>
   addMarkers(174.764, -36.877, popup = "Maungawhau") 
 ```
 
-The great thing about htmlwidgets is that you don't need to know anything about HTML or JavaScript to use them.
-All the details are wrapped inside the package, so you don't need to worry about it.
+La cosa fantastica degli htmlwidgets è che non dovete sapere nulla di HTML o JavaScript per usarli.
+Tutti i dettagli sono racchiusi dentro il pacchetto, quindi non dovete preoccuparvene.
 
-There are many packages that provide htmlwidgets, including:
+Ci sono molti pacchetti che forniscono htmlwidgets, inclusi:
 
--   [**dygraphs**](https://rstudio.github.io/dygraphs) for interactive time series visualizations.
+-   [**dygraphs**](https://rstudio.github.io/dygraphs) per visualizzazioni interattive di serie temporali.
 
--   [**DT**](https://rstudio.github.io/DT/) for interactive tables.
+-   [**DT**](https://rstudio.github.io/DT/) per tabelle interattive.
 
--   [**threejs**](https://bwlewis.github.io/rthreejs) for interactive 3d plots.
+-   [**threejs**](https://bwlewis.github.io/rthreejs) per grafici 3d interattivi.
 
--   [**DiagrammeR**](https://rich-iannone.github.io/DiagrammeR) for diagrams (like flow charts and simple node-link diagrams).
+-   [**DiagrammeR**](https://rich-iannone.github.io/DiagrammeR) per diagrammi (come diagrammi di flusso e semplici diagrammi nodo-collegamento).
 
-To learn more about htmlwidgets and see a complete list of packages that provide them visit <https://www.htmlwidgets.org>.
+Per imparare di più sugli htmlwidgets e vedere una lista completa di pacchetti che li forniscono visitate <https://www.htmlwidgets.org>.
 
 ### Shiny
 
-htmlwidgets provide **client-side** interactivity --- all the interactivity happens in the browser, independently of R.
-On the one hand, that's great because you can distribute the HTML file without any connection to R.
-However, that fundamentally limits what you can do to things that have been implemented in HTML and JavaScript.
-An alternative approach is to use **shiny**, a package that allows you to create interactivity using R code, not JavaScript.
+Gli htmlwidgets forniscono interattività **client-side** --- tutta l'interattività avviene nel browser, indipendentemente da R.
+Da un lato, questo è fantastico perché potete distribuire il file HTML senza alcuna connessione a R.
+Tuttavia, questo limita fondamentalmente quello che potete fare a cose che sono state implementate in HTML e JavaScript.
+Un approccio alternativo è usare **shiny**, un pacchetto che vi permette di creare interattività usando codice R, non JavaScript.
 
-To call Shiny code from a Quarto document, add `server: shiny` to the YAML header:
+Per chiamare codice Shiny da un documento Quarto, aggiungete `server: shiny` all'header YAML:
 
 ``` yaml
 title: "Shiny Web App"
@@ -171,7 +171,7 @@ format: html
 server: shiny
 ```
 
-Then you can use the "input" functions to add interactive components to the document:
+Poi potete usare le funzioni "input" per aggiungere componenti interattivi al documento:
 
 ```{r}
 #| eval: false
@@ -185,39 +185,39 @@ numericInput("age", "How old are you?", NA, min = 0, max = 150)
 #| echo: false
 #| out-width: null
 #| fig-alt: |
-#|   Two input boxes on top of each other. Top one says, "What is your 
-#|   name?", the bottom, "How old are you?".
+#|   Due caselle di input una sopra l'altra. Quella in alto dice, "What is your 
+#|   name?", quella in basso, "How old are you?".
 knitr::include_graphics("quarto/quarto-shiny.png")
 ```
 
-And you also need a code chunk with chunk option `context: server` which contains the code that needs to run in a Shiny server.
+E avete anche bisogno di un chunk di codice con l'opzione chunk `context: server` che contiene il codice che deve essere eseguito in un server Shiny.
 
-You can then refer to the values with `input$name` and `input$age`, and the code that uses them will be automatically re-run whenever they change.
+Potete poi riferirvi ai valori con `input$name` e `input$age`, e il codice che li usa sarà automaticamente ri-eseguito ogni volta che cambiano.
 
-We can't show you a live shiny app here because shiny interactions occur on the **server-side**.
-This means that you can write interactive apps without knowing JavaScript, but you need a server to run them on.
-This introduces a logistical issue: Shiny apps need a Shiny server to be run online.
-When you run Shiny apps on your own computer, Shiny automatically sets up a Shiny server for you, but you need a public-facing Shiny server if you want to publish this sort of interactivity online.
-That's the fundamental trade-off of shiny: you can do anything in a shiny document that you can do in R, but it requires someone to be running R.
+Non possiamo mostrarvi un'app shiny dal vivo qui perché le interazioni shiny avvengono sul **server-side**.
+Questo significa che potete scrivere app interattive senza conoscere JavaScript, ma avete bisogno di un server su cui eseguirle.
+Questo introduce un problema logistico: le app Shiny hanno bisogno di un server Shiny per essere eseguite online.
+Quando eseguite app Shiny sul vostro computer, Shiny imposta automaticamente un server Shiny per voi, ma avete bisogno di un server Shiny pubblico se volete pubblicare questo tipo di interattività online.
+Questo è il compromesso fondamentale di shiny: potete fare qualsiasi cosa in un documento shiny che potete fare in R, ma richiede che qualcuno stia eseguendo R.
 
-For learning more about Shiny, we recommend reading Mastering Shiny by Hadley Wickham, [https://mastering-shiny.org](https://mastering-shiny.org/).
+Per imparare di più su Shiny, raccomandiamo di leggere Mastering Shiny di Hadley Wickham, [https://mastering-shiny.org](https://mastering-shiny.org/).
 
-## Websites and books
+## Siti web e libri
 
-With a bit of additional infrastructure, you can use Quarto to generate a complete website or book:
+Con un po' di infrastruttura aggiuntiva, potete usare Quarto per generare un sito web completo o un libro:
 
--   Put your `.qmd` files in a single directory.
-    `index.qmd` will become the home page.
+-   Mettete i vostri file `.qmd` in una singola directory.
+    `index.qmd` diventerà la home page.
 
--   Add a YAML file named `_quarto.yml` that provides the navigation for the site.
-    In this file, set the `project` type to either `book` or `website`, e.g.:
+-   Aggiungete un file YAML chiamato `_quarto.yml` che fornisce la navigazione per il sito.
+    In questo file, impostate il tipo `project` a `book` o `website`, ad es.:
 
     ``` yaml
     project:
       type: book
     ```
 
-For example, the following `_quarto.yml` file creates a website from three source files: `index.qmd` (the home page), `viridis-colors.qmd`, and `terrain-colors.qmd`.
+Per esempio, il seguente file `_quarto.yml` crea un sito web da tre file sorgente: `index.qmd` (la home page), `viridis-colors.qmd`, e `terrain-colors.qmd`.
 
 ```{r}
 #| echo: false
@@ -225,9 +225,9 @@ For example, the following `_quarto.yml` file creates a website from three sourc
 cat(readr::read_file("quarto/example-site.yml"))
 ```
 
-The `_quarto.yml` file you need for a book is very similarly structured.
-The following example shows how you can create a book with four chapters that renders to three different outputs (`html`, `pdf`, and `epub`).
-Once again, the source files are `.qmd` files.
+Il file `_quarto.yml` di cui avete bisogno per un libro è strutturato in modo molto simile.
+L'esempio seguente mostra come potete creare un libro con quattro capitoli che renderizza a tre output diversi (`html`, `pdf`, e `epub`).
+Ancora una volta, i file sorgente sono file `.qmd`.
 
 ```{r}
 #| echo: false
@@ -235,37 +235,37 @@ Once again, the source files are `.qmd` files.
 cat(readr::read_file("quarto/example-book.yml"))
 ```
 
-We recommend that you use an RStudio project for your websites and books.
-Based on the `_quarto.yml` file, RStudio will recognize the type of project you're working on, and add a Build tab to the IDE that you can use to render and preview your websites and books.
-Both websites and books can also be rendered using `quarto::quarto_render()`.
+Raccomandiamo che usiate un progetto RStudio per i vostri siti web e libri.
+Basato sul file `_quarto.yml`, RStudio riconoscerà il tipo di progetto su cui state lavorando, e aggiungerà una scheda Build all'IDE che potete usare per renderizzare e visualizzare in anteprima i vostri siti web e libri.
+Sia i siti web che i libri possono anche essere renderizzati usando `quarto::quarto_render()`.
 
-Read more at <https://quarto.org/docs/websites> about Quarto websites and <https://quarto.org/docs/books> about books.
+Leggete di più su <https://quarto.org/docs/websites> sui siti web Quarto e <https://quarto.org/docs/books> sui libri.
 
-## Other formats
+## Altri formati
 
-Quarto offers even more output formats:
+Quarto offre ancora più formati di output:
 
--   You can write journal articles using Quarto Journal Templates: <https://quarto.org/docs/journals/templates.html>.
+-   Potete scrivere articoli di giornale usando i Template di Giornale Quarto: <https://quarto.org/docs/journals/templates.html>.
 
--   You can output Quarto documents to Jupyter Notebooks with `format: ipynb`: <https://quarto.org/docs/reference/formats/ipynb.html>.
+-   Potete dare in output documenti Quarto a Jupyter Notebook con `format: ipynb`: <https://quarto.org/docs/reference/formats/ipynb.html>.
 
-See <https://quarto.org/docs/output-formats/all-formats.html> for a list of even more formats.
+Vedete <https://quarto.org/docs/output-formats/all-formats.html> per una lista di ancora più formati.
 
-## Summary
+## Riassunto
 
-In this chapter we presented you a variety of options for communicating your results with Quarto, from static and interactive documents to presentations to websites and books.
+In questo capitolo vi abbiamo presentato una varietà di opzioni per comunicare i vostri risultati con Quarto, da documenti statici e interattivi a presentazioni a siti web e libri.
 
-To learn more about effective communication in these different formats, we recommend the following resources:
+Per imparare di più sulla comunicazione efficace in questi diversi formati, raccomandiamo le seguenti risorse:
 
--   To improve your presentation skills, try [*Presentation Patterns*](https://presentationpatterns.com/) by Neal Ford, Matthew McCollough, and Nathaniel Schutta.
-    It provides a set of effective patterns (both low- and high-level) that you can apply to improve your presentations.
+-   Per migliorare le vostre abilità di presentazione, provate [*Presentation Patterns*](https://presentationpatterns.com/) di Neal Ford, Matthew McCollough, e Nathaniel Schutta.
+    Fornisce un set di pattern efficaci (sia di basso che di alto livello) che potete applicare per migliorare le vostre presentazioni.
 
--   If you give academic talks, you might like the [*Leek group guide to giving talks*](https://github.com/jtleek/talkguide).
+-   Se fate presentazioni accademiche, potreste apprezzare la [*Leek group guide to giving talks*](https://github.com/jtleek/talkguide).
 
--   We haven't taken it ourselves, but we've heard good things about Matt McGarrity's online course on public speaking: <https://www.coursera.org/learn/public-speaking>.
+-   Non l'abbiamo seguito noi stessi, ma abbiamo sentito cose buone del corso online di Matt McGarrity sul parlare in pubblico: <https://www.coursera.org/learn/public-speaking>.
 
--   If you are creating many dashboards, make sure to read Stephen Few's [*Information Dashboard Design: The Effective Visual Communication of Data*](https://www.amazon.com/Information-Dashboard-Design-Effective-Communication/dp/0596100167).
-    It will help you create dashboards that are truly useful, not just pretty to look at.
+-   Se state creando molte dashboard, assicuratevi di leggere [*Information Dashboard Design: The Effective Visual Communication of Data*](https://www.amazon.com/Information-Dashboard-Design-Effective-Communication/dp/0596100167) di Stephen Few.
+    Vi aiuterà a creare dashboard che sono veramente utili, non solo belle da guardare.
 
--   Effectively communicating your ideas often benefits from some knowledge of graphic design.
-    Robin Williams' [*The Non-Designer's Design Book*](https://www.amazon.com/Non-Designers-Design-Book-4th/dp/0133966151) is a great place to start.
+-   Comunicare efficacemente le vostre idee spesso beneficia di qualche conoscenza di design grafico.
+    [*The Non-Designer's Design Book*](https://www.amazon.com/Non-Designers-Design-Book-4th/dp/0133966151) di Robin Williams è un ottimo posto per iniziare.

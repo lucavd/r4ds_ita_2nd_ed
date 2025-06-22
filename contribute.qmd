@@ -1,19 +1,19 @@
-# Contributing {#sec-contributing}
+# Contribuire {#sec-contributing}
 
-This book has been developed in the open, and it wouldn't be nearly as good without your contributions.
-There are a number of ways you can help make the book even better:
+Questo libro è stato sviluppato in maniera aperta, e non sarebbe così buono senza i vostri contributi.
+Ci sono diversi modi in cui potete aiutare a rendere il libro ancora migliore:
 
--   If you don't understand something, please [let me know](mailto:h.wickham@gmail.com).
-    Your feedback on what is confusing or hard to understand is valuable.
+-   Se non capite qualcosa, per favore [fatemelo sapere](mailto:h.wickham@gmail.com).
+    Il vostro feedback su ciò che è confuso o difficile da capire è prezioso.
 
--   If you spot a typo, feel free to edit the underlying page and send a pull request.
-    If you've never done this before, the process is very easy:
+-   Se notate un errore di battitura, sentitevi liberi di modificare la pagina sottostante e inviare una pull request.
+    Se non l'avete mai fatto prima, il processo è molto semplice:
 
-    -   Click the edit this page on the sidebar.
+    -   Cliccate su "edit this page" nella barra laterale.
 
-    -   Make the changes using GitHub's in-page editor and save.
+    -   Fate le modifiche usando l'editor in-page di GitHub e salvate.
 
-    -   Submit a pull request and include a brief description of your changes.
-        "Fixing typos" is perfectly adequate.
+    -   Inviate una pull request e includete una breve descrizione delle vostre modifiche.
+        "Fixing typos" è perfettamente adeguato.
 
-    -   If you make significant changes, include the phrase "I assign the copyright of this contribution to Hadley Wickham" - I need this so I can publish the printed book.
+    -   Se fate modifiche significative, includete la frase "I assign the copyright of this contribution to Hadley Wickham" - ho bisogno di questo per poter pubblicare il libro stampato.

@@ -1,39 +1,39 @@
-# Functions {#sec-functions}
+# Funzioni {#sec-functions}
 
 ```{r}
 #| echo: false
 source("_common.R")
 ```
 
-## Introduction
+## Introduzione
 
-One of the best ways to improve your reach as a data scientist is to write functions.
-Functions allow you to automate common tasks in a more powerful and general way than copy-and-pasting.
-Writing a function has four big advantages over using copy-and-paste:
+Uno dei modi migliori per migliorare la tua portata come data scientist è scrivere funzioni.
+Le funzioni ti permettono di automatizzare compiti comuni in un modo più potente e generale del copia-e-incolla.
+Scrivere una funzione ha quattro grandi vantaggi rispetto all'uso del copia-e-incolla:
 
-1.  You can give a function an evocative name that makes your code easier to understand.
+1.  Puoi dare a una funzione un nome evocativo che rende il tuo codice più facile da capire.
 
-2.  As requirements change, you only need to update code in one place, instead of many.
+2.  Quando i requisiti cambiano, devi aggiornare il codice solo in un posto, invece che in molti.
 
-3.  You eliminate the chance of making incidental mistakes when you copy and paste (i.e. updating a variable name in one place, but not in another).
+3.  Elimini la possibilità di fare errori accidentali quando copi e incolli (cioè aggiornare un nome di variabile in un posto, ma non in un altro).
 
-4.  It makes it easier to reuse work from project-to-project, increasing your productivity over time.
+4.  Rende più facile riutilizzare il lavoro da progetto a progetto, aumentando la tua produttività nel tempo.
 
-A good rule of thumb is to consider writing a function whenever you've copied and pasted a block of code more than twice (i.e. you now have three copies of the same code).
-In this chapter, you'll learn about three useful types of functions:
+Una buona regola generale è considerare di scrivere una funzione ogni volta che hai copiato e incollato un blocco di codice più di due volte (cioè ora hai tre copie dello stesso codice).
+In questo capitolo, imparerai su tre tipi utili di funzioni:
 
--   Vector functions take one or more vectors as input and return a vector as output.
--   Data frame functions take a data frame as input and return a data frame as output.
--   Plot functions that take a data frame as input and return a plot as output.
+-   Le funzioni vettoriali prendono uno o più vettori come input e restituiscono un vettore come output.
+-   Le funzioni di data frame prendono un data frame come input e restituiscono un data frame come output.
+-   Le funzioni di grafico che prendono un data frame come input e restituiscono un grafico come output.
 
-Each of these sections includes many examples to help you generalize the patterns that you see.
-These examples wouldn't be possible without the help of folks of twitter, and we encourage you to follow the links in the comments to see the original inspirations.
-You might also want to read the original motivating tweets for [general functions](https://twitter.com/hadleywickham/status/1571603361350164486) and [plotting functions](https://twitter.com/hadleywickham/status/1574373127349575680) to see even more functions.
+Ognuna di queste sezioni include molti esempi per aiutarti a generalizzare i pattern che vedi.
+Questi esempi non sarebbero stati possibili senza l'aiuto delle persone di twitter, e ti incoraggiamo a seguire i link nei commenti per vedere le ispirazioni originali.
+Potresti anche voler leggere i tweet motivazionali originali per [funzioni generali](https://twitter.com/hadleywickham/status/1571603361350164486) e [funzioni di grafico](https://twitter.com/hadleywickham/status/1574373127349575680) per vedere ancora più funzioni.
 
-### Prerequisites
+### Prerequisiti
 
-We'll wrap up a variety of functions from around the tidyverse.
-We'll also use nycflights13 as a source of familiar data to use our functions with.
+Useremo una varietà di funzioni da tutto il tidyverse.
+Useremo anche nycflights13 come fonte di dati familiari da usare con le nostre funzioni.
 
 ```{r}
 #| message: false
@@ -41,11 +41,11 @@ library(tidyverse)
 library(nycflights13)
 ```
 
-## Vector functions
+## Funzioni vettoriali
 
-We'll begin with vector functions: functions that take one or more vectors and return a vector result.
-For example, take a look at this code.
-What does it do?
+Inizieremo con le funzioni vettoriali: funzioni che prendono uno o più vettori e restituiscono un risultato vettoriale.
+Ad esempio, dai un'occhiata a questo codice.
+Cosa fa?
 
 ```{r}
 df <- tibble(
@@ -67,15 +67,15 @@ df |> mutate(
 )
 ```
 
-You might be able to puzzle out that this rescales each column to have a range from 0 to 1.
-But did you spot the mistake?
-When Hadley wrote this code he made an error when copying-and-pasting and forgot to change an `a` to a `b`.
-Preventing this type of mistake is one very good reason to learn how to write functions.
+Potresti essere in grado di capire che questo ridimensiona ogni colonna per avere un intervallo da 0 a 1.
+Ma hai notato l'errore?
+Quando Hadley ha scritto questo codice ha fatto un errore quando ha copiato-e-incollato e ha dimenticato di cambiare una `a` in una `b`.
+Prevenire questo tipo di errore è una ragione molto buona per imparare come scrivere funzioni.
 
-### Writing a function
+### Scrivere una funzione
 
-To write a function you need to first analyse your repeated code to figure what parts are constant and what parts vary.
-If we take the code above and pull it outside of `mutate()`, it's a little easier to see the pattern because each repetition is now one line:
+Per scrivere una funzione devi prima analizzare il tuo codice ripetuto per capire quali parti sono costanti e quali parti variano.
+Se prendiamo il codice sopra e lo tiriamo fuori da `mutate()`, è un po' più facile vedere il pattern perché ogni ripetizione è ora una riga:
 
 ```{r}
 #| eval: false
@@ -85,26 +85,26 @@ If we take the code above and pull it outside of `mutate()`, it's a little easie
 (d - min(d, na.rm = TRUE)) / (max(d, na.rm = TRUE) - min(d, na.rm = TRUE))  
 ```
 
-To make this a bit clearer we can replace the bit that varies with `█`:
+Per rendere questo un po' più chiaro possiamo sostituire la parte che varia con `█`:
 
 ```{r}
 #| eval: false
 (█ - min(█, na.rm = TRUE)) / (max(█, na.rm = TRUE) - min(█, na.rm = TRUE))
 ```
 
-To turn this into a function you need three things:
+Per trasformare questo in una funzione hai bisogno di tre cose:
 
-1.  A **name**.
-    Here we'll use `rescale01` because this function rescales a vector to lie between 0 and 1.
+1.  Un **nome**.
+    Qui useremo `rescale01` perché questa funzione ridimensiona un vettore per stare tra 0 e 1.
 
-2.  The **arguments**.
-    The arguments are things that vary across calls and our analysis above tells us that we have just one.
-    We'll call it `x` because this is the conventional name for a numeric vector.
+2.  Gli **argomenti**.
+    Gli argomenti sono cose che variano tra le chiamate e la nostra analisi sopra ci dice che ne abbiamo solo uno.
+    Lo chiameremo `x` perché questo è il nome convenzionale per un vettore numerico.
 
-3.  The **body**.
-    The body is the code that's repeated across all the calls.
+3.  Il **corpo**.
+    Il corpo è il codice che è ripetuto in tutte le chiamate.
 
-Then you create a function by following the template:
+Poi crei una funzione seguendo il template:
 
 ```{r}
 name <- function(arguments) {
@@ -112,7 +112,7 @@ name <- function(arguments) {
 }
 ```
 
-For this case that leads to:
+Per questo caso questo porta a:
 
 ```{r}
 rescale01 <- function(x) {
@@ -120,14 +120,14 @@ rescale01 <- function(x) {
 }
 ```
 
-At this point you might test with a few simple inputs to make sure you've captured the logic correctly:
+A questo punto potresti testare con alcuni input semplici per assicurarti di aver catturato la logica correttamente:
 
 ```{r}
 rescale01(c(-10, 0, 10))
 rescale01(c(1, 2, 3, NA, 5))
 ```
 
-Then you can rewrite the call to `mutate()` as:
+Poi puoi riscrivere la chiamata a `mutate()` come:
 
 ```{r}
 df |> mutate(
@@ -138,11 +138,11 @@ df |> mutate(
 )
 ```
 
-(In @sec-iteration, you'll learn how to use `across()` to reduce the duplication even further so all you need is `df |> mutate(across(a:d, rescale01))`).
+(Nel @sec-iteration, imparerai come usare `across()` per ridurre la duplicazione ancora di più così tutto quello di cui hai bisogno è `df |> mutate(across(a:d, rescale01))`).
 
-### Improving our function
+### Migliorare la nostra funzione
 
-You might notice that the `rescale01()` function does some unnecessary work --- instead of computing `min()` twice and `max()` once we could instead compute both the minimum and maximum in one step with `range()`:
+Potresti notare che la funzione `rescale01()` fa del lavoro non necessario --- invece di calcolare `min()` due volte e `max()` una volta potremmo invece calcolare sia il minimo che il massimo in un passo con `range()`:
 
 ```{r}
 rescale01 <- function(x) {
@@ -151,14 +151,14 @@ rescale01 <- function(x) {
 }
 ```
 
-Or you might try this function on a vector that includes an infinite value:
+O potresti provare questa funzione su un vettore che include un valore infinito:
 
 ```{r}
 x <- c(1:10, Inf)
 rescale01(x)
 ```
 
-That result is not particularly useful so we could ask `range()` to ignore infinite values:
+Quel risultato non è particolarmente utile quindi potremmo chiedere a `range()` di ignorare i valori infiniti:
 
 ```{r}
 rescale01 <- function(x) {
@@ -169,15 +169,15 @@ rescale01 <- function(x) {
 rescale01(x)
 ```
 
-These changes illustrate an important benefit of functions: because we've moved the repeated code into a function, we only need to make the change in one place.
+Questi cambiamenti illustrano un beneficio importante delle funzioni: perché abbiamo spostato il codice ripetuto in una funzione, dobbiamo fare il cambiamento solo in un posto.
 
-### Mutate functions
+### Funzioni mutate
 
-Now that you've got the basic idea of functions, let's take a look at a whole bunch of examples.
-We'll start by looking at "mutate" functions, i.e. functions that work well inside of `mutate()` and `filter()` because they return an output of the same length as the input.
+Ora che hai l'idea di base delle funzioni, diamo un'occhiata a un mucchio di esempi.
+Inizieremo guardando le funzioni "mutate", cioè funzioni che funzionano bene dentro `mutate()` e `filter()` perché restituiscono un output della stessa lunghezza dell'input.
 
-Let's start with a simple variation of `rescale01()`.
-Maybe you want to compute the Z-score, rescaling a vector to have a mean of zero and a standard deviation of one:
+Iniziamo con una variazione semplice di `rescale01()`.
+Forse vuoi calcolare il Z-score, ridimensionando un vettore per avere una media di zero e una deviazione standard di uno:
 
 ```{r}
 z_score <- function(x) {
@@ -185,8 +185,8 @@ z_score <- function(x) {
 }
 ```
 
-Or maybe you want to wrap up a straightforward `case_when()` and give it a useful name.
-For example, this `clamp()` function ensures all values of a vector lie in between a minimum or a maximum:
+O forse vuoi racchiudere un `case_when()` semplice e dargli un nome utile.
+Ad esempio, questa funzione `clamp()` assicura che tutti i valori di un vettore stiano tra un minimo o un massimo:
 
 ```{r}
 clamp <- function(x, min, max) {
@@ -200,9 +200,9 @@ clamp <- function(x, min, max) {
 clamp(1:10, min = 3, max = 7)
 ```
 
-Of course functions don't just need to work with numeric variables.
-You might want to do some repeated string manipulation.
-Maybe you need to make the first character upper case:
+Ovviamente le funzioni non hanno bisogno di funzionare solo con variabili numeriche.
+Potresti voler fare della manipolazione di stringhe ripetuta.
+Forse hai bisogno di rendere il primo carattere maiuscolo:
 
 ```{r}
 first_upper <- function(x) {
@@ -213,7 +213,7 @@ first_upper <- function(x) {
 first_upper("hello")
 ```
 
-Or maybe you want to strip percent signs, commas, and dollar signs from a string before converting it into a number:
+O forse vuoi rimuovere segni di percentuale, virgole e segni di dollaro da una stringa prima di convertirla in un numero:
 
 ```{r}
 # https://twitter.com/NVlabormarket/status/1571939851922198530
@@ -231,8 +231,8 @@ clean_number("$12,300")
 clean_number("45%")
 ```
 
-Sometimes your functions will be highly specialized for one data analysis step.
-For example, if you have a bunch of variables that record missing values as 997, 998, or 999, you might want to write a function to replace them with `NA`:
+A volte le tue funzioni saranno altamente specializzate per un passo di analisi dati.
+Ad esempio, se hai un mucchio di variabili che registrano valori mancanti come 997, 998, o 999, potresti voler scrivere una funzione per sostituirli con `NA`:
 
 ```{r}
 fix_na <- function(x) {
@@ -240,13 +240,13 @@ fix_na <- function(x) {
 }
 ```
 
-We've focused on examples that take a single vector because we think they're the most common.
-But there's no reason that your function can't take multiple vector inputs.
+Ci siamo concentrati su esempi che prendono un singolo vettore perché pensiamo siano i più comuni.
+Ma non c'è ragione per cui la tua funzione non possa prendere input di vettori multipli.
 
-### Summary functions
+### Funzioni di riassunto
 
-Another important family of vector functions is summary functions, functions that return a single value for use in `summarize()`.
-Sometimes this can just be a matter of setting a default argument or two:
+Un'altra famiglia importante di funzioni vettoriali sono le funzioni di riassunto, funzioni che restituiscono un singolo valore da usare in `summarize()`.
+A volte questo può essere solo una questione di impostare un argomento di default o due:
 
 ```{r}
 commas <- function(x) {
@@ -256,7 +256,7 @@ commas <- function(x) {
 commas(c("cat", "dog", "pigeon"))
 ```
 
-Or you might wrap up a simple computation, like for the coefficient of variation, which divides the standard deviation by the mean:
+O potresti racchiudere un calcolo semplice, come per il coefficiente di variazione, che divide la deviazione standard per la media:
 
 ```{r}
 cv <- function(x, na.rm = FALSE) {
@@ -267,7 +267,7 @@ cv(runif(100, min = 0, max = 50))
 cv(runif(100, min = 0, max = 500))
 ```
 
-Or maybe you just want to make a common pattern easier to remember by giving it a memorable name:
+O forse vuoi solo rendere un pattern comune più facile da ricordare dandogli un nome memorabile:
 
 ```{r}
 # https://twitter.com/gbganalyst/status/1571619641390252033
@@ -276,8 +276,8 @@ n_missing <- function(x) {
 } 
 ```
 
-You can also write functions with multiple vector inputs.
-For example, maybe you want to compute the mean absolute percentage error to help you compare model predictions with actual values:
+Puoi anche scrivere funzioni con input di vettori multipli.
+Ad esempio, forse vuoi calcolare l'errore percentuale assoluto medio per aiutarti a confrontare predizioni del modello con valori reali:
 
 ```{r}
 # https://twitter.com/neilgcurrie/status/1571607727255834625
@@ -289,20 +289,20 @@ mape <- function(actual, predicted) {
 ::: callout-note
 ## RStudio
 
-Once you start writing functions, there are two RStudio shortcuts that are super useful:
+Una volta che inizi a scrivere funzioni, ci sono due scorciatoie di RStudio che sono super utili:
 
--   To find the definition of a function that you've written, place the cursor on the name of the function and press `F2`.
+-   Per trovare la definizione di una funzione che hai scritto, posiziona il cursore sul nome della funzione e premi `F2`.
 
--   To quickly jump to a function, press `Ctrl + .` to open the fuzzy file and function finder and type the first few letters of your function name.
-    You can also navigate to files, Quarto sections, and more, making it a very handy navigation tool.
+-   Per saltare rapidamente a una funzione, premi `Ctrl + .` per aprire il fuzzy file and function finder e digita le prime lettere del nome della tua funzione.
+    Puoi anche navigare a file, sezioni Quarto, e altro, rendendolo uno strumento di navigazione molto utile.
 :::
 
-### Exercises
+### Esercizi
 
-1.  Practice turning the following code snippets into functions.
-    Think about what each function does.
-    What would you call it?
-    How many arguments does it need?
+1.  Esercitati a trasformare i seguenti frammenti di codice in funzioni.
+    Pensa a cosa fa ogni funzione.
+    Come la chiameresti?
+    Di quanti argomenti ha bisogno?
 
     ```{r}
     #| eval: false
@@ -319,18 +319,18 @@ Once you start writing functions, there are two RStudio shortcuts that are super
     round(z / sum(z, na.rm = TRUE) * 100, 1)
     ```
 
-2.  In the second variant of `rescale01()`, infinite values are left unchanged.
-    Can you rewrite `rescale01()` so that `-Inf` is mapped to 0, and `Inf` is mapped to 1?
+2.  Nella seconda variante di `rescale01()`, i valori infiniti sono lasciati invariati.
+    Puoi riscrivere `rescale01()` così che `-Inf` sia mappato a 0, e `Inf` sia mappato a 1?
 
-3.  Given a vector of birthdates, write a function to compute the age in years.
+3.  Dato un vettore di date di nascita, scrivi una funzione per calcolare l'età in anni.
 
-4.  Write your own functions to compute the variance and skewness of a numeric vector.
-    You can look up the definitions on Wikipedia or elsewhere.
+4.  Scrivi le tue funzioni per calcolare la varianza e l'asimmetria di un vettore numerico.
+    Puoi cercare le definizioni su Wikipedia o altrove.
 
-5.  Write `both_na()`, a summary function that takes two vectors of the same length and returns the number of positions that have an `NA` in both vectors.
+5.  Scrivi `both_na()`, una funzione di riassunto che prende due vettori della stessa lunghezza e restituisce il numero di posizioni che hanno un `NA` in entrambi i vettori.
 
-6.  Read the documentation to figure out what the following functions do.
-    Why are they useful even though they are so short?
+6.  Leggi la documentazione per capire cosa fanno le seguenti funzioni.
+    Perché sono utili anche se sono così brevi?
 
     ```{r}
     is_directory <- function(x) {
@@ -341,21 +341,21 @@ Once you start writing functions, there are two RStudio shortcuts that are super
     }
     ```
 
-## Data frame functions
+## Funzioni di data frame
 
-Vector functions are useful for pulling out code that's repeated within a dplyr verb.
-But you'll often also repeat the verbs themselves, particularly within a large pipeline.
-When you notice yourself copying and pasting multiple verbs multiple times, you might think about writing a data frame function.
-Data frame functions work like dplyr verbs: they take a data frame as the first argument, some extra arguments that say what to do with it, and return a data frame or a vector.
+Le funzioni vettoriali sono utili per estrarre codice che è ripetuto dentro un verbo dplyr.
+Ma spesso ripeterai anche i verbi stessi, particolarmente dentro una pipeline grande.
+Quando ti accorgi di copiare e incollare verbi multipli più volte, potresti pensare di scrivere una funzione di data frame.
+Le funzioni di data frame funzionano come i verbi dplyr: prendono un data frame come primo argomento, alcuni argomenti extra che dicono cosa fare con esso, e restituiscono un data frame o un vettore.
 
-To let you write a function that uses dplyr verbs, we'll first introduce you to the challenge of indirection and how you can overcome it with embracing, `{{{ }}}`.
-With this theory under your belt, we'll then show you a bunch of examples to illustrate what you might do with it.
+Per permetterti di scrivere una funzione che usa verbi dplyr, prima ti introdurremo alla sfida dell'indirezione e come puoi superarla con l'abbracciare, `{{{ }}}`.
+Con questa teoria sotto la cintura, ti mostreremo poi un mucchio di esempi per illustrare cosa potresti fare con essa.
 
-### Indirection and tidy evaluation
+### Indirezione e tidy evaluation
 
-When you start writing functions that use dplyr verbs you rapidly hit the problem of indirection.
-Let's illustrate the problem with a very simple function: `grouped_mean()`.
-The goal of this function is to compute the mean of `mean_var` grouped by `group_var`:
+Quando inizi a scrivere funzioni che usano verbi dplyr colpisci rapidamente il problema dell'indirezione.
+Illustriamo il problema con una funzione molto semplice: `grouped_mean()`.
+L'obiettivo di questa funzione è calcolare la media di `mean_var` raggruppata per `group_var`:
 
 ```{r}
 grouped_mean <- function(df, group_var, mean_var) {
@@ -365,14 +365,14 @@ grouped_mean <- function(df, group_var, mean_var) {
 }
 ```
 
-If we try and use it, we get an error:
+Se proviamo a usarla, otteniamo un errore:
 
 ```{r}
 #| error: true
 diamonds |> grouped_mean(cut, carat)
 ```
 
-To make the problem a bit more clear, we can use a made up data frame:
+Per rendere il problema un po' più chiaro, possiamo usare un data frame inventato:
 
 ```{r}
 df <- tibble(
@@ -387,19 +387,19 @@ df |> grouped_mean(group, x)
 df |> grouped_mean(group, y)
 ```
 
-Regardless of how we call `grouped_mean()` it always does `df |> group_by(group_var) |> summarize(mean(mean_var))`, instead of `df |> group_by(group) |> summarize(mean(x))` or `df |> group_by(group) |> summarize(mean(y))`.
-This is a problem of indirection, and it arises because dplyr uses **tidy evaluation** to allow you to refer to the names of variables inside your data frame without any special treatment.
+Indipendentemente da come chiamiamo `grouped_mean()` fa sempre `df |> group_by(group_var) |> summarize(mean(mean_var))`, invece di `df |> group_by(group) |> summarize(mean(x))` o `df |> group_by(group) |> summarize(mean(y))`.
+Questo è un problema di indirezione, e sorge perché dplyr usa **tidy evaluation** per permetterti di riferirsi ai nomi delle variabili dentro il tuo data frame senza alcun trattamento speciale.
 
-Tidy evaluation is great 95% of the time because it makes your data analyses very concise as you never have to say which data frame a variable comes from; it's obvious from the context.
-The downside of tidy evaluation comes when we want to wrap up repeated tidyverse code into a function.
-Here we need some way to tell `group_by()` and `summarize()` not to treat `group_var` and `mean_var` as the name of the variables, but instead look inside them for the variable we actually want to use.
+La tidy evaluation è fantastica il 95% delle volte perché rende le tue analisi dati molto concise dato che non devi mai dire da quale data frame viene una variabile; è ovvio dal contesto.
+Lo svantaggio della tidy evaluation viene quando vogliamo racchiudere codice tidyverse ripetuto in una funzione.
+Qui abbiamo bisogno di qualche modo per dire a `group_by()` e `summarize()` di non trattare `group_var` e `mean_var` come il nome delle variabili, ma invece guardare dentro di loro per la variabile che vogliamo veramente usare.
 
-Tidy evaluation includes a solution to this problem called **embracing** 🤗.
-Embracing a variable means to wrap it in braces so (e.g.) `var` becomes `{{{ var }}}`.
-Embracing a variable tells dplyr to use the value stored inside the argument, not the argument as the literal variable name.
-One way to remember what's happening is to think of `{{{ }}}` as looking down a tunnel --- `{{{ var }}}` will make a dplyr function look inside of `var` rather than looking for a variable called `var`.
+La tidy evaluation include una soluzione a questo problema chiamata **abbracciare** 🤗.
+Abbracciare una variabile significa avvolgerla in parentesi graffe così (ad es.) `var` diventa `{{{ var }}}`.
+Abbracciare una variabile dice a dplyr di usare il valore memorizzato dentro l'argomento, non l'argomento come nome letterale della variabile.
+Un modo per ricordare cosa sta succedendo è pensare a `{{{ }}}` come guardare giù per un tunnel --- `{{{ var }}}` farà in modo che una funzione dplyr guardi dentro `var` piuttosto che cercare una variabile chiamata `var`.
 
-So to make `grouped_mean()` work, we need to surround `group_var` and `mean_var` with `{{{ }}}`:
+Quindi per far funzionare `grouped_mean()`, dobbiamo circondare `group_var` e `mean_var` con `{{{ }}}`:
 
 ```{r}
 grouped_mean <- function(df, group_var, mean_var) {
@@ -411,25 +411,25 @@ grouped_mean <- function(df, group_var, mean_var) {
 df |> grouped_mean(group, x)
 ```
 
-Success!
+Successo!
 
-### When to embrace? {#sec-embracing}
+### Quando abbracciare? {#sec-embracing}
 
-So the key challenge in writing data frame functions is figuring out which arguments need to be embraced.
-Fortunately, this is easy because you can look it up from the documentation 😄.
-There are two terms to look for in the docs which correspond to the two most common sub-types of tidy evaluation:
+Quindi la sfida chiave nello scrivere funzioni di data frame è capire quali argomenti hanno bisogno di essere abbracciati.
+Fortunatamente, questo è facile perché puoi cercarlo nella documentazione 😄.
+Ci sono due termini da cercare nei documenti che corrispondono ai due sottotipi più comuni di tidy evaluation:
 
--   **Data-masking**: this is used in functions like `arrange()`, `filter()`, and `summarize()` that compute with variables.
+-   **Data-masking**: questo è usato in funzioni come `arrange()`, `filter()`, e `summarize()` che calcolano con variabili.
 
--   **Tidy-selection**: this is used for functions like `select()`, `relocate()`, and `rename()` that select variables.
+-   **Tidy-selection**: questo è usato per funzioni come `select()`, `relocate()`, e `rename()` che selezionano variabili.
 
-Your intuition about which arguments use tidy evaluation should be good for many common functions --- just think about whether you can compute (e.g., `x + 1`) or select (e.g., `a:x`).
+La tua intuizione su quali argomenti usano tidy evaluation dovrebbe essere buona per molte funzioni comuni --- pensa solo se puoi calcolare (ad es., `x + 1`) o selezionare (ad es., `a:x`).
 
-In the following sections, we'll explore the sorts of handy functions you might write once you understand embracing.
+Nelle sezioni seguenti, esploreremo i tipi di funzioni utili che potresti scrivere una volta che capisci l'abbracciare.
 
-### Common use cases
+### Casi d'uso comuni
 
-If you commonly perform the same set of summaries when doing initial data exploration, you might consider wrapping them up in a helper function:
+Se comunemente esegui lo stesso set di riassunti quando fai esplorazione iniziale dei dati, potresti considerare di racchiuderli in una funzione helper:
 
 ```{r}
 summary6 <- function(data, var) {
@@ -447,9 +447,9 @@ summary6 <- function(data, var) {
 diamonds |> summary6(carat)
 ```
 
-(Whenever you wrap `summarize()` in a helper, we think it's good practice to set `.groups = "drop"` to both avoid the message and leave the data in an ungrouped state.)
+(Ogni volta che racchiudi `summarize()` in un helper, pensiamo sia buona pratica impostare `.groups = "drop"` per evitare sia il messaggio che lasciare i dati in uno stato non raggruppato.)
 
-The nice thing about this function is, because it wraps `summarize()`, you can use it on grouped data:
+La cosa bella di questa funzione è che, perché racchiude `summarize()`, puoi usarla su dati raggruppati:
 
 ```{r}
 diamonds |> 
@@ -457,8 +457,8 @@ diamonds |>
   summary6(carat)
 ```
 
-Furthermore, since the arguments to summarize are data-masking, so is the `var` argument to `summary6()`.
-That means you can also summarize computed variables:
+Inoltre, dato che gli argomenti di summarize sono data-masking, così è l'argomento `var` di `summary6()`.
+Questo significa che puoi anche riassumere variabili calcolate:
 
 ```{r}
 diamonds |> 
@@ -466,9 +466,9 @@ diamonds |>
   summary6(log10(carat))
 ```
 
-To summarize multiple variables, you'll need to wait until @sec-across, where you'll learn how to use `across()`.
+Per riassumere variabili multiple, dovrai aspettare fino al @sec-across, dove imparerai come usare `across()`.
 
-Another popular `summarize()` helper function is a version of `count()` that also computes proportions:
+Un'altra funzione helper popolare di `summarize()` è una versione di `count()` che calcola anche proporzioni:
 
 ```{r}
 # https://twitter.com/Diabb6/status/1571635146658402309
@@ -481,11 +481,11 @@ count_prop <- function(df, var, sort = FALSE) {
 diamonds |> count_prop(clarity)
 ```
 
-This function has three arguments: `df`, `var`, and `sort`, and only `var` needs to be embraced because it's passed to `count()` which uses data-masking for all variables.
-Note that we use a default value for `sort` so that if the user doesn't supply their own value it will default to `FALSE`.
+Questa funzione ha tre argomenti: `df`, `var`, e `sort`, e solo `var` ha bisogno di essere abbracciato perché è passato a `count()` che usa data-masking per tutte le variabili.
+Nota che usiamo un valore di default per `sort` così che se l'utente non fornisce il proprio valore sarà di default `FALSE`.
 
-Or maybe you want to find the sorted unique values of a variable for a subset of the data.
-Rather than supplying a variable and a value to do the filtering, we'll allow the user to supply a condition:
+O forse vuoi trovare i valori unici ordinati di una variabile per un sottoinsieme dei dati.
+Piuttosto che fornire una variabile e un valore per fare il filtraggio, permetteremo all'utente di fornire una condizione:
 
 ```{r}
 unique_where <- function(df, condition, var) {
@@ -495,14 +495,14 @@ unique_where <- function(df, condition, var) {
     arrange({{ var }})
 }
 
-# Find all the destinations in December
+# Trova tutte le destinazioni a dicembre
 flights |> unique_where(month == 12, dest)
 ```
 
-Here we embrace `condition` because it's passed to `filter()` and `var` because it's passed to `distinct()` and `arrange()`.
+Qui abbracciamo `condition` perché è passato a `filter()` e `var` perché è passato a `distinct()` e `arrange()`.
 
-We've made all these examples to take a data frame as the first argument, but if you're working repeatedly with the same data, it can make sense to hardcode it.
-For example, the following function always works with the flights dataset and always selects `time_hour`, `carrier`, and `flight` since they form the compound primary key that allows you to identify a row.
+Abbiamo fatto tutti questi esempi per prendere un data frame come primo argomento, ma se stai lavorando ripetutamente con gli stessi dati, può avere senso codificarli duramente.
+Ad esempio, la seguente funzione lavora sempre con il dataset flights e seleziona sempre `time_hour`, `carrier`, e `flight` dato che formano la chiave primaria composta che ti permette di identificare una riga.
 
 ```{r}
 subset_flights <- function(rows, cols) {
@@ -514,9 +514,9 @@ subset_flights <- function(rows, cols) {
 
 ### Data-masking vs. tidy-selection
 
-Sometimes you want to select variables inside a function that uses data-masking.
-For example, imagine you want to write a `count_missing()` that counts the number of missing observations in rows.
-You might try writing something like:
+A volte vuoi selezionare variabili dentro una funzione che usa data-masking.
+Ad esempio, immagina di voler scrivere un `count_missing()` che conta il numero di osservazioni mancanti nelle righe.
+Potresti provare a scrivere qualcosa come:
 
 ```{r}
 #| error: true
@@ -533,8 +533,8 @@ flights |>
   count_missing(c(year, month, day), dep_time)
 ```
 
-This doesn't work because `group_by()` uses data-masking, not tidy-selection.
-We can work around that problem by using the handy `pick()` function, which allows you to use tidy-selection inside data-masking functions:
+Questo non funziona perché `group_by()` usa data-masking, non tidy-selection.
+Possiamo aggirare quel problema usando la funzione comoda `pick()`, che ti permette di usare tidy-selection dentro funzioni data-masking:
 
 ```{r}
 count_missing <- function(df, group_vars, x_var) {
@@ -550,8 +550,8 @@ flights |>
   count_missing(c(year, month, day), dep_time)
 ```
 
-Another convenient use of `pick()` is to make a 2d table of counts.
-Here we count using all the variables in the `rows` and `columns`, then use `pivot_wider()` to rearrange the counts into a grid:
+Un altro uso conveniente di `pick()` è fare una tabella 2d di conteggi.
+Qui contiamo usando tutte le variabili nelle `rows` e `columns`, poi usiamo `pivot_wider()` per riorganizzare i conteggi in una griglia:
 
 ```{r}
 # https://twitter.com/pollicipes/status/1571606508944719876
@@ -569,50 +569,50 @@ count_wide <- function(data, rows, cols) {
 diamonds |> count_wide(c(clarity, color), cut)
 ```
 
-While our examples have mostly focused on dplyr, tidy evaluation also underpins tidyr, and if you look at the `pivot_wider()` docs you can see that `names_from` uses tidy-selection.
+Mentre i nostri esempi si sono concentrati principalmente su dplyr, la tidy evaluation sostiene anche tidyr, e se guardi i documenti di `pivot_wider()` puoi vedere che `names_from` usa tidy-selection.
 
-### Exercises
+### Esercizi
 
-1.  Using the datasets from nycflights13, write a function that:
+1.  Usando i dataset da nycflights13, scrivi una funzione che:
 
-    1.  Finds all flights that were cancelled (i.e. `is.na(arr_time)`) or delayed by more than an hour.
+    1.  Trova tutti i voli che sono stati cancellati (cioè `is.na(arr_time)`) o ritardati di più di un'ora.
 
         ```{r}
         #| eval: false
         flights |> filter_severe()
         ```
 
-    2.  Counts the number of cancelled flights and the number of flights delayed by more than an hour.
+    2.  Conta il numero di voli cancellati e il numero di voli ritardati di più di un'ora.
 
         ```{r}
         #| eval: false
         flights |> group_by(dest) |> summarize_severe()
         ```
 
-    3.  Finds all flights that were cancelled or delayed by more than a user supplied number of hours:
+    3.  Trova tutti i voli che sono stati cancellati o ritardati di più di un numero di ore fornito dall'utente:
 
         ```{r}
         #| eval: false
         flights |> filter_severe(hours = 2)
         ```
 
-    4.  Summarizes the weather to compute the minimum, mean, and maximum, of a user supplied variable:
+    4.  Riassume il tempo per calcolare il minimo, media, e massimo, di una variabile fornita dall'utente:
 
         ```{r}
         #| eval: false
         weather |> summarize_weather(temp)
         ```
 
-    5.  Converts the user supplied variable that uses clock time (e.g., `dep_time`, `arr_time`, etc.) into a decimal time (i.e. hours + (minutes / 60)).
+    5.  Converte la variabile fornita dall'utente che usa l'orario dell'orologio (ad es., `dep_time`, `arr_time`, ecc.) in un tempo decimale (cioè ore + (minuti / 60)).
 
         ```{r}
         #| eval: false
         flights |> standardize_time(sched_dep_time)
         ```
 
-2.  For each of the following functions list all arguments that use tidy evaluation and describe whether they use data-masking or tidy-selection: `distinct()`, `count()`, `group_by()`, `rename_with()`, `slice_min()`, `slice_sample()`.
+2.  Per ognuna delle seguenti funzioni elenca tutti gli argomenti che usano tidy evaluation e descrivi se usano data-masking o tidy-selection: `distinct()`, `count()`, `group_by()`, `rename_with()`, `slice_min()`, `slice_sample()`.
 
-3.  Generalize the following function so that you can supply any number of variables to count.
+3.  Generalizza la seguente funzione così che puoi fornire qualsiasi numero di variabili da contare.
 
     ```{r}
     count_prop <- function(df, var, sort = FALSE) {
@@ -622,11 +622,11 @@ While our examples have mostly focused on dplyr, tidy evaluation also underpins 
     }
     ```
 
-## Plot functions
+## Funzioni di grafico
 
-Instead of returning a data frame, you might want to return a plot.
-Fortunately, you can use the same techniques with ggplot2, because `aes()` is a data-masking function.
-For example, imagine that you're making a lot of histograms:
+Invece di restituire un data frame, potresti voler restituire un grafico.
+Fortunatamente, puoi usare le stesse tecniche con ggplot2, perché `aes()` è una funzione data-masking.
+Ad esempio, immagina di fare molti istogrammi:
 
 ```{r}
 #| fig-show: hide
@@ -639,13 +639,13 @@ diamonds |>
   geom_histogram(binwidth = 0.05)
 ```
 
-Wouldn't it be nice if you could wrap this up into a histogram function?
-This is easy as pie once you know that `aes()` is a data-masking function and you need to embrace:
+Non sarebbe bello se potessi racchiudere questo in una funzione istogramma?
+Questo è facile come bere un bicchier d'acqua una volta che sai che `aes()` è una funzione data-masking e devi abbracciare:
 
 ```{r}
 #| fig-alt: |
-#|   A histogram of carats of diamonds, ranging from 0 to 5, showing a unimodal, 
-#|   right-skewed distribution with a peak between 0 to 1 carats.
+#|   Un istogramma dei carati dei diamanti, che va da 0 a 5, mostrando una distribuzione 
+#|   unimodale, asimmetrica a destra con un picco tra 0 a 1 carati.
 histogram <- function(df, var, binwidth = NULL) {
   df |> 
     ggplot(aes(x = {{ var }})) + 
@@ -655,8 +655,8 @@ histogram <- function(df, var, binwidth = NULL) {
 diamonds |> histogram(carat, 0.1)
 ```
 
-Note that `histogram()` returns a ggplot2 plot, meaning you can still add on additional components if you want.
-Just remember to switch from `|>` to `+`:
+Nota che `histogram()` restituisce un grafico ggplot2, il che significa che puoi ancora aggiungere componenti aggiuntivi se vuoi.
+Ricorda solo di passare da `|>` a `+`:
 
 ```{r}
 #| fig.show: hide
@@ -665,16 +665,16 @@ diamonds |>
   labs(x = "Size (in carats)", y = "Number of diamonds")
 ```
 
-### More variables
+### Più variabili
 
-It's straightforward to add more variables to the mix.
-For example, maybe you want an easy way to eyeball whether or not a dataset is linear by overlaying a smooth line and a straight line:
+È semplice aggiungere più variabili al mix.
+Ad esempio, forse vuoi un modo facile per valutare a occhio se un dataset è lineare o no sovrapponendo una linea liscia e una linea dritta:
 
 ```{r}
 #| fig-alt: |
-#|   Scatterplot of height vs. mass of StarWars characters showing a positive 
-#|   relationship. A smooth curve of the relationship is plotted in red, and 
-#|   the best fit line is ploted in blue.
+#|   Scatterplot di altezza vs. massa dei personaggi di StarWars che mostra una relazione 
+#|   positiva. Una curva liscia della relazione è tracciata in rosso, e 
+#|   la linea di best fit è tracciata in blu.
 # https://twitter.com/tyler_js_smith/status/1574377116988104704
 linearity_check <- function(df, x, y) {
   df |>
@@ -689,18 +689,18 @@ starwars |>
   linearity_check(mass, height)
 ```
 
-Or maybe you want an alternative to colored scatterplots for very large datasets where overplotting is a problem:
+O forse vuoi un'alternativa agli scatterplot colorati per dataset molto grandi dove il sovrapporsi è un problema:
 
 ```{r}
 #| fig-alt: |
-#|   Hex plot of price vs. carat of diamonds showing a positive relationship. 
-#|   There are more diamonds that are less than 2 carats than more than 2 carats.
+#|   Grafico esagonale di prezzo vs. carati di diamanti che mostra una relazione positiva. 
+#|   Ci sono più diamanti che sono meno di 2 carati che più di 2 carati.
 # https://twitter.com/ppaxisa/status/1574398423175921665
 hex_plot <- function(df, x, y, z, bins = 20, fun = "mean") {
   df |> 
     ggplot(aes(x = {{ x }}, y = {{ y }}, z = {{ z }})) + 
     stat_summary_hex(
-      aes(color = after_scale(fill)), # make border same color as fill
+      aes(color = after_scale(fill)), # rendi il bordo dello stesso colore del riempimento
       bins = bins, 
       fun = fun,
     )
@@ -709,16 +709,16 @@ hex_plot <- function(df, x, y, z, bins = 20, fun = "mean") {
 diamonds |> hex_plot(carat, price, depth)
 ```
 
-### Combining with other tidyverse
+### Combinare con altro tidyverse
 
-Some of the most useful helpers combine a dash of data manipulation with ggplot2.
-For example, if you might want to do a vertical bar chart where you automatically sort the bars in frequency order using `fct_infreq()`.
-Since the bar chart is vertical, we also need to reverse the usual order to get the highest values at the top:
+Alcuni degli helper più utili combinano un pizzico di manipolazione dati con ggplot2.
+Ad esempio, se potresti voler fare un grafico a barre verticale dove ordini automaticamente le barre in ordine di frequenza usando `fct_infreq()`.
+Dato che il grafico a barre è verticale, dobbiamo anche invertire l'ordine usuale per ottenere i valori più alti in cima:
 
 ```{r}
 #| fig-alt: |
-#|   Bar plot of clarify of diamonds, where clarity is on the y-axis and counts 
-#|   are on the x-axis, and the bars are ordered in order of frequency: SI1, 
+#|   Grafico a barre della chiarezza dei diamanti, dove la chiarezza è sull'asse y e i conteggi 
+#|   sono sull'asse x, e le barre sono ordinate in ordine di frequenza: SI1, 
 #|   VS2, SI2, VS1, VVS2, VVS1, IF, I1.
 sorted_bars <- function(df, var) {
   df |> 
@@ -730,16 +730,16 @@ sorted_bars <- function(df, var) {
 diamonds |> sorted_bars(clarity)
 ```
 
-We have to use a new operator here, `:=` (commonly referred to as the "walrus operator"), because we are generating the variable name based on user-supplied data.
-Variable names go on the left hand side of `=`, but R's syntax doesn't allow anything to the left of `=` except for a single literal name.
-To work around this problem, we use the special operator `:=` which tidy evaluation treats in exactly the same way as `=`.
+Dobbiamo usare un nuovo operatore qui, `:=` (comunemente chiamato "operatore tricheco"), perché stiamo generando il nome della variabile basato sui dati forniti dall'utente.
+I nomi delle variabili vanno sul lato sinistro di `=`, ma la sintassi di R non permette niente sul lato sinistro di `=` eccetto un singolo nome letterale.
+Per aggirare questo problema, usiamo l'operatore speciale `:=` che la tidy evaluation tratta esattamente nello stesso modo di `=`.
 
-Or maybe you want to make it easy to draw a bar plot just for a subset of the data:
+O forse vuoi rendere facile disegnare un grafico a barre solo per un sottoinsieme dei dati:
 
 ```{r}
 #| fig-alt: |
-#|   Bar plot of clarity of diamonds. The most common is SI1, then SI2, then 
-#|   VS2, then VS1, then VVS2, then VVS1, then I1, then lastly IF.
+#|   Grafico a barre della chiarezza dei diamanti. Il più comune è SI1, poi SI2, poi 
+#|   VS2, poi VS1, poi VVS2, poi VVS1, poi I1, poi infine IF.
 conditional_bars <- function(df, condition, var) {
   df |> 
     filter({{ condition }}) |> 
@@ -750,15 +750,15 @@ conditional_bars <- function(df, condition, var) {
 diamonds |> conditional_bars(cut == "Good", clarity)
 ```
 
-You can also get creative and display data summaries in other ways.
-You can find a cool application at <https://gist.github.com/GShotwell/b19ef520b6d56f61a830fabb3454965b>; it uses the axis labels to display the highest value.
-As you learn more about ggplot2, the power of your functions will continue to increase.
+Puoi anche essere creativo e mostrare riassunti di dati in altri modi.
+Puoi trovare un'applicazione interessante su <https://gist.github.com/GShotwell/b19ef520b6d56f61a830fabb3454965b>; usa le etichette degli assi per mostrare il valore più alto.
+Mentre impari di più su ggplot2, il potere delle tue funzioni continuerà ad aumentare.
 
-We'll finish with a more complicated case: labelling the plots you create.
+Finiremo con un caso più complicato: etichettare i grafici che crei.
 
-### Labeling
+### Etichettatura
 
-Remember the histogram function we showed you earlier?
+Ricordi la funzione istogramma che ti abbiamo mostrato prima?
 
 ```{r}
 histogram <- function(df, var, binwidth = NULL) {
@@ -768,18 +768,18 @@ histogram <- function(df, var, binwidth = NULL) {
 }
 ```
 
-Wouldn't it be nice if we could label the output with the variable and the bin width that was used?
-To do so, we're going to have to go under the covers of tidy evaluation and use a function from the package we haven't talked about yet: rlang.
-rlang is a low-level package that's used by just about every other package in the tidyverse because it implements tidy evaluation (as well as many other useful tools).
+Non sarebbe bello se potessimo etichettare l'output con la variabile e la larghezza del bin che è stata usata?
+Per farlo, dovremo andare sotto le coperture della tidy evaluation e usare una funzione dal pacchetto di cui non abbiamo ancora parlato: rlang.
+rlang è un pacchetto di basso livello che è usato da quasi ogni altro pacchetto nel tidyverse perché implementa la tidy evaluation (così come molti altri strumenti utili).
 
-To solve the labeling problem we can use `rlang::englue()`.
-This works similarly to `str_glue()`, so any value wrapped in `{ }` will be inserted into the string.
-But it also understands `{{{ }}}`, which automatically inserts the appropriate variable name:
+Per risolvere il problema dell'etichettatura possiamo usare `rlang::englue()`.
+Questo funziona similmente a `str_glue()`, quindi qualsiasi valore racchiuso in `{ }` sarà inserito nella stringa.
+Ma capisce anche `{{{ }}}`, che inserisce automaticamente il nome della variabile appropriato:
 
 ```{r}
 #| fig-alt: |
-#|   Histogram of carats of diamonds, ranging from 0 to 5. The distribution is 
-#|   unimodal and right skewed with a peak between 0 to 1 carats.
+#|   Istogramma dei carati dei diamanti, che va da 0 a 5. La distribuzione è 
+#|   unimodale e asimmetrica a destra con un picco tra 0 a 1 carati.
 histogram <- function(df, var, binwidth) {
   label <- rlang::englue("A histogram of {{var}} with binwidth {binwidth}")
   
@@ -792,49 +792,49 @@ histogram <- function(df, var, binwidth) {
 diamonds |> histogram(carat, 0.1)
 ```
 
-You can use the same approach in any other place where you want to supply a string in a ggplot2 plot.
+Puoi usare lo stesso approccio in qualsiasi altro posto dove vuoi fornire una stringa in un grafico ggplot2.
 
-### Exercises
+### Esercizi
 
-Build up a rich plotting function by incrementally implementing each of the steps below:
+Costruisci una funzione di grafico ricca implementando incrementalmente ognuno dei passi sotto:
 
-1.  Draw a scatterplot given dataset and `x` and `y` variables.
+1.  Disegna uno scatterplot dato un dataset e variabili `x` e `y`.
 
-2.  Add a line of best fit (i.e. a linear model with no standard errors).
+2.  Aggiungi una linea di best fit (cioè un modello lineare senza errori standard).
 
-3.  Add a title.
+3.  Aggiungi un titolo.
 
-## Style
+## Stile
 
-R doesn't care what your function or arguments are called but the names make a big difference for humans.
-Ideally, the name of your function will be short, but clearly evoke what the function does.
-That's hard!
-But it's better to be clear than short, as RStudio's autocomplete makes it easy to type long names.
+A R non importa come sono chiamate le tue funzioni o argomenti ma i nomi fanno una grande differenza per gli umani.
+Idealmente, il nome della tua funzione sarà breve, ma evocherà chiaramente cosa fa la funzione.
+È difficile!
+Ma è meglio essere chiari che brevi, dato che l'autocompletamento di RStudio rende facile digitare nomi lunghi.
 
-Generally, function names should be verbs, and arguments should be nouns.
-There are some exceptions: nouns are ok if the function computes a very well known noun (i.e. `mean()` is better than `compute_mean()`), or accessing some property of an object (i.e. `coef()` is better than `get_coefficients()`).
-Use your best judgement and don't be afraid to rename a function if you figure out a better name later.
+Generalmente, i nomi delle funzioni dovrebbero essere verbi, e gli argomenti dovrebbero essere nomi.
+Ci sono alcune eccezioni: i nomi vanno bene se la funzione calcola un nome molto ben conosciuto (cioè `mean()` è meglio di `compute_mean()`), o accedere a qualche proprietà di un oggetto (cioè `coef()` è meglio di `get_coefficients()`).
+Usa il tuo miglior giudizio e non aver paura di rinominare una funzione se capisci un nome migliore dopo.
 
 ```{r}
 #| eval: false
-# Too short
+# Troppo breve
 f()
 
-# Not a verb, or descriptive
+# Non un verbo, o descrittivo
 my_awesome_function()
 
-# Long, but clear
+# Lungo, ma chiaro
 impute_missing()
 collapse_years()
 ```
 
-R also doesn't care about how you use white space in your functions but future readers will.
-Continue to follow the rules from @sec-workflow-style.
-Additionally, `function()` should always be followed by squiggly brackets (`{}`), and the contents should be indented by an additional two spaces.
-This makes it easier to see the hierarchy in your code by skimming the left-hand margin.
+A R non importa neanche come usi lo spazio bianco nelle tue funzioni ma ai lettori futuri importerà.
+Continua a seguire le regole dal @sec-workflow-style.
+Inoltre, `function()` dovrebbe sempre essere seguita da parentesi graffe (`{}`), e i contenuti dovrebbero essere indentati di due spazi aggiuntivi.
+Questo rende più facile vedere la gerarchia nel tuo codice scorrendo il margine sinistro.
 
 ```{r}
-# Missing extra two spaces
+# Mancano due spazi extra
 density <- function(color, facets, binwidth = 0.1) {
 diamonds |> 
   ggplot(aes(x = carat, y = after_stat(density), color = {{ color }})) +
@@ -842,7 +842,7 @@ diamonds |>
   facet_wrap(vars({{ facets }}))
 }
 
-# Pipe indented incorrectly
+# Pipe indentata incorrettamente
 density <- function(color, facets, binwidth = 0.1) {
   diamonds |> 
   ggplot(aes(x = carat, y = after_stat(density), color = {{ color }})) +
@@ -851,12 +851,12 @@ density <- function(color, facets, binwidth = 0.1) {
 }
 ```
 
-As you can see we recommend putting extra spaces inside of `{{{ }}}`.
-This makes it very obvious that something unusual is happening.
+Come puoi vedere raccomandiamo di mettere spazi extra dentro `{{{ }}}`.
+Questo rende molto ovvio che sta succedendo qualcosa di inusuale.
 
-### Exercises
+### Esercizi
 
-1.  Read the source code for each of the following two functions, puzzle out what they do, and then brainstorm better names.
+1.  Leggi il codice sorgente per ognuna delle seguenti due funzioni, capisci cosa fanno, e poi fai brainstorming di nomi migliori.
 
     ```{r}
     f1 <- function(string, prefix) {
@@ -868,22 +868,20 @@ This makes it very obvious that something unusual is happening.
     }
     ```
 
-2.  Take a function that you've written recently and spend 5 minutes brainstorming a better name for it and its arguments.
+2.  Prendi una funzione che hai scritto di recente e spendi 5 minuti facendo brainstorming di un nome migliore per essa e i suoi argomenti.
 
-3.  Make a case for why `norm_r()`, `norm_d()` etc. would be better than `rnorm()`, `dnorm()`.
-    Make a case for the opposite.
-    How could you make the names even clearer?
+3.  Fai un caso per perché `norm_r()`, `norm_d()` ecc. sarebbero meglio di `rnorm()`, `dnorm()`.
+    Fai un caso per l'opposto.
+    Come potresti rendere i nomi ancora più chiari?
 
-## Summary
+## Riassunto
 
-In this chapter, you learned how to write functions for three useful scenarios: creating a vector, creating a data frame, or creating a plot.
-Along the way you saw many examples, which hopefully started to get your creative juices flowing, and gave you some ideas for where functions might help your analysis code.
+In questo capitolo, hai imparato come scrivere funzioni per tre scenari utili: creare un vettore, creare un data frame, o creare un grafico.
+Lungo la strada hai visto molti esempi, che speriamo abbiano iniziato a far fluire i tuoi succhi creativi, e ti abbiano dato alcune idee per dove le funzioni potrebbero aiutare il tuo codice di analisi.
 
-We have only shown you the bare minimum to get started with functions and there's much more to learn.
-A few places to learn more are:
+Ti abbiamo mostrato solo il minimo per iniziare con le funzioni e c'è molto di più da imparare.
+Alcuni posti per imparare di più sono:
 
--   To learn more about programming with tidy evaluation, see useful recipes in [programming with dplyr](https://dplyr.tidyverse.org/articles/programming.html) and [programming with tidyr](https://tidyr.tidyverse.org/articles/programming.html) and learn more about the theory in [What is data-masking and why do I need {{?](https://rlang.r-lib.org/reference/topic-data-mask.html).
--   To learn more about reducing duplication in your ggplot2 code, read the [Programming with ggplot2](https://ggplot2-book.org/programming.html){.uri} chapter of the ggplot2 book.
--   For more advice on function style, see the [tidyverse style guide](https://style.tidyverse.org/functions.html){.uri}.
-
-In the next chapter, we'll dive into iteration which gives you further tools for reducing code duplication.
+-   Per imparare di più sulla programmazione con tidy evaluation, vedi ricette utili in [programming with dplyr](https://dplyr.tidyverse.org/articles/programming.html) e [programming with tidyr](https://tidyr.tidyverse.org/articles/programming.html) e impara di più sulla teoria in [What is data-masking and why do I need {{?](https://rlang.r-lib.org/reference/topic-data-mask.html).
+-   Per imparare di più sul ridurre la duplicazione nel tuo codice ggplot2, leggi il capitolo [Programming with ggplot2](https://ggplot2-book.org/programming.html){.uri} del libro ggplot2.
+-   Per più consigli sullo stile delle funzioni, vedi la [tidyverse style guide](https://style.tidyverse.org/functions.html){.uri}.
