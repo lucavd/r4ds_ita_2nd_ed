@@ -10,27 +10,27 @@ freeze: true
 source("_common.R")
 ```
 
-## Introduction
+## Introduzione
 
-CSV files are designed to be easily read by humans.
-They're a good interchange format because they're very simple and they can be read by every tool under the sun.
-But CSV files aren't very efficient: you have to do quite a lot of work to read the data into R.
-In this chapter, you'll learn about a powerful alternative: the [parquet format](https://parquet.apache.org/), an open standards-based format widely used by big data systems.
+I file CSV sono progettati per essere facilmente letti dagli esseri umani.
+Sono un buon formato di interscambio perché sono molto semplici e possono essere letti da qualsiasi strumento esistente.
+Ma i file CSV non sono molto efficienti: devi fare parecchio lavoro per leggere i dati in R.
+In questo capitolo, imparerai un'alternativa potente: il [formato parquet](https://parquet.apache.org/), un formato basato su standard aperti ampiamente utilizzato dai sistemi di big data.
 
-We'll pair parquet files with [Apache Arrow](https://arrow.apache.org), a multi-language toolbox designed for efficient analysis and transport of large datasets.
-We'll use Apache Arrow via the [arrow package](https://arrow.apache.org/docs/r/), which provides a dplyr backend allowing you to analyze larger-than-memory datasets using familiar dplyr syntax.
-As an additional benefit, arrow is extremely fast: you'll see some examples later in the chapter.
+Abbineremo i file parquet con [Apache Arrow](https://arrow.apache.org), una toolbox multi-linguaggio progettata per l'analisi efficiente e il trasporto di grandi dataset.
+Useremo Apache Arrow tramite il [pacchetto arrow](https://arrow.apache.org/docs/r/), che fornisce un backend dplyr permettendoti di analizzare dataset più grandi della memoria usando la sintassi familiare di dplyr.
+Come beneficio aggiuntivo, arrow è estremamente veloce: vedrai alcuni esempi più avanti nel capitolo.
 
-Both arrow and dbplyr provide dplyr backends, so you might wonder when to use each.
-In many cases, the choice is made for you, as the data is already in a database or in parquet files, and you'll want to work with it as is.
-But if you're starting with your own data (perhaps CSV files), you can either load it into a database or convert it to parquet.
-In general, it's hard to know what will work best, so in the early stages of your analysis we'd encourage you to try both and pick the one that works the best for you.
+Sia arrow che dbplyr forniscono backend dplyr, quindi potresti chiederti quando usare ciascuno.
+In molti casi, la scelta è fatta per te, poiché i dati sono già in un database o in file parquet, e vorrai lavorarci così come sono.
+Ma se stai iniziando con i tuoi dati (magari file CSV), puoi caricarli in un database o convertirli in parquet.
+In generale, è difficile sapere cosa funzionerà meglio, quindi nelle fasi iniziali della tua analisi ti incoraggiamo a provare entrambi e scegliere quello che funziona meglio per te.
 
-(A big thanks to Danielle Navarro who contributed the initial version of this chapter.)
+(Un grande ringraziamento a Danielle Navarro che ha contribuito alla versione iniziale di questo capitolo.)
 
-### Prerequisites
+### Prerequisiti
 
-In this chapter, we'll continue to use the tidyverse, particularly dplyr, but we'll pair it with the arrow package which is designed specifically for working with large data.
+In questo capitolo, continueremo a usare il tidyverse, in particolare dplyr, ma lo abbineremo al pacchetto arrow che è progettato specificamente per lavorare con grandi dati.
 
 ```{r setup}
 #| message: false
@@ -39,21 +39,21 @@ library(tidyverse)
 library(arrow)
 ```
 
-Later in the chapter, we'll also see some connections between arrow and duckdb, so we'll also need dbplyr and duckdb.
+Più avanti nel capitolo, vedremo anche alcune connessioni tra arrow e duckdb, quindi avremo bisogno anche di dbplyr e duckdb.
 
 ```{r}
 library(dbplyr, warn.conflicts = FALSE)
 library(duckdb)
 ```
 
-## Getting the data
+## Ottenere i dati
 
-We begin by getting a dataset worthy of these tools: a dataset of item checkouts from Seattle public libraries, available online at [data.seattle.gov/Community/Checkouts-by-Title/tmmm-ytt6](https://data.seattle.gov/Community/Checkouts-by-Title/tmmm-ytt6).
-This dataset contains 41,389,465 rows that tell you how many times each book was checked out each month from April 2005 to October 2022.
+Iniziamo ottenendo un dataset degno di questi strumenti: un dataset di prestiti di oggetti dalle biblioteche pubbliche di Seattle, disponibile online su [data.seattle.gov/Community/Checkouts-by-Title/tmmm-ytt6](https://data.seattle.gov/Community/Checkouts-by-Title/tmmm-ytt6).
+Questo dataset contiene 41.389.465 righe che ti dicono quante volte ogni libro è stato preso in prestito ogni mese da aprile 2005 a ottobre 2022.
 
-The following code will get you a cached copy of the data.
-The data is a 9GB CSV file, so it will take some time to download.
-I highly recommend using `curl::multi_download()` to get very large files as it's built for exactly this purpose: it gives you a progress bar and it can resume the download if its interrupted.
+Il seguente codice ti darà una copia cached dei dati.
+I dati sono un file CSV di 9GB, quindi ci vorrà del tempo per scaricarlo.
+Raccomando vivamente di usare `curl::multi_download()` per ottenere file molto grandi poiché è costruito esattamente per questo scopo: ti dà una barra di progresso e può riprendere il download se viene interrotto.
 
 ```{r}
 #| eval: !expr "!file.exists('data/seattle-library-checkouts.csv')"
@@ -66,12 +66,12 @@ curl::multi_download(
 )
 ```
 
-## Opening a dataset
+## Aprire un dataset
 
-Let's start by taking a look at the data.
-At 9 GB, this file is large enough that we probably don't want to load the whole thing into memory.
-A good rule of thumb is that you usually want at least twice as much memory as the size of the data, and many laptops top out at 16 GB.
-This means we want to avoid `read_csv()` and instead use the `arrow::open_dataset()`:
+Iniziamo dando un'occhiata ai dati.
+A 9 GB, questo file è abbastanza grande che probabilmente non vogliamo caricare tutto in memoria.
+Una buona regola empirica è che di solito vuoi almeno il doppio della memoria rispetto alla dimensione dei dati, e molti laptop arrivano al massimo a 16 GB.
+Questo significa che vogliamo evitare `read_csv()` e invece usare `arrow::open_dataset()`:
 
 ```{r open-dataset}
 seattle_csv <- open_dataset(
@@ -81,29 +81,29 @@ seattle_csv <- open_dataset(
 )
 ```
 
-What happens when this code is run?
-`open_dataset()` will scan a few thousand rows to figure out the structure of the dataset.
-The `ISBN` column contains blank values for the first 80,000 rows, so we have to specify the column type to help arrow work out the data structure.
-Once the data has been scanned by `open_dataset()`, it records what it's found and stops; it will only read further rows as you specifically request them.
-This metadata is what we see if we print `seattle_csv`:
+Cosa succede quando questo codice viene eseguito?
+`open_dataset()` scannerà alcune migliaia di righe per capire la struttura del dataset.
+La colonna `ISBN` contiene valori vuoti per le prime 80.000 righe, quindi dobbiamo specificare il tipo di colonna per aiutare arrow a capire la struttura dei dati.
+Una volta che i dati sono stati scansionati da `open_dataset()`, registra quello che ha trovato e si ferma; leggerà solo ulteriori righe quando le richiedi specificamente.
+Questi metadati sono quello che vediamo se stampiamo `seattle_csv`:
 
 ```{r}
 seattle_csv
 ```
 
-The first line in the output tells you that `seattle_csv` is stored locally on-disk as a single CSV file; it will only be loaded into memory as needed.
-The remainder of the output tells you the column type that arrow has imputed for each column.
+La prima riga nell'output ti dice che `seattle_csv` è memorizzato localmente su disco come un singolo file CSV; sarà caricato in memoria solo quando necessario.
+Il resto dell'output ti dice il tipo di colonna che arrow ha imputato per ogni colonna.
 
-We can see what's actually in with `glimpse()`.
-This reveals that there are \~41 million rows and 12 columns, and shows us a few values.
+Possiamo vedere cosa c'è effettivamente dentro con `glimpse()`.
+Questo rivela che ci sono ~41 milioni di righe e 12 colonne, e ci mostra alcuni valori.
 
 ```{r glimpse-data}
 #| cache: true
 seattle_csv |> glimpse()
 ```
 
-We can start to use this dataset with dplyr verbs, using `collect()` to force arrow to perform the computation and return some data.
-For example, this code tells us the total number of checkouts per year:
+Possiamo iniziare a usare questo dataset con i verbi dplyr, usando `collect()` per forzare arrow a eseguire il calcolo e restituire alcuni dati.
+Per esempio, questo codice ci dice il numero totale di prestiti per anno:
 
 ```{r}
 #| cache: true
@@ -114,54 +114,54 @@ seattle_csv |>
   collect()
 ```
 
-Thanks to arrow, this code will work regardless of how large the underlying dataset is.
-But it's currently rather slow: on Hadley's computer, it took \~10s to run.
-That's not terrible given how much data we have, but we can make it much faster by switching to a better format.
+Grazie ad arrow, questo codice funzionerà indipendentemente da quanto è grande il dataset sottostante.
+Ma è attualmente piuttosto lento: sul computer di Hadley, ha impiegato ~10 secondi per essere eseguito.
+Non è terribile considerando quanti dati abbiamo, ma possiamo renderlo molto più veloce passando a un formato migliore.
 
-## The parquet format {#sec-parquet}
+## Il formato parquet {#sec-parquet}
 
-To make this data easier to work with, let's switch to the parquet file format and split it up into multiple files.
-The following sections will first introduce you to parquet and partitioning, and then apply what we learned to the Seattle library data.
+Per rendere questi dati più facili da usare, passiamo al formato file parquet e dividiamoli in più file.
+Le sezioni seguenti ti introdurranno prima a parquet e al partizionamento, e poi applicheremo quello che abbiamo imparato ai dati della biblioteca di Seattle.
 
-### Advantages of parquet
+### Vantaggi di parquet
 
-Like CSV, parquet is used for rectangular data, but instead of being a text format that you can read with any file editor, it's a custom binary format designed specifically for the needs of big data.
-This means that:
+Come CSV, parquet è usato per dati rettangolari, ma invece di essere un formato testo che puoi leggere con qualsiasi editor di file, è un formato binario personalizzato progettato specificamente per le esigenze dei big data.
+Questo significa che:
 
--   Parquet files are usually smaller than the equivalent CSV file.
-    Parquet relies on [efficient encodings](https://parquet.apache.org/docs/file-format/data-pages/encodings/) to keep file size down, and supports file compression.
-    This helps make parquet files fast because there's less data to move from disk to memory.
+-   I file parquet sono solitamente più piccoli del file CSV equivalente.
+    Parquet si basa su [codifiche efficienti](https://parquet.apache.org/docs/file-format/data-pages/encodings/) per mantenere bassa la dimensione del file, e supporta la compressione dei file.
+    Questo aiuta a rendere i file parquet veloci perché ci sono meno dati da spostare dal disco alla memoria.
 
--   Parquet files have a rich type system.
-    As we talked about in @sec-col-types, a CSV file does not provide any information about column types.
-    For example, a CSV reader has to guess whether `"08-10-2022"` should be parsed as a string or a date.
-    In contrast, parquet files store data in a way that records the type along with the data.
+-   I file parquet hanno un sistema di tipi ricco.
+    Come abbiamo discusso in @sec-col-types, un file CSV non fornisce informazioni sui tipi di colonna.
+    Per esempio, un lettore CSV deve indovinare se `"08-10-2022"` dovrebbe essere analizzato come stringa o data.
+    Al contrario, i file parquet memorizzano i dati in un modo che registra il tipo insieme ai dati.
 
--   Parquet files are "column-oriented".
-    This means that they're organized column-by-column, much like R's data frame.
-    This typically leads to better performance for data analysis tasks compared to CSV files, which are organized row-by-row.
+-   I file parquet sono "orientati alle colonne".
+    Questo significa che sono organizzati colonna per colonna, molto come il data frame di R.
+    Questo porta tipicamente a prestazioni migliori per i compiti di analisi dati rispetto ai file CSV, che sono organizzati riga per riga.
 
--   Parquet files are "chunked", which makes it possible to work on different parts of the file at the same time, and, if you're lucky, to skip some chunks altogether.
+-   I file parquet sono "suddivisi in chunk", il che rende possibile lavorare su parti diverse del file allo stesso tempo, e, se sei fortunato, saltare completamente alcuni chunk.
 
-There's one primary disadvantage to parquet files: they are no longer "human readable", i.e. if you look at a parquet file using `readr::read_file()`, you'll just see a bunch of gibberish.
+C'è uno svantaggio principale dei file parquet: non sono più "leggibili dall'uomo", cioè se guardi un file parquet usando `readr::read_file()`, vedrai solo un mucchio di caratteri senza senso.
 
-### Partitioning
+### Partizionamento
 
-As datasets get larger and larger, storing all the data in a single file gets increasingly painful and it's often useful to split large datasets across many files.
-When this structuring is done intelligently, this strategy can lead to significant improvements in performance because many analyses will only require a subset of the files.
+Man mano che i dataset diventano sempre più grandi, memorizzare tutti i dati in un singolo file diventa sempre più doloroso ed è spesso utile dividere grandi dataset in molti file.
+Quando questa strutturazione è fatta intelligentemente, questa strategia può portare a miglioramenti significativi nelle prestazioni perché molte analisi richiederanno solo un sottoinsieme dei file.
 
-There are no hard and fast rules about how to partition your dataset: the results will depend on your data, access patterns, and the systems that read the data.
-You're likely to need to do some experimentation before you find the ideal partitioning for your situation.
-As a rough guide, arrow suggests that you avoid files smaller than 20MB and larger than 2GB and avoid partitions that produce more than 10,000 files.
-You should also try to partition by variables that you filter by; as you'll see shortly, that allows arrow to skip a lot of work by reading only the relevant files.
+Non ci sono regole rigide e veloci su come partizionare il tuo dataset: i risultati dipenderanno dai tuoi dati, dai pattern di accesso e dai sistemi che leggono i dati.
+Probabilmente dovrai fare qualche sperimentazione prima di trovare il partizionamento ideale per la tua situazione.
+Come guida approssimativa, arrow suggerisce di evitare file più piccoli di 20MB e più grandi di 2GB ed evitare partizioni che producono più di 10.000 file.
+Dovresti anche provare a partizionare per variabili su cui filtri; come vedrai a breve, questo permette ad arrow di saltare molto lavoro leggendo solo i file rilevanti.
 
-### Rewriting the Seattle library data
+### Riscrivere i dati della biblioteca di Seattle
 
-Let's apply these ideas to the Seattle library data to see how they play out in practice.
-We're going to partition by `CheckoutYear`, since it's likely some analyses will only want to look at recent data and partitioning by year yields 18 chunks of a reasonable size.
+Applichiamo queste idee ai dati della biblioteca di Seattle per vedere come funzionano in pratica.
+Stiamo per partizionare per `CheckoutYear`, dato che è probabile che alcune analisi vogliano guardare solo i dati recenti e partizionare per anno produce 18 chunk di dimensione ragionevole.
 
-To rewrite the data we define the partition using `dplyr::group_by()` and then save the partitions to a directory with `arrow::write_dataset()`.
-`write_dataset()` has two important arguments: a directory where we'll create the files and the format we'll use.
+Per riscrivere i dati definiamo la partizione usando `dplyr::group_by()` e poi salviamo le partizioni in una directory con `arrow::write_dataset()`.
+`write_dataset()` ha due argomenti importanti: una directory dove creeremo i file e il formato che useremo.
 
 ```{r}
 pq_path <- "data/seattle-library-checkouts"
@@ -175,9 +175,9 @@ seattle_csv |>
   write_dataset(path = pq_path, format = "parquet")
 ```
 
-This takes about a minute to run; as we'll see shortly this is an initial investment that pays off by making future operations much much faster.
+Questo richiede circa un minuto per essere eseguito; come vedremo a breve questo è un investimento iniziale che ripaga rendendo le operazioni future molto più veloci.
 
-Let's take a look at what we just produced:
+Diamo un'occhiata a quello che abbiamo appena prodotto:
 
 ```{r show-parquet-files}
 tibble(
@@ -186,23 +186,23 @@ tibble(
 )
 ```
 
-Our single 9GB CSV file has been rewritten into 18 parquet files.
-The file names use a "self-describing" convention used by the [Apache Hive](https://hive.apache.org) project.
-Hive-style partitions name folders with a "key=value" convention, so as you might guess, the `CheckoutYear=2005` directory contains all the data where `CheckoutYear` is 2005.
-Each file is between 100 and 300 MB and the total size is now around 4 GB, a little over half the size of the original CSV file.
-This is as we expect since parquet is a much more efficient format.
+Il nostro singolo file CSV di 9GB è stato riscritto in 18 file parquet.
+I nomi dei file usano una convenzione "auto-descrittiva" usata dal progetto [Apache Hive](https://hive.apache.org).
+Le partizioni in stile Hive nominano le cartelle con una convenzione "chiave=valore", quindi come potresti indovinare, la directory `CheckoutYear=2005` contiene tutti i dati dove `CheckoutYear` è 2005.
+Ogni file è tra 100 e 300 MB e la dimensione totale è ora intorno a 4 GB, poco più della metà della dimensione del file CSV originale.
+Questo è come ci aspettiamo dato che parquet è un formato molto più efficiente.
 
-## Using dplyr with arrow
+## Usare dplyr con arrow
 
-Now we've created these parquet files, we'll need to read them in again.
-We use `open_dataset()` again, but this time we give it a directory:
+Ora che abbiamo creato questi file parquet, dovremo leggerli di nuovo.
+Usiamo di nuovo `open_dataset()`, ma questa volta gli diamo una directory:
 
 ```{r}
 seattle_pq <- open_dataset(pq_path)
 ```
 
-Now we can write our dplyr pipeline.
-For example, we could count the total number of books checked out in each month for the last five years:
+Ora possiamo scrivere la nostra pipeline dplyr.
+Per esempio, potremmo contare il numero totale di libri presi in prestito in ogni mese per gli ultimi cinque anni:
 
 ```{r books-by-year-query}
 query <- seattle_pq |> 
@@ -212,26 +212,26 @@ query <- seattle_pq |>
   arrange(CheckoutYear, CheckoutMonth)
 ```
 
-Writing dplyr code for arrow data is conceptually similar to dbplyr, @sec-import-databases: you write dplyr code, which is automatically transformed into a query that the Apache Arrow C++ library understands, which is then executed when you call `collect()`.
-If we print out the `query` object we can see a little information about what we expect Arrow to return when the execution takes place:
+Scrivere codice dplyr per i dati arrow è concettualmente simile a dbplyr, @sec-import-databases: scrivi codice dplyr, che viene automaticamente trasformato in una query che la libreria Apache Arrow C++ capisce, che viene poi eseguita quando chiami `collect()`.
+Se stampiamo l'oggetto `query` possiamo vedere un po' di informazioni su quello che ci aspettiamo che Arrow restituisca quando ha luogo l'esecuzione:
 
 ```{r}
 query
 ```
 
-And we can get the results by calling `collect()`:
+E possiamo ottenere i risultati chiamando `collect()`:
 
 ```{r books-by-year}
 query |> collect()
 ```
 
-Like dbplyr, arrow only understands some R expressions, so you may not be able to write exactly the same code you usually would.
-However, the list of operations and functions supported is fairly extensive and continues to grow; find a complete list of currently supported functions in `?acero`.
+Come dbplyr, arrow capisce solo alcune espressioni R, quindi potresti non essere in grado di scrivere esattamente lo stesso codice che scriveresti di solito.
+Tuttavia, la lista di operazioni e funzioni supportate è abbastanza estesa e continua a crescere; trova una lista completa delle funzioni attualmente supportate in `?acero`.
 
-### Performance {#sec-parquet-fast}
+### Prestazioni {#sec-parquet-fast}
 
-Let's take a quick look at the performance impact of switching from CSV to parquet.
-First, let's time how long it takes to calculate the number of books checked out in each month of 2021, when the data is stored as a single large csv:
+Diamo un'occhiata veloce all'impatto sulle prestazioni del passaggio da CSV a parquet.
+Primo, cronometriamo quanto tempo ci vuole per calcolare il numero di libri presi in prestito in ogni mese del 2021, quando i dati sono memorizzati come un singolo CSV grande:
 
 ```{r dataset-performance-csv}
 #| cache: true
@@ -245,7 +245,7 @@ seattle_csv |>
   system.time()
 ```
 
-Now let's use our new version of the dataset in which the Seattle library checkout data has been partitioned into 18 smaller parquet files:
+Ora usiamo la nostra nuova versione del dataset in cui i dati di prestito della biblioteca di Seattle sono stati partizionati in 18 file parquet più piccoli:
 
 ```{r dataset-performance-multiple-parquet}
 #| cache: true
@@ -259,16 +259,16 @@ seattle_pq |>
   system.time()
 ```
 
-The \~100x speedup in performance is attributable to two factors: the multi-file partitioning, and the format of individual files:
+L'accelerazione delle prestazioni di ~100x è attribuibile a due fattori: il partizionamento multi-file, e il formato dei singoli file:
 
--   Partitioning improves performance because this query uses `CheckoutYear == 2021` to filter the data, and arrow is smart enough to recognize that it only needs to read 1 of the 18 parquet files.
--   The parquet format improves performance by storing data in a binary format that can be read more directly into memory. The column-wise format and rich metadata means that arrow only needs to read the four columns actually used in the query (`CheckoutYear`, `MaterialType`, `CheckoutMonth`, and `Checkouts`).
+-   Il partizionamento migliora le prestazioni perché questa query usa `CheckoutYear == 2021` per filtrare i dati, e arrow è abbastanza intelligente da riconoscere che deve leggere solo 1 dei 18 file parquet.
+-   Il formato parquet migliora le prestazioni memorizzando i dati in un formato binario che può essere letto più direttamente in memoria. Il formato per colonne e i metadati ricchi significano che arrow deve leggere solo le quattro colonne effettivamente usate nella query (`CheckoutYear`, `MaterialType`, `CheckoutMonth`, e `Checkouts`).
 
-This massive difference in performance is why it pays off to convert large CSVs to parquet!
+Questa enorme differenza nelle prestazioni è il motivo per cui vale la pena convertire grandi CSV in parquet!
 
-### Using duckdb with arrow
+### Usare duckdb con arrow
 
-There's one last advantage of parquet and arrow --- it's very easy to turn an arrow dataset into a DuckDB database (@sec-import-databases) by calling `arrow::to_duckdb()`:
+C'è un ultimo vantaggio di parquet e arrow --- è molto facile trasformare un dataset arrow in un database DuckDB (@sec-import-databases) chiamando `arrow::to_duckdb()`:
 
 ```{r use-duckdb}
 seattle_pq |> 
@@ -280,20 +280,20 @@ seattle_pq |>
   collect()
 ```
 
-The neat thing about `to_duckdb()` is that the transfer doesn't involve any memory copying, and speaks to the goals of the arrow ecosystem: enabling seamless transitions from one computing environment to another.
+La cosa bella di `to_duckdb()` è che il trasferimento non comporta alcuna copia di memoria, e parla degli obiettivi dell'ecosistema arrow: abilitare transizioni senza soluzione di continuità da un ambiente di calcolo a un altro.
 
-### Exercises
+### Esercizi
 
-1.  Figure out the most popular book each year.
-2.  Which author has the most books in the Seattle library system?
-3.  How has checkouts of books vs ebooks changed over the last 10 years?
+1.  Scopri il libro più popolare ogni anno.
+2.  Quale autore ha più libri nel sistema bibliotecario di Seattle?
+3.  Come sono cambiati i prestiti di libri vs ebook negli ultimi 10 anni?
 
-## Summary
+## Riassunto
 
-In this chapter, you've been given a taste of the arrow package, which provides a dplyr backend for working with large on-disk datasets.
-It can work with CSV files, and it's much much faster if you convert your data to parquet.
-Parquet is a binary data format that's designed specifically for data analysis on modern computers.
-Far fewer tools can work with parquet files compared to CSV, but its partitioned, compressed, and columnar structure makes it much more efficient to analyze.
+In questo capitolo, hai avuto un assaggio del pacchetto arrow, che fornisce un backend dplyr per lavorare con grandi dataset su disco.
+Può lavorare con file CSV, ed è molto più veloce se converti i tuoi dati in parquet.
+Parquet è un formato di dati binario progettato specificamente per l'analisi dei dati su computer moderni.
+Molti meno strumenti possono lavorare con file parquet rispetto a CSV, ma la sua struttura partizionata, compressa e colonnare lo rende molto più efficiente da analizzare.
 
-Next up you'll learn about your first non-rectangular data source, which you'll handle using tools provided by the tidyr package.
-We'll focus on data that comes from JSON files, but the general principles apply to tree-like data regardless of its source.
+Successivamente imparerai la tua prima fonte di dati non rettangolare, che gestirai usando strumenti forniti dal pacchetto tidyr.
+Ci concentreremo su dati che vengono da file JSON, ma i principi generali si applicano a dati ad albero indipendentemente dalla loro fonte.

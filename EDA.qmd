@@ -1,35 +1,35 @@
-# Exploratory data analysis {#sec-exploratory-data-analysis}
+# Analisi esplorativa dei dati {#sec-exploratory-data-analysis}
 
 ```{r}
 #| echo: false
 source("_common.R")
 ```
 
-## Introduction
+## Introduzione
 
-This chapter will show you how to use visualization and transformation to explore your data in a systematic way, a task that statisticians call exploratory data analysis, or EDA for short.
-EDA is an iterative cycle.
-You:
+Questo capitolo ti mostrerà come usare visualizzazione e trasformazione per esplorare i tuoi dati in modo sistematico, un compito che gli statistici chiamano analisi esplorativa dei dati, o EDA in breve.
+EDA è un ciclo iterativo.
+Tu:
 
-1.  Generate questions about your data.
+1.  Generi domande sui tuoi dati.
 
-2.  Search for answers by visualizing, transforming, and modelling your data.
+2.  Cerchi risposte visualizzando, trasformando e modellando i tuoi dati.
 
-3.  Use what you learn to refine your questions and/or generate new questions.
+3.  Usi quello che impari per raffinare le tue domande e/o generare nuove domande.
 
-EDA is not a formal process with a strict set of rules.
-More than anything, EDA is a state of mind.
-During the initial phases of EDA you should feel free to investigate every idea that occurs to you.
-Some of these ideas will pan out, and some will be dead ends.
-As your exploration continues, you will home in on a few particularly productive insights that you'll eventually write up and communicate to others.
+EDA non è un processo formale con un insieme rigoroso di regole.
+Più di ogni altra cosa, EDA è uno stato mentale.
+Durante le fasi iniziali di EDA dovresti sentirti libero di investigare ogni idea che ti viene in mente.
+Alcune di queste idee si riveleranno utili, e alcune saranno vicoli ciechi.
+Mentre la tua esplorazione continua, ti concentrerai su alcuni insight particolarmente produttivi che alla fine scriverai e comunicherai ad altri.
 
-EDA is an important part of any data analysis, even if the primary research questions are handed to you on a platter, because you always need to investigate the quality of your data.
-Data cleaning is just one application of EDA: you ask questions about whether your data meets your expectations or not.
-To do data cleaning, you'll need to deploy all the tools of EDA: visualization, transformation, and modelling.
+EDA è una parte importante di qualsiasi analisi dei dati, anche se le domande di ricerca primarie ti vengono consegnate su un piatto d'argento, perché devi sempre investigare la qualità dei tuoi dati.
+La pulizia dei dati è solo un'applicazione di EDA: fai domande su se i tuoi dati soddisfano le tue aspettative o no.
+Per fare pulizia dei dati, dovrai utilizzare tutti gli strumenti di EDA: visualizzazione, trasformazione e modellazione.
 
-### Prerequisites
+### Prerequisiti
 
-In this chapter we'll combine what you've learned about dplyr and ggplot2 to interactively ask questions, answer them with data, and then ask new questions.
+In questo capitolo combineremo quello che hai imparato su dplyr e ggplot2 per fare domande interattivamente, rispondere con i dati, e poi fare nuove domande.
 
 ```{r}
 #| label: setup
@@ -37,66 +37,66 @@ In this chapter we'll combine what you've learned about dplyr and ggplot2 to int
 library(tidyverse)
 ```
 
-## Questions
+## Domande
 
-> "There are no routine statistical questions, only questionable statistical routines." --- Sir David Cox
+> "Non ci sono domande statistiche di routine, solo routine statistiche discutibili." --- Sir David Cox
 
-> "Far better an approximate answer to the right question, which is often vague, than an exact answer to the wrong question, which can always be made precise." --- John Tukey
+> "Molto meglio una risposta approssimativa alla domanda giusta, che è spesso vaga, che una risposta esatta alla domanda sbagliata, che può sempre essere resa precisa." --- John Tukey
 
-Your goal during EDA is to develop an understanding of your data.
-The easiest way to do this is to use questions as tools to guide your investigation.
-When you ask a question, the question focuses your attention on a specific part of your dataset and helps you decide which graphs, models, or transformations to make.
+Il tuo obiettivo durante EDA è sviluppare una comprensione dei tuoi dati.
+Il modo più semplice per farlo è usare le domande come strumenti per guidare la tua investigazione.
+Quando fai una domanda, la domanda focalizza la tua attenzione su una parte specifica del tuo dataset e ti aiuta a decidere quali grafici, modelli, o trasformazioni fare.
 
-EDA is fundamentally a creative process.
-And like most creative processes, the key to asking *quality* questions is to generate a large *quantity* of questions.
-It is difficult to ask revealing questions at the start of your analysis because you do not know what insights can be gleaned from your dataset.
-On the other hand, each new question that you ask will expose you to a new aspect of your data and increase your chance of making a discovery.
-You can quickly drill down into the most interesting parts of your data---and develop a set of thought-provoking questions---if you follow up each question with a new question based on what you find.
+EDA è fondamentalmente un processo creativo.
+E come la maggior parte dei processi creativi, la chiave per fare domande di *qualità* è generare una grande *quantità* di domande.
+È difficile fare domande rivelatrici all'inizio della tua analisi perché non sai quali insight possono essere ricavati dal tuo dataset.
+D'altra parte, ogni nuova domanda che fai ti esporrà a un nuovo aspetto dei tuoi dati e aumenterà le tue possibilità di fare una scoperta.
+Puoi rapidamente concentrarti sulle parti più interessanti dei tuoi dati---e sviluppare un insieme di domande stimolanti---se segui ogni domanda con una nuova domanda basata su quello che trovi.
 
-There is no rule about which questions you should ask to guide your research.
-However, two types of questions will always be useful for making discoveries within your data.
-You can loosely word these questions as:
+Non c'è una regola su quali domande dovresti fare per guidare la tua ricerca.
+Tuttavia, due tipi di domande saranno sempre utili per fare scoperte nei tuoi dati.
+Puoi formulare vagamente queste domande come:
 
-1.  What type of variation occurs within my variables?
+1.  Che tipo di variazione si verifica all'interno delle mie variabili?
 
-2.  What type of covariation occurs between my variables?
+2.  Che tipo di covariazione si verifica tra le mie variabili?
 
-The rest of this chapter will look at these two questions.
-We'll explain what variation and covariation are, and we'll show you several ways to answer each question.
+Il resto di questo capitolo esaminerà queste due domande.
+Spiegheremo cosa sono variazione e covariazione, e ti mostreremo diversi modi per rispondere a ogni domanda.
 
-## Variation
+## Variazione
 
-**Variation** is the tendency of the values of a variable to change from measurement to measurement.
-You can see variation easily in real life; if you measure any continuous variable twice, you will get two different results.
-This is true even if you measure quantities that are constant, like the speed of light.
-Each of your measurements will include a small amount of error that varies from measurement to measurement.
-Variables can also vary if you measure across different subjects (e.g., the eye colors of different people) or at different times (e.g., the energy levels of an electron at different moments).
-Every variable has its own pattern of variation, which can reveal interesting information about how it varies between measurements on the same observation as well as across observations.
-The best way to understand that pattern is to visualize the distribution of the variable's values, which you've learned about in @sec-data-visualization.
+**Variazione** è la tendenza dei valori di una variabile a cambiare da misurazione a misurazione.
+Puoi vedere facilmente la variazione nella vita reale; se misuri qualsiasi variabile continua due volte, otterrai due risultati diversi.
+Questo è vero anche se misuri quantità che sono costanti, come la velocità della luce.
+Ognuna delle tue misurazioni includerà una piccola quantità di errore che varia da misurazione a misurazione.
+Le variabili possono anche variare se misuri attraverso soggetti diversi (es., i colori degli occhi di persone diverse) o in tempi diversi (es., i livelli di energia di un elettrone in momenti diversi).
+Ogni variabile ha il suo modello di variazione, che può rivelare informazioni interessanti su come varia tra misurazioni sulla stessa osservazione così come tra osservazioni.
+Il modo migliore per capire quel modello è visualizzare la distribuzione dei valori della variabile, di cui hai imparato in @sec-data-visualization.
 
-We'll start our exploration by visualizing the distribution of weights (`carat`) of \~54,000 diamonds from the `diamonds` dataset.
-Since `carat` is a numerical variable, we can use a histogram:
+Inizieremo la nostra esplorazione visualizzando la distribuzione dei pesi (`carat`) di \~54.000 diamanti dal dataset `diamonds`.
+Poiché `carat` è una variabile numerica, possiamo usare un istogramma:
 
 ```{r}
 #| fig-alt: |
-#|   A histogram of carats of diamonds, with the x-axis ranging from 0 to 4.5 
-#|   and the y-axis ranging from 0 to 30000. The distribution is right skewed 
-#|   with very few diamonds in the bin centered at 0, almost 30000 diamonds in 
-#|   the bin centered at 0.5, approximately 15000 diamonds in the bin centered 
-#|   at 1, and much fewer, approximately 5000 diamonds in the bin centered at 
-#|   1.5. Beyond this, there's a trailing tail.
+#|   Un istogramma dei carati dei diamanti, con l'asse x che varia da 0 a 4.5 
+#|   e l'asse y che varia da 0 a 30000. La distribuzione è asimmetrica a destra 
+#|   con pochissimi diamanti nel bin centrato a 0, quasi 30000 diamanti nel 
+#|   bin centrato a 0.5, circa 15000 diamanti nel bin centrato 
+#|   a 1, e molti meno, circa 5000 diamanti nel bin centrato a 
+#|   1.5. Oltre a questo, c'è una coda finale.
 ggplot(diamonds, aes(x = carat)) +
   geom_histogram(binwidth = 0.5)
 ```
 
-Now that you can visualize variation, what should you look for in your plots?
-And what type of follow-up questions should you ask?
-We've put together a list below of the most useful types of information that you will find in your graphs, along with some follow-up questions for each type of information.
-The key to asking good follow-up questions will be to rely on your curiosity (What do you want to learn more about?) as well as your skepticism (How could this be misleading?).
+Ora che puoi visualizzare la variazione, cosa dovresti cercare nei tuoi grafici?
+E che tipo di domande di follow-up dovresti fare?
+Abbiamo messo insieme una lista qui sotto dei tipi più utili di informazioni che troverai nei tuoi grafici, insieme ad alcune domande di follow-up per ogni tipo di informazione.
+La chiave per fare buone domande di follow-up sarà fare affidamento sulla tua curiosità (Cosa vuoi imparare di più?) così come sul tuo scetticismo (Come potrebbe questo essere fuorviante?).
 
-### Typical values
+### Valori tipici
 
-In both bar charts and histograms, tall bars show the common values of a variable, and shorter bars show less-common values.
+Sia nei grafici a barre che negli istogrammi, le barre alte mostrano i valori comuni di una variabile, e le barre più corte mostrano valori meno comuni.
 Places that do not have bars reveal values that were not seen in your data.
 To turn this information into useful questions, look for anything unexpected:
 
@@ -147,7 +147,7 @@ Some of these questions can be answered with the data while some will require do
 Many of them will prompt you to explore a relationship *between* variables, for example, to see if the values of one variable can explain the behavior of another variable.
 We'll get to that shortly.
 
-### Unusual values
+### Valori insoliti
 
 Outliers are observations that are unusual; data points that don't seem to fit the pattern.
 Sometimes outliers are data entry errors, sometimes they are simply values at the extremes that happened to be observed in this data collection, and other times they suggest important new discoveries.
@@ -214,7 +214,7 @@ If they have minimal effect on the results, and you can't figure out why they're
 However, if they have a substantial effect on your results, you shouldn't drop them without justification.
 You'll need to figure out what caused them (e.g., a data entry error) and disclose that you removed them in your write-up.
 
-### Exercises
+### Esercizi
 
 1.  Explore the distribution of each of the `x`, `y`, and `z` variables in `diamonds`.
     What do you learn?
@@ -232,7 +232,7 @@ You'll need to figure out what caused them (e.g., a data entry error) and disclo
     What happens if you leave `binwidth` unset?
     What happens if you try and zoom so only half a bar shows?
 
-## Unusual values {#sec-unusual-values-eda}
+## Valori insoliti {#sec-unusual-values-eda}
 
 If you've encountered unusual values in your dataset, and simply want to move on to the rest of your analysis, you have two options.
 
@@ -304,7 +304,7 @@ nycflights13::flights |>
 However this plot isn't great because there are many more non-cancelled flights than cancelled flights.
 In the next section we'll explore some techniques for improving this comparison.
 
-### Exercises
+### Esercizi
 
 1.  What happens to missing values in a histogram?
     What happens to missing values in a bar chart?
@@ -316,15 +316,15 @@ In the next section we'll explore some techniques for improving this comparison.
     Also facet by the `cancelled` variable.
     Experiment with different values of the `scales` variable in the faceting function to mitigate the effect of more non-cancelled flights than cancelled flights.
 
-## Covariation
+## Covariazione
 
-If variation describes the behavior *within* a variable, covariation describes the behavior *between* variables.
-**Covariation** is the tendency for the values of two or more variables to vary together in a related way.
-The best way to spot covariation is to visualize the relationship between two or more variables.
+Se la variazione descrive il comportamento *all'interno* di una variabile, la covariazione descrive il comportamento *tra* variabili.
+**Covariazione** è la tendenza dei valori di due o più variabili a variare insieme in modo correlato.
+Il modo migliore per individuare la covariazione è visualizzare la relazione tra due o più variabili.
 
-### A categorical and a numerical variable {#sec-cat-num}
+### Una variabile categorica e una numerica {#sec-cat-num}
 
-For example, let's explore how the price of a diamond varies with its quality (measured by `cut`) using `geom_freqpoly()`:
+Per esempio, esploriamo come il prezzo di un diamante varia con la sua qualità (misurata da `cut`) usando `geom_freqpoly()`:
 
 ```{r}
 #| fig-alt: |
@@ -418,7 +418,7 @@ ggplot(mpg, aes(x = hwy, y = fct_reorder(class, hwy, median))) +
   geom_boxplot()
 ```
 
-#### Exercises
+#### Esercizi
 
 1.  Use what you've learned to improve the visualization of the departure times of cancelled vs. non-cancelled flights.
 
@@ -443,7 +443,7 @@ ggplot(mpg, aes(x = hwy, y = fct_reorder(class, hwy, median))) +
     The ggbeeswarm package provides a number of methods similar to `geom_jitter()`.
     List them and briefly describe what each one does.
 
-### Two categorical variables
+### Due variabili categoriche
 
 To visualize the covariation between categorical variables, you'll need to count the number of observations for each combination of levels of these categorical variables.
 One way to do that is to rely on the built-in `geom_count()`:
@@ -487,7 +487,7 @@ diamonds |>
 If the categorical variables are unordered, you might want to use the seriation package to simultaneously reorder the rows and columns in order to more clearly reveal interesting patterns.
 For larger plots, you might want to try the heatmaply package, which creates interactive plots.
 
-#### Exercises
+#### Esercizi
 
 1.  How could you rescale the count dataset above to more clearly show the distribution of cut within color, or color within cut?
 
@@ -498,7 +498,7 @@ For larger plots, you might want to try the heatmaply package, which creates int
     What makes the plot difficult to read?
     How could you improve it?
 
-### Two numerical variables
+### Due variabili numeriche
 
 You've already seen one great way to visualize the covariation between two numerical variables: draw a scatterplot with `geom_point()`.
 You can see covariation as a pattern in the points.
@@ -576,7 +576,7 @@ ggplot(smaller, aes(x = carat, y = price)) +
 By default, boxplots look roughly the same (apart from number of outliers) regardless of how many observations there are, so it's difficult to tell that each boxplot summarizes a different number of points.
 One way to show that is to make the width of the boxplot proportional to the number of points with `varwidth = TRUE`.
 
-#### Exercises
+#### Esercizi
 
 1.  Instead of summarizing the conditional distribution with a boxplot, you could use a frequency polygon.
     What do you need to consider when using `cut_width()` vs. `cut_number()`?
@@ -611,7 +611,7 @@ One way to show that is to make the width of the boxplot proportional to the num
       geom_boxplot(aes(group = cut_number(carat, 20)))
     ```
 
-## Patterns and models
+## Pattern e modelli
 
 If a systematic relationship exists between two variables it will appear as a pattern in the data.
 If you spot a pattern, ask yourself:
@@ -678,12 +678,12 @@ ggplot(diamonds_aug, aes(x = cut, y = .resid)) +
   geom_boxplot()
 ```
 
-We're not discussing modelling in this book because understanding what models are and how they work is easiest once you have tools of data wrangling and programming in hand.
+Non stiamo discutendo di modellazione in questo libro perché capire cosa sono i modelli e come funzionano è più facile una volta che hai gli strumenti di manipolazione dati e programmazione in mano.
 
-## Summary
+## Riassunto
 
-In this chapter you've learned a variety of tools to help you understand the variation within your data.
-You've seen techniques that work with a single variable at a time and with a pair of variables.
-This might seem painfully restrictive if you have tens or hundreds of variables in your data, but they're the foundation upon which all other techniques are built.
+In questo capitolo hai imparato una varietà di strumenti per aiutarti a capire la variazione nei tuoi dati.
+Hai visto tecniche che funzionano con una singola variabile alla volta e con una coppia di variabili.
+Questo potrebbe sembrare dolorosamente restrittivo se hai decine o centinaia di variabili nei tuoi dati, ma sono le fondamenta su cui tutte le altre tecniche sono costruite.
 
-In the next chapter, we'll focus on the tools we can use to communicate our results.
+Nel prossimo capitolo, ci concentreremo sugli strumenti che possiamo usare per comunicare i nostri risultati.

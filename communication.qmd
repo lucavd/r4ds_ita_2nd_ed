@@ -1,33 +1,33 @@
-# Communication {#sec-communication}
+# Comunicazione {#sec-communication}
 
 ```{r}
 #| echo: false
 source("_common.R")
 ```
 
-## Introduction
+## Introduzione
 
-In @sec-exploratory-data-analysis, you learned how to use plots as tools for *exploration*.
-When you make exploratory plots, you know---even before looking---which variables the plot will display.
-You made each plot for a purpose, could quickly look at it, and then move on to the next plot.
-In the course of most analyses, you'll produce tens or hundreds of plots, most of which are immediately thrown away.
+In @sec-exploratory-data-analysis, hai imparato come usare i grafici come strumenti per l'*esplorazione*.
+Quando fai grafici esplorativi, sai---anche prima di guardare---quali variabili il grafico mostrerà.
+Hai fatto ogni grafico per uno scopo, potevi guardarlo velocemente, e poi passare al grafico successivo.
+Nel corso della maggior parte delle analisi, produrrai decine o centinaia di grafici, la maggior parte dei quali vengono immediatamente buttati via.
 
-Now that you understand your data, you need to *communicate* your understanding to others.
-Your audience will likely not share your background knowledge and will not be deeply invested in the data.
-To help others quickly build up a good mental model of the data, you will need to invest considerable effort in making your plots as self-explanatory as possible.
-In this chapter, you'll learn some of the tools that ggplot2 provides to do so.
+Ora che capisci i tuoi dati, devi *comunicare* la tua comprensione ad altri.
+Il tuo pubblico probabilmente non condividerà le tue conoscenze di base e non sarà profondamente coinvolto nei dati.
+Per aiutare altri a costruire rapidamente un buon modello mentale dei dati, dovrai investire uno sforzo considerevole nel rendere i tuoi grafici il più auto-esplicativi possibile.
+In questo capitolo, imparerai alcuni degli strumenti che ggplot2 fornisce per farlo.
 
-This chapter focuses on the tools you need to create good graphics.
-We assume that you know what you want, and just need to know how to do it.
-For that reason, we highly recommend pairing this chapter with a good general visualization book.
-We particularly like [The Truthful Art](https://www.amazon.com/gp/product/0321934075/), by Albert Cairo.
-It doesn't teach the mechanics of creating visualizations, but instead focuses on what you need to think about in order to create effective graphics.
+Questo capitolo si concentra sugli strumenti di cui hai bisogno per creare buoni grafici.
+Assumiamo che tu sappia cosa vuoi, e che tu abbia solo bisogno di sapere come farlo.
+Per questa ragione, raccomandiamo vivamente di abbinare questo capitolo con un buon libro generale sulla visualizzazione.
+Ci piace particolarmente [The Truthful Art](https://www.amazon.com/gp/product/0321934075/), di Albert Cairo.
+Non insegna la meccanica della creazione di visualizzazioni, ma si concentra invece su quello a cui devi pensare per creare grafici efficaci.
 
-### Prerequisites
+### Prerequisiti
 
-In this chapter, we'll focus once again on ggplot2.
-We'll also use a little dplyr for data manipulation, **scales** to override the default breaks, labels, transformations and palettes, and a few ggplot2 extension packages, including **ggrepel** ([https://ggrepel.slowkow.com](https://ggrepel.slowkow.com/)) by Kamil Slowikowski and **patchwork** ([https://patchwork.data-imaginist.com](https://patchwork.data-imaginist.com/)) by Thomas Lin Pedersen.
-Don't forget that you'll need to install those packages with `install.packages()` if you don't already have them.
+In questo capitolo, ci concentreremo ancora una volta su ggplot2.
+Useremo anche un po' di dplyr per la manipolazione dei dati, **scales** per sovrascrivere le interruzioni, etichette, trasformazioni e palette predefinite, e alcuni pacchetti di estensione ggplot2, inclusi **ggrepel** ([https://ggrepel.slowkow.com](https://ggrepel.slowkow.com/)) di Kamil Slowikowski e **patchwork** ([https://patchwork.data-imaginist.com](https://patchwork.data-imaginist.com/)) di Thomas Lin Pedersen.
+Non dimenticare che dovrai installare quei pacchetti con `install.packages()` se non li hai già.
 
 ```{r}
 #| label: setup
@@ -38,10 +38,10 @@ library(ggrepel)
 library(patchwork)
 ```
 
-## Labels
+## Etichette
 
-The easiest place to start when turning an exploratory graphic into an expository graphic is with good labels.
-You add labels with the `labs()` function.
+Il posto più facile per iniziare quando trasformi un grafico esplorativo in un grafico esplicativo è con buone etichette.
+Aggiungi etichette con la funzione `labs()`.
 
 ```{r}
 #| message: false
@@ -98,7 +98,7 @@ ggplot(df, aes(x, y)) +
   )
 ```
 
-### Exercises
+### Esercizi
 
 1.  Create one plot on the fuel economy data with customized `title`, `subtitle`, `caption`, `x`, `y`, and `color` labels.
 
@@ -122,16 +122,16 @@ ggplot(df, aes(x, y)) +
 
 3.  Take an exploratory graphic that you've created in the last month, and add informative titles to make it easier for others to understand.
 
-## Annotations
+## Annotazioni
 
-In addition to labelling major components of your plot, it's often useful to label individual observations or groups of observations.
-The first tool you have at your disposal is `geom_text()`.
-`geom_text()` is similar to `geom_point()`, but it has an additional aesthetic: `label`.
-This makes it possible to add textual labels to your plots.
+Oltre ad etichettare i componenti principali del tuo grafico, è spesso utile etichettare osservazioni individuali o gruppi di osservazioni.
+Il primo strumento che hai a disposizione è `geom_text()`.
+`geom_text()` è simile a `geom_point()`, ma ha un'estetica aggiuntiva: `label`.
+Questo rende possibile aggiungere etichette testuali ai tuoi grafici.
 
-There are two possible sources of labels.
-First, you might have a tibble that provides labels.
-In the following plot we pull out the cars with the highest engine size in each drive type and save their information as a new data frame called `label_info`.
+Ci sono due possibili fonti di etichette.
+Primo, potresti avere un tibble che fornisce etichette.
+Nel grafico seguente estraiamo le auto con la cilindrata del motore più alta in ogni tipo di trazione e salviamo le loro informazioni come un nuovo data frame chiamato `label_info`.
 
 ```{r}
 label_info <- mpg |>
@@ -270,7 +270,7 @@ ggplot(mpg, aes(x = displ, y = hwy)) +
 Annotation is a powerful tool for communicating main takeaways and interesting features of your visualizations.
 The only limit is your imagination (and your patience with positioning annotations to be aesthetically pleasing)!
 
-### Exercises
+### Esercizi
 
 1.  Use `geom_text()` with infinite positions to place text at the four corners of the plot.
 
@@ -288,12 +288,12 @@ The only limit is your imagination (and your patience with positioning annotatio
     How do they work?
     Create a series of plots that demonstrate the most important options.
 
-## Scales
+## Scale
 
 The third way you can make your plot better for communication is to adjust the scales.
 Scales control how the aesthetic mappings manifest visually.
 
-### Default scales
+### Scale predefinite
 
 Normally, ggplot2 automatically adds scales for you.
 For example, when you type:
@@ -330,7 +330,7 @@ Nevertheless, you might want to override the defaults for two reasons:
 -   You might want to replace the scale altogether, and use a completely different algorithm.
     Often you can do better than the default because you know more about the data.
 
-### Axis ticks and legend keys
+### Tick degli assi e chiavi della legenda
 
 Collectively axes and legends are called **guides**.
 Axes are used for x and y aesthetics; legends are used for everything else.
@@ -431,7 +431,7 @@ Also note that the specification of breaks and labels for date and datetime scal
 
 -   `date_breaks` (not shown here), takes a string like "2 days" or "1 month".
 
-### Legend layout
+### Layout della legenda
 
 You will most often use `breaks` and `labels` to tweak the axes.
 While they both also work for legends, there are a few other techniques you are more likely to use.
@@ -483,7 +483,7 @@ ggplot(mpg, aes(x = displ, y = hwy)) +
 
 Note that the name of the argument in `guides()` matches the name of the aesthetic, just like in `labs()`.
 
-### Replacing a scale
+### Sostituire una scala
 
 Instead of just tweaking the details a little, you can instead replace the scale altogether.
 There are two types of scales you're mostly likely to want to switch out: continuous position scales and color scales.
@@ -644,7 +644,7 @@ ggplot(df, aes(x, y)) +
 
 Note that all color scales come in two varieties: `scale_color_*()` and `scale_fill_*()` for the `color` and `fill` aesthetics respectively (the color scales are available in both UK and US spellings).
 
-### Zooming
+### Zoom
 
 There are three ways to control the plot limits:
 
@@ -775,7 +775,7 @@ ggplot(compact, aes(x = displ, y = hwy, color = drv)) +
 
 In this particular case, you could have simply used faceting, but this technique is useful more generally, if for instance, you want to spread plots over multiple pages of a report.
 
-### Exercises
+### Esercizi
 
 1.  Why doesn't the following code override the default scale?
 
@@ -812,7 +812,7 @@ In this particular case, you could have simply used faceting, but this technique
       geom_point(aes(color = cut), alpha = 1/20)
     ```
 
-## Themes {#sec-themes}
+## Temi {#sec-themes}
 
 Finally, you can customize the non-data elements of your plot with a theme:
 
@@ -892,7 +892,7 @@ ggplot(mpg, aes(x = displ, y = hwy, color = drv)) +
 For an overview of all `theme()` components, see help with `?theme`.
 The [ggplot2 book](https://ggplot2-book.org/) is also a great place to go for the full details on theming.
 
-### Exercises
+### Esercizi
 
 1.  Pick a theme offered by the ggthemes package and apply it to the last plot you made.
 2.  Make the axis labels of your plot blue and bolded.
@@ -1001,7 +1001,7 @@ p5 <- ggplot(mpg, aes(x = cty, y = hwy, color = drv)) +
 
 If you'd like to learn more about combining and layout out multiple plots with patchwork, we recommend looking through the guides on the package website: <https://patchwork.data-imaginist.com>.
 
-### Exercises
+### Esercizi
 
 1.  What happens if you omit the parentheses in the following plot layout.
     Can you explain why this happens?
@@ -1042,11 +1042,11 @@ If you'd like to learn more about combining and layout out multiple plots with p
       )
     ```
 
-## Summary
+## Riassunto
 
-In this chapter you've learned about adding plot labels such as title, subtitle, caption as well as modifying default axis labels, using annotation to add informational text to your plot or to highlight specific data points, customizing the axis scales, and changing the theme of your plot.
-You've also learned about combining multiple plots in a single graph using both simple and complex plot layouts.
+In questo capitolo hai imparato ad aggiungere etichette del grafico come titolo, sottotitolo, didascalia così come modificare le etichette degli assi predefinite, usare annotazioni per aggiungere testo informativo al tuo grafico o per evidenziare punti dati specifici, personalizzare le scale degli assi, e cambiare il tema del tuo grafico.
+Hai anche imparato a combinare grafici multipli in un singolo grafico usando sia layout di grafici semplici che complessi.
 
-While you've so far learned about how to make many different types of plots and how to customize them using a variety of techniques, we've barely scratched the surface of what you can create with ggplot2.
-If you want to get a comprehensive understanding of ggplot2, we recommend reading the book, [*ggplot2: Elegant Graphics for Data Analysis*](https://ggplot2-book.org).
-Other useful resources are the [*R Graphics Cookbook*](https://r-graphics.org) by Winston Chang and [*Fundamentals of Data Visualization*](https://clauswilke.com/dataviz/) by Claus Wilke.
+Mentre finora hai imparato come fare molti tipi diversi di grafici e come personalizzarli usando una varietà di tecniche, abbiamo appena graffiato la superficie di quello che puoi creare con ggplot2.
+Se vuoi ottenere una comprensione completa di ggplot2, raccomandiamo di leggere il libro, [*ggplot2: Elegant Graphics for Data Analysis*](https://ggplot2-book.org).
+Altre risorse utili sono [*R Graphics Cookbook*](https://r-graphics.org) di Winston Chang e [*Fundamentals of Data Visualization*](https://clauswilke.com/dataviz/) di Claus Wilke.

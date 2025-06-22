@@ -1,18 +1,18 @@
-# Spreadsheets {#sec-import-spreadsheets}
+# Fogli di calcolo {#sec-import-spreadsheets}
 
 ```{r}
 #| echo: false
 source("_common.R")
 ```
 
-## Introduction
+## Introduzione
 
-In @sec-data-import you learned about importing data from plain text files like `.csv` and `.tsv`.
-Now it's time to learn how to get data out of a spreadsheet, either an Excel spreadsheet or a Google Sheet.
-This will build on much of what you've learned in @sec-data-import, but we will also discuss additional considerations and complexities when working with data from spreadsheets.
+In @sec-data-import hai imparato a importare dati da file di testo semplice come `.csv` e `.tsv`.
+Ora è il momento di imparare come estrarre dati da un foglio di calcolo, sia esso un foglio di calcolo Excel o un Google Sheet.
+Questo si basarà su molto di quello che hai imparato in @sec-data-import, ma discuteremo anche considerazioni e complessità aggiuntive quando lavori con dati da fogli di calcolo.
 
-If you or your collaborators are using spreadsheets for organizing data, we strongly recommend reading the paper "Data Organization in Spreadsheets" by Karl Broman and Kara Woo: <https://doi.org/10.1080/00031305.2017.1375989>.
-The best practices presented in this paper will save you much headache when you import data from a spreadsheet into R to analyze and visualize.
+Se tu o i tuoi collaboratori state usando fogli di calcolo per organizzare i dati, raccomandiamo vivamente di leggere l'articolo "Data Organization in Spreadsheets" di Karl Broman e Kara Woo: <https://doi.org/10.1080/00031305.2017.1375989>.
+Le migliori pratiche presentate in questo articolo ti faranno risparmiare molti mal di testa quando importi dati da un foglio di calcolo in R per analizzarli e visualizzarli.
 
 ## Excel
 

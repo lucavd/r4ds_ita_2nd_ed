@@ -1,28 +1,28 @@
-# Databases {#sec-import-databases}
+# Database {#sec-import-databases}
 
 ```{r}
 #| echo: false
 source("_common.R")
 ```
 
-## Introduction
+## Introduzione
 
-A huge amount of data lives in databases, so it's essential that you know how to access it.
-Sometimes you can ask someone to download a snapshot into a `.csv` for you, but this gets painful quickly: every time you need to make a change you'll have to communicate with another human.
-You want to be able to reach into the database directly to get the data you need, when you need it.
+Un'enorme quantità di dati risiede nei database, quindi è essenziale sapere come accedervi.
+A volte puoi chiedere a qualcuno di scaricare un'istantanea in un file `.csv` per te, ma questo diventa rapidamente doloroso: ogni volta che devi apportare una modifica dovrai comunicare con un altro essere umano.
+Vuoi essere in grado di accedere direttamente al database per ottenere i dati di cui hai bisogno, quando ne hai bisogno.
 
-In this chapter, you'll first learn the basics of the DBI package: how to use it to connect to a database and then retrieve data with a SQL[^databases-1] query.
-**SQL**, short for **s**tructured **q**uery **l**anguage, is the lingua franca of databases, and is an important language for all data scientists to learn.
-That said, we're not going to start with SQL, but instead we'll teach you dbplyr, which can translate your dplyr code to the SQL.
-We'll use that as a way to teach you some of the most important features of SQL.
-You won't become a SQL master by the end of the chapter, but you will be able to identify the most important components and understand what they do.
+In questo capitolo, imparerai prima le basi del pacchetto DBI: come usarlo per connetterti a un database e poi recuperare dati con una query SQL[^databases-1].
+**SQL**, abbreviazione di **s**tructured **q**uery **l**anguage, è la lingua franca dei database ed è un linguaggio importante da imparare per tutti i data scientist.
+Detto questo, non inizieremo con SQL, ma invece ti insegneremo dbplyr, che può tradurre il tuo codice dplyr in SQL.
+Useremo questo come modo per insegnarti alcune delle caratteristiche più importanti di SQL.
+Non diventerai un maestro di SQL alla fine del capitolo, ma sarai in grado di identificare i componenti più importanti e capire cosa fanno.
 
-[^databases-1]: SQL is either pronounced "s"-"q"-"l" or "sequel".
+[^databases-1]: SQL si pronuncia "esse-qu-elle" o "sequel".
 
-### Prerequisites
+### Prerequisiti
 
-In this chapter, we'll introduce DBI and dbplyr.
-DBI is a low-level interface that connects to databases and executes SQL; dbplyr is a high-level interface that translates your dplyr code to SQL queries then executes them with DBI.
+In questo capitolo, introdurremo DBI e dbplyr.
+DBI è un'interfaccia di basso livello che si connette ai database ed esegue SQL; dbplyr è un'interfaccia di alto livello che traduce il tuo codice dplyr in query SQL e poi le esegue con DBI.
 
 ```{r}
 #| label: setup
@@ -32,49 +32,49 @@ library(dbplyr)
 library(tidyverse)
 ```
 
-## Database basics
+## Basi dei database
 
-At the simplest level, you can think about a database as a collection of data frames, called **tables** in database terminology.
-Like a data frame, a database table is a collection of named columns, where every value in the column is the same type.
-There are three high level differences between data frames and database tables:
+Al livello più semplice, puoi pensare a un database come a una collezione di data frame, chiamate **tabelle** nella terminologia dei database.
+Come un data frame, una tabella di database è una collezione di colonne nominate, dove ogni valore nella colonna è dello stesso tipo.
+Ci sono tre differenze di alto livello tra data frame e tabelle di database:
 
--   Database tables are stored on disk and can be arbitrarily large.
-    Data frames are stored in memory, and are fundamentally limited (although that limit is still plenty large for many problems).
+-   Le tabelle di database sono memorizzate su disco e possono essere arbitrariamente grandi.
+    I data frame sono memorizzati in memoria e sono fondamentalmente limitati (anche se quel limite è comunque abbastanza grande per molti problemi).
 
--   Database tables almost always have indexes.
-    Much like the index of a book, a database index makes it possible to quickly find rows of interest without having to look at every single row.
-    Data frames and tibbles don't have indexes, but data.tables do, which is one of the reasons that they're so fast.
+-   Le tabelle di database hanno quasi sempre degli indici.
+    Proprio come l'indice di un libro, un indice di database rende possibile trovare rapidamente le righe di interesse senza dover guardare ogni singola riga.
+    I data frame e i tibble non hanno indici, ma i data.table sì, che è uno dei motivi per cui sono così veloci.
 
--   Most classical databases are optimized for rapidly collecting data, not analyzing existing data.
-    These databases are called **row-oriented** because the data is stored row-by-row, rather than column-by-column like R.
-    More recently, there's been much development of **column-oriented** databases that make analyzing the existing data much faster.
+-   La maggior parte dei database classici è ottimizzata per raccogliere rapidamente i dati, non per analizzare i dati esistenti.
+    Questi database sono chiamati **orientati alle righe** perché i dati sono memorizzati riga per riga, piuttosto che colonna per colonna come R.
+    Più recentemente, c'è stato molto sviluppo di database **orientati alle colonne** che rendono molto più veloce l'analisi dei dati esistenti.
 
-Databases are run by database management systems (**DBMS**'s for short), which come in three basic forms:
+I database sono gestiti dai sistemi di gestione di database (**DBMS** in breve), che si presentano in tre forme di base:
 
--   **Client-server** DBMS's run on a powerful central server, which you connect to from your computer (the client). They are great for sharing data with multiple people in an organization. Popular client-server DBMS's include PostgreSQL, MariaDB, SQL Server, and Oracle.
--   **Cloud** DBMS's, like Snowflake, Amazon's RedShift, and Google's BigQuery, are similar to client server DBMS's, but they run in the cloud. This means that they can easily handle extremely large datasets and can automatically provide more compute resources as needed.
--   **In-process** DBMS's, like SQLite or duckdb, run entirely on your computer. They're great for working with large datasets where you're the primary user.
+-   I DBMS **client-server** funzionano su un potente server centrale, a cui ti connetti dal tuo computer (il client). Sono ottimi per condividere dati con più persone in un'organizzazione. I DBMS client-server popolari includono PostgreSQL, MariaDB, SQL Server e Oracle.
+-   I DBMS **cloud**, come Snowflake, Amazon RedShift e Google BigQuery, sono simili ai DBMS client-server, ma funzionano nel cloud. Questo significa che possono facilmente gestire dataset estremamente grandi e possono fornire automaticamente più risorse di calcolo quando necessario.
+-   I DBMS **in-process**, come SQLite o duckdb, funzionano interamente sul tuo computer. Sono ottimi per lavorare con grandi dataset dove sei l'utente principale.
 
-## Connecting to a database
+## Connettersi a un database
 
-To connect to the database from R, you'll use a pair of packages:
+Per connetterti al database da R, userai una coppia di pacchetti:
 
--   You'll always use DBI (**d**ata**b**ase **i**nterface) because it provides a set of generic functions that connect to the database, upload data, run SQL queries, etc.
+-   Userai sempre DBI (**d**ata**b**ase **i**nterface) perché fornisce un insieme di funzioni generiche che si connettono al database, caricano dati, eseguono query SQL, ecc.
 
--   You'll also use a package tailored for the DBMS you're connecting to.
-    This package translates the generic DBI commands into the specifics needed for a given DBMS.
-    There's usually one package for each DBMS, e.g.
-    RPostgres for PostgreSQL and RMariaDB for MySQL.
+-   Userai anche un pacchetto su misura per il DBMS a cui ti stai connettendo.
+    Questo pacchetto traduce i comandi DBI generici nelle specificità necessarie per un dato DBMS.
+    Di solito c'è un pacchetto per ogni DBMS, ad es.
+    RPostgres per PostgreSQL e RMariaDB per MySQL.
 
-If you can't find a specific package for your DBMS, you can usually use the odbc package instead.
-This uses the ODBC protocol supported by many DBMS.
-odbc requires a little more setup because you'll also need to install an ODBC driver and tell the odbc package where to find it.
+Se non riesci a trovare un pacchetto specifico per il tuo DBMS, puoi solitamente usare il pacchetto odbc invece.
+Questo usa il protocollo ODBC supportato da molti DBMS.
+odbc richiede un po' più di configurazione perché dovrai anche installare un driver ODBC e dire al pacchetto odbc dove trovarlo.
 
-Concretely, you create a database connection using `DBI::dbConnect()`.
-The first argument selects the DBMS[^databases-2], then the second and subsequent arguments describe how to connect to it (i.e. where it lives and the credentials that you need to access it).
-The following code shows a couple of typical examples:
+Concretamente, crei una connessione al database usando `DBI::dbConnect()`.
+Il primo argomento seleziona il DBMS[^databases-2], poi il secondo e i successivi argomenti descrivono come connettersi ad esso (cioè dove si trova e le credenziali necessarie per accedervi).
+Il seguente codice mostra un paio di esempi tipici:
 
-[^databases-2]: Typically, this is the only function you'll use from the client package, so we recommend using `::` to pull out that one function, rather than loading the complete package with `library()`.
+[^databases-2]: Tipicamente, questa è l'unica funzione che userai dal pacchetto client, quindi raccomandiamo di usare `::` per estrarre quella singola funzione, piuttosto che caricare il pacchetto completo con `library()`.
 
 ```{r}
 #| eval: false
@@ -89,54 +89,54 @@ con <- DBI::dbConnect(
 )
 ```
 
-The precise details of the connection vary a lot from DBMS to DBMS so unfortunately we can't cover all the details here.
-This means you'll need to do a little research on your own.
-Typically you can ask the other data scientists in your team or talk to your DBA (**d**ata**b**ase **a**dministrator).
-The initial setup will often take a little fiddling (and maybe some googling) to get it right, but you'll generally only need to do it once.
+I dettagli precisi della connessione variano molto da DBMS a DBMS quindi sfortunatamente non possiamo coprire tutti i dettagli qui.
+Questo significa che dovrai fare un po' di ricerca da solo.
+Tipicamente puoi chiedere agli altri data scientist del tuo team o parlare con il tuo DBA (**d**ata**b**ase **a**dministrator).
+La configurazione iniziale richiederà spesso un po' di smanettamento (e forse qualche ricerca su Google) per farla funzionare correttamente, ma generalmente dovrai farlo solo una volta.
 
-### In this book
+### In questo libro
 
-Setting up a client-server or cloud DBMS would be a pain for this book, so we'll instead use an in-process DBMS that lives entirely in an R package: duckdb.
-Thanks to the magic of DBI, the only difference between using duckdb and any other DBMS is how you'll connect to the database.
-This makes it great to teach with because you can easily run this code as well as easily take what you learn and apply it elsewhere.
+Configurare un DBMS client-server o cloud sarebbe una seccatura per questo libro, quindi useremo invece un DBMS in-process che vive interamente in un pacchetto R: duckdb.
+Grazie alla magia di DBI, l'unica differenza tra usare duckdb e qualsiasi altro DBMS è come ti connetterai al database.
+Questo lo rende ottimo per insegnare perché puoi facilmente eseguire questo codice così come facilmente prendere quello che impari e applicarlo altrove.
 
-Connecting to duckdb is particularly simple because the defaults create a temporary database that is deleted when you quit R.
-That's great for learning because it guarantees that you'll start from a clean slate every time you restart R:
+Connettersi a duckdb è particolarmente semplice perché le impostazioni predefinite creano un database temporaneo che viene eliminato quando esci da R.
+Questo è ottimo per imparare perché garantisce che inizierai da zero ogni volta che riavvii R:
 
 ```{r}
 con <- DBI::dbConnect(duckdb::duckdb())
 ```
 
-duckdb is a high-performance database that's designed very much for the needs of a data scientist.
-We use it here because it's very easy to get started with, but it's also capable of handling gigabytes of data with great speed.
-If you want to use duckdb for a real data analysis project, you'll also need to supply the `dbdir` argument to make a persistent database and tell duckdb where to save it.
-Assuming you're using a project (@sec-workflow-scripts-projects), it's reasonable to store it in the `duckdb` directory of the current project:
+duckdb è un database ad alte prestazioni progettato molto per le esigenze di un data scientist.
+Lo usiamo qui perché è molto facile iniziare, ma è anche capace di gestire gigabyte di dati con grande velocità.
+Se vuoi usare duckdb per un vero progetto di analisi dati, dovrai anche fornire l'argomento `dbdir` per creare un database persistente e dire a duckdb dove salvarlo.
+Assumendo che stai usando un progetto (@sec-workflow-scripts-projects), è ragionevole memorizzarlo nella directory `duckdb` del progetto corrente:
 
 ```{r}
 #| eval: false
 con <- DBI::dbConnect(duckdb::duckdb(), dbdir = "duckdb")
 ```
 
-### Load some data {#sec-load-data}
+### Caricare alcuni dati {#sec-load-data}
 
-Since this is a new database, we need to start by adding some data.
-Here we'll add `mpg` and `diamonds` datasets from ggplot2 using `DBI::dbWriteTable()`.
-The simplest usage of `dbWriteTable()` needs three arguments: a database connection, the name of the table to create in the database, and a data frame of data.
+Dato che questo è un nuovo database, dobbiamo iniziare aggiungendo alcuni dati.
+Qui aggiungeremo i dataset `mpg` e `diamonds` da ggplot2 usando `DBI::dbWriteTable()`.
+L'uso più semplice di `dbWriteTable()` ha bisogno di tre argomenti: una connessione al database, il nome della tabella da creare nel database e un data frame di dati.
 
 ```{r}
 dbWriteTable(con, "mpg", ggplot2::mpg)
 dbWriteTable(con, "diamonds", ggplot2::diamonds)
 ```
 
-If you're using duckdb in a real project, we highly recommend learning about `duckdb_read_csv()` and `duckdb_register_arrow()`.
-These give you powerful and performant ways to quickly load data directly into duckdb, without having to first load it into R.
-We'll also show off a useful technique for loading multiple files into a database in @sec-save-database.
+Se stai usando duckdb in un progetto reale, raccomandiamo vivamente di imparare `duckdb_read_csv()` e `duckdb_register_arrow()`.
+Questi ti danno modi potenti e performanti per caricare rapidamente i dati direttamente in duckdb, senza dover prima caricarli in R.
+Mostreremo anche una tecnica utile per caricare più file in un database in @sec-save-database.
 
-### DBI basics
+### Basi di DBI
 
-You can check that the data is loaded correctly by using a couple of other DBI functions: `dbListTables()` lists all tables in the database[^databases-3] and `dbReadTable()` retrieves the contents of a table.
+Puoi verificare che i dati siano caricati correttamente usando un paio di altre funzioni DBI: `dbListTables()` elenca tutte le tabelle nel database[^databases-3] e `dbReadTable()` recupera i contenuti di una tabella.
 
-[^databases-3]: At least, all the tables that you have permission to see.
+[^databases-3]: Almeno, tutte le tabelle che hai il permesso di vedere.
 
 ```{r}
 dbListTables(con)
@@ -146,9 +146,9 @@ con |>
   as_tibble()
 ```
 
-`dbReadTable()` returns a `data.frame` so we use `as_tibble()` to convert it into a tibble so that it prints nicely.
+`dbReadTable()` restituisce un `data.frame` quindi usiamo `as_tibble()` per convertirlo in un tibble in modo che si stampi bene.
 
-If you already know SQL, you can use `dbGetQuery()` to get the results of running a query on the database:
+Se conosci già SQL, puoi usare `dbGetQuery()` per ottenere i risultati dell'esecuzione di una query sul database:
 
 ```{r}
 sql <- "
@@ -159,17 +159,17 @@ sql <- "
 as_tibble(dbGetQuery(con, sql))
 ```
 
-If you've never seen SQL before, don't worry!
-You'll learn more about it shortly.
-But if you read it carefully, you might guess that it selects five columns of the diamonds dataset and all the rows where `price` is greater than 15,000.
+Se non hai mai visto SQL prima, non preoccuparti!
+Imparerai di più su di esso a breve.
+Ma se lo leggi attentamente, potresti indovinare che seleziona cinque colonne del dataset diamonds e tutte le righe dove `price` è maggiore di 15.000.
 
-## dbplyr basics
+## Basi di dbplyr
 
-Now that we've connected to a database and loaded up some data, we can start to learn about dbplyr.
-dbplyr is a dplyr **backend**, which means that you keep writing dplyr code but the backend executes it differently.
-In this, dbplyr translates to SQL; other backends include [dtplyr](https://dtplyr.tidyverse.org) which translates to [data.table](https://r-datatable.com), and [multidplyr](https://multidplyr.tidyverse.org) which executes your code on multiple cores.
+Ora che ci siamo connessi a un database e abbiamo caricato alcuni dati, possiamo iniziare a imparare dbplyr.
+dbplyr è un **backend** di dplyr, il che significa che continui a scrivere codice dplyr ma il backend lo esegue diversamente.
+In questo caso, dbplyr traduce in SQL; altri backend includono [dtplyr](https://dtplyr.tidyverse.org) che traduce in [data.table](https://r-datatable.com), e [multidplyr](https://multidplyr.tidyverse.org) che esegue il tuo codice su più core.
 
-To use dbplyr, you must first use `tbl()` to create an object that represents a database table:
+Per usare dbplyr, devi prima usare `tbl()` per creare un oggetto che rappresenta una tabella di database:
 
 ```{r}
 diamonds_db <- tbl(con, "diamonds")
@@ -177,9 +177,9 @@ diamonds_db
 ```
 
 ::: callout-note
-There are two other common ways to interact with a database.
-First, many corporate databases are very large so you need some hierarchy to keep all the tables organized.
-In that case you might need to supply a schema, or a catalog and a schema, in order to pick the table you're interested in:
+Ci sono due altri modi comuni per interagire con un database.
+Primo, molti database aziendali sono molto grandi quindi hai bisogno di una gerarchia per mantenere tutte le tabelle organizzate.
+In quel caso potresti aver bisogno di fornire uno schema, o un catalogo e uno schema, per scegliere la tabella che ti interessa:
 
 ```{r}
 #| eval: false
@@ -187,7 +187,7 @@ diamonds_db <- tbl(con, in_schema("sales", "diamonds"))
 diamonds_db <- tbl(con, in_catalog("north_america", "sales", "diamonds"))
 ```
 
-Other times you might want to use your own SQL query as a starting point:
+Altre volte potresti voler usare la tua query SQL come punto di partenza:
 
 ```{r}
 #| eval: false
@@ -195,8 +195,8 @@ diamonds_db <- tbl(con, sql("SELECT * FROM diamonds"))
 ```
 :::
 
-This object is **lazy**; when you use dplyr verbs on it, dplyr doesn't do any work: it just records the sequence of operations that you want to perform and only performs them when needed.
-For example, take the following pipeline:
+Questo oggetto è **lazy**; quando usi i verbi dplyr su di esso, dplyr non fa alcun lavoro: registra solo la sequenza di operazioni che vuoi eseguire e le esegue solo quando necessario.
+Per esempio, prendi la seguente pipeline:
 
 ```{r}
 big_diamonds_db <- diamonds_db |> 
@@ -206,20 +206,20 @@ big_diamonds_db <- diamonds_db |>
 big_diamonds_db
 ```
 
-You can tell this object represents a database query because it prints the DBMS name at the top, and while it tells you the number of columns, it typically doesn't know the number of rows.
-This is because finding the total number of rows usually requires executing the complete query, something we're trying to avoid.
+Puoi dire che questo oggetto rappresenta una query di database perché stampa il nome del DBMS in alto, e mentre ti dice il numero di colonne, tipicamente non conosce il numero di righe.
+Questo è perché trovare il numero totale di righe richiede solitamente di eseguire la query completa, qualcosa che stiamo cercando di evitare.
 
-You can see the SQL code generated by the dplyr function `show_query()`.
-If you know dplyr, this is a great way to learn SQL!
-Write some dplyr code, get dbplyr to translate it to SQL, and then try to figure out how the two languages match up.
+Puoi vedere il codice SQL generato dalla funzione dplyr `show_query()`.
+Se conosci dplyr, questo è un ottimo modo per imparare SQL!
+Scrivi del codice dplyr, fai tradurre dbplyr in SQL, e poi prova a capire come i due linguaggi si corrispondono.
 
 ```{r}
 big_diamonds_db |>
   show_query()
 ```
 
-To get all the data back into R, you call `collect()`.
-Behind the scenes, this generates the SQL, calls `dbGetQuery()` to get the data, then turns the result into a tibble:
+Per riportare tutti i dati in R, chiami `collect()`.
+Dietro le quinte, questo genera l'SQL, chiama `dbGetQuery()` per ottenere i dati, poi trasforma il risultato in un tibble:
 
 ```{r}
 big_diamonds <- big_diamonds_db |> 
@@ -227,17 +227,17 @@ big_diamonds <- big_diamonds_db |>
 big_diamonds
 ```
 
-Typically, you'll use dbplyr to select the data you want from the database, performing basic filtering and aggregation using the translations described below.
-Then, once you're ready to analyse the data with functions that are unique to R, you'll `collect()` the data to get an in-memory tibble, and continue your work with pure R code.
+Tipicamente, userai dbplyr per selezionare i dati che vuoi dal database, eseguendo filtraggio e aggregazione di base usando le traduzioni descritte sotto.
+Poi, una volta che sei pronto ad analizzare i dati con funzioni uniche di R, farai `collect()` sui dati per ottenere un tibble in memoria, e continuerai il tuo lavoro con codice R puro.
 
 ## SQL
 
-The rest of the chapter will teach you a little SQL through the lens of dbplyr.
-It's a rather non-traditional introduction to SQL but we hope it will get you quickly up to speed with the basics.
-Luckily, if you understand dplyr you're in a great place to quickly pick up SQL because so many of the concepts are the same.
+Il resto del capitolo ti insegnerà un po' di SQL attraverso la lente di dbplyr.
+È un'introduzione piuttosto non tradizionale a SQL ma speriamo che ti porterà rapidamente al passo con le basi.
+Fortunamente, se capisci dplyr sei in un'ottima posizione per imparare rapidamente SQL perché molti dei concetti sono gli stessi.
 
-We'll explore the relationship between dplyr and SQL using a couple of old friends from the nycflights13 package: `flights` and `planes`.
-These datasets are easy to get into our learning database because dbplyr comes with a function that copies the tables from nycflights13 to our database:
+Esploreremo la relazione tra dplyr e SQL usando un paio di vecchi amici dal pacchetto nycflights13: `flights` e `planes`.
+Questi dataset sono facili da inserire nel nostro database di apprendimento perché dbplyr viene con una funzione che copia le tabelle da nycflights13 al nostro database:
 
 ```{r}
 dbplyr::copy_nycflights13(con)
@@ -250,29 +250,29 @@ planes <- tbl(con, "planes")
 options(dplyr.strict_sql = TRUE)
 ```
 
-### SQL basics
+### Basi di SQL
 
-The top-level components of SQL are called **statements**.
-Common statements include `CREATE` for defining new tables, `INSERT` for adding data, and `SELECT` for retrieving data.
-We will focus on `SELECT` statements, also called **queries**, because they are almost exclusively what you'll use as a data scientist.
+I componenti di livello superiore di SQL sono chiamati **statement**.
+Gli statement comuni includono `CREATE` per definire nuove tabelle, `INSERT` per aggiungere dati, e `SELECT` per recuperare dati.
+Ci concentreremo sugli statement `SELECT`, chiamati anche **query**, perché sono quasi esclusivamente quello che userai come data scientist.
 
-A query is made up of **clauses**.
-There are five important clauses: `SELECT`, `FROM`, `WHERE`, `ORDER BY`, and `GROUP BY`. Every query must have the `SELECT`[^databases-4] and `FROM`[^databases-5] clauses and the simplest query is `SELECT * FROM table`, which selects all columns from the specified table
-. This is what dbplyr generates for an unadulterated table
+Una query è composta da **clausole**.
+Ci sono cinque clausole importanti: `SELECT`, `FROM`, `WHERE`, `ORDER BY`, e `GROUP BY`. Ogni query deve avere le clausole `SELECT`[^databases-4] e `FROM`[^databases-5] e la query più semplice è `SELECT * FROM table`, che seleziona tutte le colonne dalla tabella specificata
+. Questo è quello che dbplyr genera per una tabella non modificata
 :
 
-[^databases-4]: Confusingly, depending on the context, `SELECT` is either a statement or a clause.
-    To avoid this confusion, we'll generally use `SELECT` query instead of `SELECT` statement.
+[^databases-4]: In modo confuso, a seconda del contesto, `SELECT` è sia uno statement che una clausola.
+    Per evitare questa confusione, useremo generalmente query `SELECT` invece di statement `SELECT`.
 
-[^databases-5]: Ok, technically, only the `SELECT` is required, since you can write queries like `SELECT 1+1` to perform basic calculations.
-    But if you want to work with data (as you always do!) you'll also need a `FROM` clause.
+[^databases-5]: Ok, tecnicamente, solo `SELECT` è richiesto, dato che puoi scrivere query come `SELECT 1+1` per eseguire calcoli di base.
+    Ma se vuoi lavorare con i dati (come fai sempre!) avrai anche bisogno di una clausola `FROM`.
 
 ```{r}
 flights |> show_query()
 planes |> show_query()
 ```
 
-`WHERE` and `ORDER BY` control which rows are included and how they are ordered:
+`WHERE` e `ORDER BY` controllano quali righe sono incluse e come sono ordinate:
 
 ```{r}
 flights |> 
@@ -281,7 +281,7 @@ flights |>
   show_query()
 ```
 
-`GROUP BY` converts the query to a summary, causing aggregation to happen:
+`GROUP BY` converte la query in un riassunto, causando l'aggregazione:
 
 ```{r}
 flights |> 
@@ -290,25 +290,25 @@ flights |>
   show_query()
 ```
 
-There are two important differences between dplyr verbs and SELECT clauses:
+Ci sono due differenze importanti tra i verbi dplyr e le clausole SELECT:
 
--   In SQL, case doesn't matter: you can write `select`, `SELECT`, or even `SeLeCt`. In this book we'll stick with the common convention of writing SQL keywords in uppercase to distinguish them from table or variables names.
--   In SQL, order matters: you must always write the clauses in the order `SELECT`, `FROM`, `WHERE`, `GROUP BY`, `ORDER BY`. Confusingly, this order doesn't match how the clauses are actually evaluated which is first `FROM`, then `WHERE`, `GROUP BY`, `SELECT`, and `ORDER BY`.
+-   In SQL, il caso non importa: puoi scrivere `select`, `SELECT`, o anche `SeLeCt`. In questo libro ci atterremo alla convenzione comune di scrivere le parole chiave SQL in maiuscolo per distinguerle dai nomi di tabelle o variabili.
+-   In SQL, l'ordine importa: devi sempre scrivere le clausole nell'ordine `SELECT`, `FROM`, `WHERE`, `GROUP BY`, `ORDER BY`. In modo confuso, questo ordine non corrisponde a come le clausole sono effettivamente valutate che è prima `FROM`, poi `WHERE`, `GROUP BY`, `SELECT`, e `ORDER BY`.
 
-The following sections explore each clause in more detail.
+Le sezioni seguenti esplorano ogni clausola in più dettaglio.
 
 ::: callout-note
-Note that while SQL is a standard, it is extremely complex and no database follows it exactly.
-While the main components that we'll focus on in this book are very similar between DBMS's, there are many minor variations.
-Fortunately, dbplyr is designed to handle this problem and generates different translations for different databases.
-It's not perfect, but it's continually improving, and if you hit a problem you can file an issue [on GitHub](https://github.com/tidyverse/dbplyr/issues/) to help us do better.
+Nota che mentre SQL è uno standard, è estremamente complesso e nessun database lo segue esattamente.
+Mentre i componenti principali su cui ci concentreremo in questo libro sono molto simili tra DBMS, ci sono molte variazioni minori.
+Fortunamente, dbplyr è progettato per gestire questo problema e genera traduzioni diverse per database diversi.
+Non è perfetto, ma migliora continuamente, e se incontri un problema puoi segnalare un issue [su GitHub](https://github.com/tidyverse/dbplyr/issues/) per aiutarci a fare meglio.
 :::
 
 ### SELECT
 
-The `SELECT` clause is the workhorse of queries and performs the same job as `select()`, `mutate()`, `rename()`, `relocate()`, and, as you'll learn in the next section, `summarize()`.
+La clausola `SELECT` è il cavallo da lavoro delle query e svolge lo stesso lavoro di `select()`, `mutate()`, `rename()`, `relocate()`, e, come imparerai nella prossima sezione, `summarize()`.
 
-`select()`, `rename()`, and `relocate()` have very direct translations to `SELECT` as they just affect where a column appears (if at all) along with its name:
+`select()`, `rename()`, e `relocate()` hanno traduzioni molto dirette in `SELECT` poiché influenzano solo dove appare una colonna (se appare) insieme al suo nome:
 
 ```{r}
 planes |> 
@@ -326,22 +326,22 @@ planes |>
   show_query()
 ```
 
-This example also shows you how SQL does renaming.
-In SQL terminology renaming is called **aliasing** and is done with `AS`.
-Note that unlike `mutate()`, the old name is on the left and the new name is on the right.
+Questo esempio ti mostra anche come SQL fa la ridenominazione.
+Nella terminologia SQL la ridenominazione è chiamata **aliasing** e viene fatta con `AS`.
+Nota che a differenza di `mutate()`, il vecchio nome è a sinistra e il nuovo nome è a destra.
 
 ::: callout-note
-In the examples above note that `"year"` and `"type"` are wrapped in double quotes.
-That's because these are **reserved words** in duckdb, so dbplyr quotes them to avoid any potential confusion between column/table names and SQL operators.
+Negli esempi sopra nota che `"year"` e `"type"` sono racchiusi tra virgolette doppie.
+Questo perché sono **parole riservate** in duckdb, quindi dbplyr le quota per evitare qualsiasi potenziale confusione tra nomi di colonne/tabelle e operatori SQL.
 
-When working with other databases you're likely to see every variable name quoted because only a handful of client packages, like duckdb, know what all the reserved words are, so they quote everything to be safe.
+Quando lavori con altri database probabilmente vedrai ogni nome di variabile quotato perché solo una manciata di pacchetti client, come duckdb, sanno quali sono tutte le parole riservate, quindi quotano tutto per sicurezza.
 
 ``` sql
 SELECT "tailnum", "type", "manufacturer", "model", "year"
 FROM "planes"
 ```
 
-Some other database systems use backticks instead of quotes:
+Alcuni altri sistemi di database usano backtick invece di virgolette:
 
 ``` sql
 SELECT `tailnum`, `type`, `manufacturer`, `model`, `year`
@@ -349,7 +349,7 @@ FROM `planes`
 ```
 :::
 
-The translations for `mutate()` are similarly straightforward: each variable becomes a new expression in `SELECT`:
+Le traduzioni per `mutate()` sono similmente dirette: ogni variabile diventa una nuova espressione in `SELECT`:
 
 ```{r}
 flights |> 
@@ -359,19 +359,19 @@ flights |>
   show_query()
 ```
 
-We'll come back to the translation of individual components (like `/`) in @sec-sql-expressions.
+Torneremo alla traduzione dei componenti individuali (come `/`) in @sec-sql-expressions.
 
 ### FROM
 
-The `FROM` clause defines the data source.
-It's going to be rather uninteresting for a little while, because we're just using single tables.
-You'll see more complex examples once we hit the join functions.
+La clausola `FROM` definisce la fonte dei dati.
+Sarà piuttosto poco interessante per un po', perché stiamo usando solo singole tabelle.
+Vedrai esempi più complessi una volta che arriveremo alle funzioni di join.
 
 ### GROUP BY
 
-`group_by()` is translated to the `GROUP BY`[^databases-6] clause and `summarize()` is translated to the `SELECT` clause:
+`group_by()` è tradotto nella clausola `GROUP BY`[^databases-6] e `summarize()` è tradotto nella clausola `SELECT`:
 
-[^databases-6]: This is no coincidence: the dplyr function name was inspired by the SQL clause.
+[^databases-6]: Non è una coincidenza: il nome della funzione dplyr è stato ispirato dalla clausola SQL.
 
 ```{r}
 diamonds_db |> 
@@ -383,11 +383,11 @@ diamonds_db |>
   show_query()
 ```
 
-We'll come back to what's happening with the translation of `n()` and `mean()` in @sec-sql-expressions.
+Torneremo a cosa succede con la traduzione di `n()` e `mean()` in @sec-sql-expressions.
 
 ### WHERE
 
-`filter()` is translated to the `WHERE` clause:
+`filter()` è tradotto nella clausola `WHERE`:
 
 ```{r}
 flights |> 
@@ -399,13 +399,13 @@ flights |>
   show_query()
 ```
 
-There are a few important details to note here:
+Ci sono alcuni dettagli importanti da notare qui:
 
--   `|` becomes `OR` and `&` becomes `AND`.
--   SQL uses `=` for comparison, not `==`. SQL doesn't have assignment, so there's no potential for confusion there.
--   SQL uses only `''` for strings, not `""`. In SQL, `""` is used to identify variables, like R's ``` `` ```.
+-   `|` diventa `OR` e `&` diventa `AND`.
+-   SQL usa `=` per il confronto, non `==`. SQL non ha assegnazione, quindi non c'è potenziale confusione.
+-   SQL usa solo `''` per le stringhe, non `""`. In SQL, `""` è usato per identificare le variabili, come ``` `` ``` di R.
 
-Another useful SQL operator is `IN`, which is very close to R's `%in%`:
+Un altro operatore SQL utile è `IN`, che è molto simile a `%in%` di R:
 
 ```{r}
 flights |> 
@@ -413,10 +413,10 @@ flights |>
   show_query()
 ```
 
-SQL uses `NULL` instead of `NA`.
-`NULL`s behave similarly to `NA`s.
-The main difference is that while they're "infectious" in comparisons and arithmetic, they are silently dropped when summarizing.
-dbplyr will remind you about this behavior the first time you hit it:
+SQL usa `NULL` invece di `NA`.
+I `NULL` si comportano in modo simile agli `NA`.
+La differenza principale è che mentre sono "infettivi" nei confronti e nell'aritmetica, vengono silenziosamente eliminati quando si riassume.
+dbplyr ti ricorderà questo comportamento la prima volta che lo incontri:
 
 ```{r}
 flights |> 
@@ -424,9 +424,9 @@ flights |>
   summarize(delay = mean(arr_delay))
 ```
 
-If you want to learn more about how `NULL`s work, you might enjoy "[The Three-Valued Logic of SQL](https://modern-sql.com/concept/three-valued-logic)" by Markus Winand.
+Se vuoi imparare di più su come funzionano i `NULL`, potresti apprezzare "[The Three-Valued Logic of SQL](https://modern-sql.com/concept/three-valued-logic)" di Markus Winand.
 
-In general, you can work with `NULL`s using the functions you'd use for `NA`s in R:
+In generale, puoi lavorare con i `NULL` usando le funzioni che useresti per gli `NA` in R:
 
 ```{r}
 flights |> 
@@ -434,15 +434,15 @@ flights |>
   show_query()
 ```
 
-This SQL query illustrates one of the drawbacks of dbplyr: while the SQL is correct, it isn't as simple as you might write by hand.
-In this case, you could drop the parentheses and use a special operator that's easier to read:
+Questa query SQL illustra uno degli svantaggi di dbplyr: mentre l'SQL è corretto, non è semplice come potresti scrivere a mano.
+In questo caso, potresti eliminare le parentesi e usare un operatore speciale che è più facile da leggere:
 
 ``` sql
 WHERE "dep_delay" IS NOT NULL
 ```
 
-Note that if you `filter()` a variable that you created using a summarize, dbplyr will generate a `HAVING` clause, rather than a `WHERE` clause.
-This is a one of the idiosyncrasies of SQL: `WHERE` is evaluated before `SELECT` and `GROUP BY`, so SQL needs another clause that's evaluated afterwards.
+Nota che se fai `filter()` su una variabile che hai creato usando summarize, dbplyr genererà una clausola `HAVING`, piuttosto che una clausola `WHERE`.
+Questa è una delle idiosincrasie di SQL: `WHERE` è valutato prima di `SELECT` e `GROUP BY`, quindi SQL ha bisogno di un'altra clausola che viene valutata dopo.
 
 ```{r}
 diamonds_db |> 
@@ -454,7 +454,7 @@ diamonds_db |>
 
 ### ORDER BY
 
-Ordering rows involves a straightforward translation from `arrange()` to the `ORDER BY` clause:
+Ordinare le righe comporta una traduzione diretta da `arrange()` alla clausola `ORDER BY`:
 
 ```{r}
 flights |> 
@@ -462,16 +462,16 @@ flights |>
   show_query()
 ```
 
-Notice how `desc()` is translated to `DESC`: this is one of the many dplyr functions whose name was directly inspired by SQL.
+Nota come `desc()` è tradotto in `DESC`: questa è una delle molte funzioni dplyr il cui nome è stato direttamente ispirato da SQL.
 
-### Subqueries
+### Subquery
 
-Sometimes it's not possible to translate a dplyr pipeline into a single `SELECT` statement and you need to use a subquery.
-A **subquery** is just a query used as a data source in the `FROM` clause, instead of the usual table.
+A volte non è possibile tradurre una pipeline dplyr in un singolo statement `SELECT` e devi usare una subquery.
+Una **subquery** è semplicemente una query usata come fonte di dati nella clausola `FROM`, invece della solita tabella.
 
-dbplyr typically uses subqueries to work around limitations of SQL.
-For example, expressions in the `SELECT` clause can't refer to columns that were just created.
-That means that the following (silly) dplyr pipeline needs to happen in two steps: the first (inner) query computes `year1` and then the second (outer) query can compute `year2`.
+dbplyr tipicamente usa subquery per aggirare le limitazioni di SQL.
+Per esempio, le espressioni nella clausola `SELECT` non possono riferirsi a colonne che sono state appena create.
+Questo significa che la seguente pipeline dplyr (sciocca) deve accadere in due passaggi: la prima query (interna) calcola `year1` e poi la seconda query (esterna) può calcolare `year2`.
 
 ```{r}
 flights |> 
@@ -482,8 +482,8 @@ flights |>
   show_query()
 ```
 
-You'll also see this if you attempted to `filter()` a variable that you just created.
-Remember, even though `WHERE` is written after `SELECT`, it's evaluated before it, so we need a subquery in this (silly) example:
+Vedrai anche questo se provi a fare `filter()` su una variabile che hai appena creato.
+Ricorda, anche se `WHERE` è scritto dopo `SELECT`, viene valutato prima, quindi abbiamo bisogno di una subquery in questo esempio (sciocco):
 
 ```{r}
 flights |> 
@@ -492,13 +492,13 @@ flights |>
   show_query()
 ```
 
-Sometimes dbplyr will create a subquery where it's not needed because it doesn't yet know how to optimize that translation.
-As dbplyr improves over time, these cases will get rarer but will probably never go away.
+A volte dbplyr creerà una subquery dove non è necessaria perché non sa ancora come ottimizzare quella traduzione.
+Mentre dbplyr migliora nel tempo, questi casi diventeranno più rari ma probabilmente non scompariranno mai.
 
 ### Joins
 
-If you're familiar with dplyr's joins, SQL joins are very similar.
-Here's a simple example:
+Se hai familiarità con i join di dplyr, i join SQL sono molto simili.
+Ecco un esempio semplice:
 
 ```{r}
 flights |> 
@@ -506,9 +506,9 @@ flights |>
   show_query()
 ```
 
-The main thing to notice here is the syntax: SQL joins use sub-clauses of the `FROM` clause to bring in additional tables, using `ON` to define how the tables are related.
+La cosa principale da notare qui è la sintassi: i join SQL usano sub-clausole della clausola `FROM` per portare tabelle aggiuntive, usando `ON` per definire come le tabelle sono correlate.
 
-dplyr's names for these functions are so closely connected to SQL that you can easily guess the equivalent SQL for `inner_join()`, `right_join()`, and `full_join()`:
+I nomi di dplyr per queste funzioni sono così strettamente connessi a SQL che puoi facilmente indovinare l'SQL equivalente per `inner_join()`, `right_join()`, e `full_join()`:
 
 ``` sql
 SELECT flights.*, "type", manufacturer, model, engines, seats, speed
@@ -524,22 +524,22 @@ FROM flights
 FULL JOIN planes ON (flights.tailnum = planes.tailnum)
 ```
 
-You're likely to need many joins when working with data from a database.
-That's because database tables are often stored in a highly normalized form, where each "fact" is stored in a single place and to keep a complete dataset for analysis you need to navigate a complex network of tables connected by primary and foreign keys.
-If you hit this scenario, the [dm package](https://cynkra.github.io/dm/), by Tobias Schieferdecker, Kirill Müller, and Darko Bergant, is a life saver.
-It can automatically determine the connections between tables using the constraints that DBAs often supply, visualize the connections so you can see what's going on, and generate the joins you need to connect one table to another.
+Probabilmente avrai bisogno di molti join quando lavori con dati da un database.
+Questo perché le tabelle di database sono spesso memorizzate in una forma altamente normalizzata, dove ogni "fatto" è memorizzato in un singolo posto e per mantenere un dataset completo per l'analisi devi navigare una rete complessa di tabelle connesse da chiavi primarie e straniere.
+Se incontri questo scenario, il [pacchetto dm](https://cynkra.github.io/dm/), di Tobias Schieferdecker, Kirill Müller, e Darko Bergant, è una salvezza.
+Può automaticamente determinare le connessioni tra tabelle usando i vincoli che i DBA spesso forniscono, visualizzare le connessioni così puoi vedere cosa sta succedendo, e generare i join di cui hai bisogno per connettere una tabella a un'altra.
 
-### Other verbs
+### Altri verbi
 
-dbplyr also translates other verbs like `distinct()`, `slice_*()`, and `intersect()`, and a growing selection of tidyr functions like `pivot_longer()` and `pivot_wider()`.
-The easiest way to see the full set of what's currently available is to visit the dbplyr website: <https://dbplyr.tidyverse.org/reference/>.
+dbplyr traduce anche altri verbi come `distinct()`, `slice_*()`, e `intersect()`, e una selezione crescente di funzioni tidyr come `pivot_longer()` e `pivot_wider()`.
+Il modo più facile per vedere l'insieme completo di ciò che è attualmente disponibile è visitare il sito web di dbplyr: <https://dbplyr.tidyverse.org/reference/>.
 
-### Exercises
+### Esercizi
 
-1.  What is `distinct()` translated to?
-    How about `head()`?
+1.  A cosa viene tradotto `distinct()`?
+    E `head()`?
 
-2.  Explain what each of the following SQL queries do and try recreate them using dbplyr.
+2.  Spiega cosa fa ognuna delle seguenti query SQL e prova a ricrearle usando dbplyr.
 
     ``` sql
     SELECT * 
@@ -550,13 +550,13 @@ The easiest way to see the full set of what's currently available is to visit th
     FROM flights
     ```
 
-## Function translations {#sec-sql-expressions}
+## Traduzioni di funzioni {#sec-sql-expressions}
 
-So far we've focused on the big picture of how dplyr verbs are translated to the clauses of a query.
-Now we're going to zoom in a little and talk about the translation of the R functions that work with individual columns, e.g., what happens when you use `mean(x)` in a `summarize()`?
+Finora ci siamo concentrati sul quadro generale di come i verbi dplyr sono tradotti nelle clausole di una query.
+Ora zoomeremo un po' e parleremo della traduzione delle funzioni R che lavorano con singole colonne, ad es., cosa succede quando usi `mean(x)` in un `summarize()`?
 
-To help see what's going on, we'll use a couple of little helper functions that run a `summarize()` or `mutate()` and show the generated SQL.
-That will make it a little easier to explore a few variations and see how summaries and transformations can differ.
+Per aiutare a vedere cosa sta succedendo, useremo un paio di piccole funzioni helper che eseguono un `summarize()` o `mutate()` e mostrano l'SQL generato.
+Questo renderà un po' più facile esplorare alcune variazioni e vedere come i riassunti e le trasformazioni possono differire.
 
 ```{r}
 summarize_query <- function(df, ...) {
@@ -571,9 +571,9 @@ mutate_query <- function(df, ...) {
 }
 ```
 
-Let's dive in with some summaries!
-Looking at the code below you'll notice that some summary functions, like `mean()`, have a relatively simple translation while others, like `median()`, are much more complex.
-The complexity is typically higher for operations that are common in statistics but less common in databases.
+Immergiamoci con alcuni riassunti!
+Guardando il codice sotto noterai che alcune funzioni di riassunto, come `mean()`, hanno una traduzione relativamente semplice mentre altre, come `median()`, sono molto più complesse.
+La complessità è tipicamente più alta per operazioni che sono comuni nelle statistiche ma meno comuni nei database.
 
 ```{r}
 flights |> 
@@ -584,8 +584,8 @@ flights |>
   )
 ```
 
-The translation of summary functions becomes more complicated when you use them inside a `mutate()` because they have to turn into so-called **window** functions.
-In SQL, you turn an ordinary aggregation function into a window function by adding `OVER` after it:
+La traduzione delle funzioni di riassunto diventa più complicata quando le usi dentro un `mutate()` perché devono trasformarsi in cosiddette funzioni **window**.
+In SQL, trasformi una funzione di aggregazione ordinaria in una funzione window aggiungendo `OVER` dopo di essa:
 
 ```{r}
 flights |> 
@@ -595,9 +595,9 @@ flights |>
   )
 ```
 
-In SQL, the `GROUP BY` clause is used exclusively for summaries so here you can see that the grouping has moved from the `GROUP BY` clause to `OVER`.
+In SQL, la clausola `GROUP BY` è usata esclusivamente per i riassunti quindi qui puoi vedere che il raggruppamento si è spostato dalla clausola `GROUP BY` a `OVER`.
 
-Window functions include all functions that look forward or backwards, like `lead()` and `lag()` which look at the "previous" or "next" value respectively:
+Le funzioni window includono tutte le funzioni che guardano avanti o indietro, come `lead()` e `lag()` che guardano rispettivamente il valore "precedente" o "successivo":
 
 ```{r}
 flights |> 
@@ -609,12 +609,12 @@ flights |>
   )
 ```
 
-Here it's important to `arrange()` the data, because SQL tables have no intrinsic order.
-In fact, if you don't use `arrange()` you might get the rows back in a different order every time!
-Notice for window functions, the ordering information is repeated: the `ORDER BY` clause of the main query doesn't automatically apply to window functions.
+Qui è importante fare `arrange()` sui dati, perché le tabelle SQL non hanno un ordine intrinseco.
+Infatti, se non usi `arrange()` potresti riavere le righe in un ordine diverso ogni volta!
+Nota che per le funzioni window, l'informazione di ordinamento è ripetuta: la clausola `ORDER BY` della query principale non si applica automaticamente alle funzioni window.
 
-Another important SQL function is `CASE WHEN`. It's used as the translation of `if_else()` and `case_when()`, the dplyr function that it directly inspired.
-Here are a couple of simple examples:
+Un'altra importante funzione SQL è `CASE WHEN`. È usata come traduzione di `if_else()` e `case_when()`, la funzione dplyr che ha ispirato direttamente.
+Ecco un paio di esempi semplici:
 
 ```{r}
 flights |> 
@@ -632,8 +632,8 @@ flights |>
   )
 ```
 
-`CASE WHEN` is also used for some other functions that don't have a direct translation from R to SQL.
-A good example of this is `cut()`:
+`CASE WHEN` è anche usato per alcune altre funzioni che non hanno una traduzione diretta da R a SQL.
+Un buon esempio di questo è `cut()`:
 
 ```{r}
 flights |> 
@@ -646,19 +646,19 @@ flights |>
   )
 ```
 
-dbplyr also translates common string and date-time manipulation functions, which you can learn about in `vignette("translation-function", package = "dbplyr")`.
-dbplyr's translations are certainly not perfect, and there are many R functions that aren't translated yet, but dbplyr does a surprisingly good job covering the functions that you'll use most of the time.
+dbplyr traduce anche comuni funzioni di manipolazione di stringhe e date-ora, su cui puoi imparare in `vignette("translation-function", package = "dbplyr")`.
+Le traduzioni di dbplyr non sono certamente perfette, e ci sono molte funzioni R che non sono ancora tradotte, ma dbplyr fa un lavoro sorprendentemente buono nel coprire le funzioni che userai la maggior parte del tempo.
 
-## Summary
+## Riassunto
 
-In this chapter you learned how to access data from databases.
-We focused on dbplyr, a dplyr "backend" that allows you to write the dplyr code you're familiar with, and have it be automatically translated to SQL.
-We used that translation to teach you a little SQL; it's important to learn some SQL because it's *the* most commonly used language for working with data and knowing some will make it easier for you to communicate with other data folks who don't use R.
+In questo capitolo hai imparato come accedere ai dati dai database.
+Ci siamo concentrati su dbplyr, un "backend" di dplyr che ti permette di scrivere il codice dplyr che conosci, e farlo tradurre automaticamente in SQL.
+Abbiamo usato quella traduzione per insegnarti un po' di SQL; è importante imparare un po' di SQL perché è *il* linguaggio più comunemente usato per lavorare con i dati e conoscerne un po' renderà più facile comunicare con altre persone che lavorano con i dati che non usano R.
 
-If you've finished this chapter and would like to learn more about SQL, we have two recommendations:
+Se hai finito questo capitolo e vorresti imparare di più su SQL, abbiamo due raccomandazioni:
 
--   [*SQL for Data Scientists*](https://sqlfordatascientists.com) by Renée M. P. Teate is an introduction to SQL designed specifically for the needs of data scientists, and includes examples of the sort of highly interconnected data you're likely to encounter in real organizations.
--   [*Practical SQL*](https://www.practicalsql.com) by Anthony DeBarros is written from the perspective of a data journalist (a data scientist specialized in telling compelling stories) and goes into more detail about getting your data into a database and running your own DBMS.
+-   [*SQL for Data Scientists*](https://sqlfordatascientists.com) di Renée M. P. Teate è un'introduzione a SQL progettata specificamente per le esigenze dei data scientist, e include esempi del tipo di dati altamente interconnessi che probabilmente incontrerai nelle organizzazioni reali.
+-   [*Practical SQL*](https://www.practicalsql.com) di Anthony DeBarros è scritto dalla prospettiva di un data journalist (un data scientist specializzato nel raccontare storie convincenti) e va più nel dettaglio su come inserire i tuoi dati in un database e gestire il tuo DBMS.
 
-In the next chapter, we'll learn about another dplyr backend for working with large data: arrow.
-Arrow is designed for working with large files on disk, and is a natural complement to databases.
+Nel prossimo capitolo, impareremo un altro backend dplyr per lavorare con grandi dati: arrow.
+Arrow è progettato per lavorare con file grandi su disco, ed è un complemento naturale ai database.

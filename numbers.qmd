@@ -1,24 +1,24 @@
-# Numbers {#sec-numbers}
+# Numeri {#sec-numbers}
 
 ```{r}
 #| echo: false
 source("_common.R")
 ```
 
-## Introduction
+## Introduzione
 
-Numeric vectors are the backbone of data science, and you've already used them a bunch of times earlier in the book.
-Now it's time to systematically survey what you can do with them in R, ensuring that you're well situated to tackle any future problem involving numeric vectors.
+I vettori numerici sono la spina dorsale della data science, e li hai già usati molte volte in precedenza nel libro.
+Ora è il momento di esaminare sistematicamente cosa puoi fare con essi in R, assicurandoti di essere ben posizionato per affrontare qualsiasi problema futuro che coinvolga vettori numerici.
 
-We'll start by giving you a couple of tools to make numbers if you have strings, and then going into a little more detail of `count()`.
-Then we'll dive into various numeric transformations that pair well with `mutate()`, including more general transformations that can be applied to other types of vectors, but are often used with numeric vectors.
-We'll finish off by covering the summary functions that pair well with `summarize()` and show you how they can also be used with `mutate()`.
+Inizieremo dandoti un paio di strumenti per creare numeri se hai stringhe, e poi entreremo in un po' più di dettaglio su `count()`.
+Poi ci immergeremo in varie trasformazioni numeriche che si abbinano bene con `mutate()`, incluse trasformazioni più generali che possono essere applicate ad altri tipi di vettori, ma sono spesso usate con vettori numerici.
+Finiremo coprendo le funzioni di riassunto che si abbinano bene con `summarize()` e ti mostreremo come possono anche essere usate con `mutate()`.
 
-### Prerequisites
+### Prerequisiti
 
-This chapter mostly uses functions from base R, which are available without loading any packages.
-But we still need the tidyverse because we'll use these base R functions inside of tidyverse functions like `mutate()` and `filter()`.
-Like in the last chapter, we'll use real examples from nycflights13, as well as toy examples made with `c()` and `tribble()`.
+Questo capitolo usa principalmente funzioni di base R, che sono disponibili senza caricare alcun pacchetto.
+Ma abbiamo ancora bisogno del tidyverse perché useremo queste funzioni di base R all'interno di funzioni tidyverse come `mutate()` e `filter()`.
+Come nell'ultimo capitolo, useremo esempi reali da nycflights13, così come esempi giocattolo fatti con `c()` e `tribble()`.
 
 ```{r}
 #| label: setup
@@ -27,48 +27,48 @@ library(tidyverse)
 library(nycflights13)
 ```
 
-## Making numbers
+## Creare numeri
 
-In most cases, you'll get numbers already recorded in one of R's numeric types: integer or double.
-In some cases, however, you'll encounter them as strings, possibly because you've created them by pivoting from column headers or because something has gone wrong in your data import process.
+Nella maggior parte dei casi, otterrai numeri già registrati in uno dei tipi numerici di R: intero o double.
+In alcuni casi, tuttavia, li incontrerai come stringhe, possibilmente perché li hai creati ruotando dalle intestazioni delle colonne o perché qualcosa è andato storto nel tuo processo di importazione dati.
 
-readr provides two useful functions for parsing strings into numbers: `parse_double()` and `parse_number()`.
-Use `parse_double()` when you have numbers that have been written as strings:
+readr fornisce due funzioni utili per analizzare le stringhe in numeri: `parse_double()` e `parse_number()`.
+Usa `parse_double()` quando hai numeri che sono stati scritti come stringhe:
 
 ```{r}
 x <- c("1.2", "5.6", "1e3")
 parse_double(x)
 ```
 
-Use `parse_number()` when the string contains non-numeric text that you want to ignore.
-This is particularly useful for currency data and percentages:
+Usa `parse_number()` quando la stringa contiene testo non numerico che vuoi ignorare.
+Questo è particolarmente utile per dati di valuta e percentuali:
 
 ```{r}
 x <- c("$1,234", "USD 3,513", "59%")
 parse_number(x)
 ```
 
-## Counts {#sec-counts}
+## Conteggi {#sec-counts}
 
-It's surprising how much data science you can do with just counts and a little basic arithmetic, so dplyr strives to make counting as easy as possible with `count()`.
-This function is great for quick exploration and checks during analysis:
+È sorprendente quanta data science puoi fare con solo conteggi e un po' di aritmetica di base, quindi dplyr si sforza di rendere il conteggio il più facile possibile con `count()`.
+Questa funzione è ottima per esplorazione rapida e controlli durante l'analisi:
 
 ```{r}
 flights |> count(dest)
 ```
 
-(Despite the advice in @sec-workflow-style, we usually put `count()` on a single line because it's usually used at the console for a quick check that a calculation is working as expected.)
+(Nonostante il consiglio in @sec-workflow-style, di solito mettiamo `count()` su una singola riga perché è di solito usato alla console per un controllo rapido che un calcolo stia funzionando come previsto.)
 
-If you want to see the most common values, add `sort = TRUE`:
+Se vuoi vedere i valori più comuni, aggiungi `sort = TRUE`:
 
 ```{r}
 flights |> count(dest, sort = TRUE)
 ```
 
-And remember that if you want to see all the values, you can use `|> View()` or `|> print(n = Inf)`.
+E ricorda che se vuoi vedere tutti i valori, puoi usare `|> View()` o `|> print(n = Inf)`.
 
-You can perform the same computation "by hand" with `group_by()`, `summarize()` and `n()`.
-This is useful because it allows you to compute other summaries at the same time:
+Puoi eseguire lo stesso calcolo "a mano" con `group_by()`, `summarize()` e `n()`.
+Questo è utile perché ti permette di calcolare altri riassunti allo stesso tempo:
 
 ```{r}
 flights |> 
@@ -79,18 +79,18 @@ flights |>
   )
 ```
 
-`n()` is a special summary function that doesn't take any arguments and instead accesses information about the "current" group.
-This means that it only works inside dplyr verbs:
+`n()` è una funzione di riassunto speciale che non prende argomenti e invece accede alle informazioni sul gruppo "corrente".
+Questo significa che funziona solo all'interno dei verbi dplyr:
 
 ```{r}
 #| error: true
 n()
 ```
 
-There are a couple of variants of `n()` and `count()` that you might find useful:
+Ci sono un paio di varianti di `n()` e `count()` che potresti trovare utili:
 
--   `n_distinct(x)` counts the number of distinct (unique) values of one or more variables.
-    For example, we could figure out which destinations are served by the most carriers:
+-   `n_distinct(x)` conta il numero di valori distinti (unici) di una o più variabili.
+    Per esempio, potremmo capire quali destinazioni sono servite dal maggior numero di vettori:
 
     ```{r}
     flights |> 
@@ -99,8 +99,8 @@ There are a couple of variants of `n()` and `count()` that you might find useful
       arrange(desc(carriers))
     ```
 
--   A weighted count is a sum.
-    For example you could "count" the number of miles each plane flew:
+-   Un conteggio pesato è una somma.
+    Per esempio potresti "contare" il numero di miglia che ogni aereo ha volato:
 
     ```{r}
     flights |> 
@@ -108,15 +108,15 @@ There are a couple of variants of `n()` and `count()` that you might find useful
       summarize(miles = sum(distance))
     ```
 
-    Weighted counts are a common problem so `count()` has a `wt` argument that does the same thing:
+    I conteggi pesati sono un problema comune quindi `count()` ha un argomento `wt` che fa la stessa cosa:
 
     ```{r}
     #| results: false
     flights |> count(tailnum, wt = distance)
     ```
 
--   You can count missing values by combining `sum()` and `is.na()`.
-    In the `flights` dataset this represents flights that are cancelled:
+-   Puoi contare i valori mancanti combinando `sum()` e `is.na()`.
+    Nel dataset `flights` questo rappresenta voli che sono cancellati:
 
     ```{r}
     flights |> 
@@ -124,65 +124,65 @@ There are a couple of variants of `n()` and `count()` that you might find useful
       summarize(n_cancelled = sum(is.na(dep_time))) 
     ```
 
-### Exercises
+### Esercizi
 
-1.  How can you use `count()` to count the number of rows with a missing value for a given variable?
-2.  Expand the following calls to `count()` to instead use `group_by()`, `summarize()`, and `arrange()`:
+1.  Come puoi usare `count()` per contare il numero di righe con un valore mancante per una data variabile?
+2.  Espandi le seguenti chiamate a `count()` per usare invece `group_by()`, `summarize()`, e `arrange()`:
     1.  `flights |> count(dest, sort = TRUE)`
 
     2.  `flights |> count(tailnum, wt = distance)`
 
-## Numeric transformations
+## Trasformazioni numeriche
 
-Transformation functions work well with `mutate()` because their output is the same length as the input.
-The vast majority of transformation functions are already built into base R.
-It's impractical to list them all so this section will show the most useful ones.
-As an example, while R provides all the trigonometric functions that you might dream of, we don't list them here because they're rarely needed for data science.
+Le funzioni di trasformazione funzionano bene con `mutate()` perché il loro output ha la stessa lunghezza dell'input.
+La grande maggioranza delle funzioni di trasformazione sono già integrate in base R.
+È impraticabile elencarle tutte quindi questa sezione mostrerà quelle più utili.
+Come esempio, mentre R fornisce tutte le funzioni trigonometriche che potresti sognare, non le elenchiamo qui perché sono raramente necessarie per la data science.
 
-### Arithmetic and recycling rules {#sec-recycling}
+### Aritmetica e regole di riciclo {#sec-recycling}
 
-We introduced the basics of arithmetic (`+`, `-`, `*`, `/`, `^`) in @sec-workflow-basics and have used them a bunch since.
-These functions don't need a huge amount of explanation because they do what you learned in grade school.
-But we need to briefly talk about the **recycling rules** which determine what happens when the left and right hand sides have different lengths.
-This is important for operations like `flights |> mutate(air_time = air_time / 60)` because there are 336,776 numbers on the left of `/` but only one on the right.
+Abbiamo introdotto le basi dell'aritmetica (`+`, `-`, `*`, `/`, `^`) in @sec-workflow-basics e le abbiamo usate molto da allora.
+Queste funzioni non hanno bisogno di una spiegazione enorme perché fanno quello che hai imparato alle elementari.
+Ma dobbiamo parlare brevemente delle **regole di riciclo** che determinano cosa succede quando i lati sinistro e destro hanno lunghezze diverse.
+Questo è importante per operazioni come `flights |> mutate(air_time = air_time / 60)` perché ci sono 336.776 numeri a sinistra di `/` ma solo uno a destra.
 
-R handles mismatched lengths by **recycling,** or repeating, the short vector.
-We can see this in operation more easily if we create some vectors outside of a data frame:
+R gestisce le lunghezze non corrispondenti **riciclando**, o ripetendo, il vettore corto.
+Possiamo vedere questo in azione più facilmente se creiamo alcuni vettori fuori da un data frame:
 
 ```{r}
 x <- c(1, 2, 10, 20)
 x / 5
-# is shorthand for
+# è abbreviazione per
 x / c(5, 5, 5, 5)
 ```
 
-Generally, you only want to recycle single numbers (i.e. vectors of length 1), but R will recycle any shorter length vector.
-It usually (but not always) gives you a warning if the longer vector isn't a multiple of the shorter:
+In generale, vuoi riciclare solo singoli numeri (cioè vettori di lunghezza 1), ma R riciclerà qualsiasi vettore di lunghezza più corta.
+Di solito (ma non sempre) ti dà un avvertimento se il vettore più lungo non è un multiplo di quello più corto:
 
 ```{r}
 x * c(1, 2)
 x * c(1, 2, 3)
 ```
 
-These recycling rules are also applied to logical comparisons (`==`, `<`, `<=`, `>`, `>=`, `!=`) and can lead to a surprising result if you accidentally use `==` instead of `%in%` and the data frame has an unfortunate number of rows.
-For example, take this code which attempts to find all flights in January and February:
+Queste regole di riciclo sono anche applicate ai confronti logici (`==`, `<`, `<=`, `>`, `>=`, `!=`) e possono portare a un risultato sorprendente se usi accidentalmente `==` invece di `%in%` e il data frame ha un numero sfortunato di righe.
+Per esempio, prendi questo codice che tenta di trovare tutti i voli a gennaio e febbraio:
 
 ```{r}
 flights |> 
   filter(month == c(1, 2))
 ```
 
-The code runs without error, but it doesn't return what you want.
-Because of the recycling rules it finds flights in odd numbered rows that departed in January and flights in even numbered rows that departed in February.
-And unfortunately there's no warning because `flights` has an even number of rows.
+Il codice viene eseguito senza errori, ma non restituisce quello che vuoi.
+A causa delle regole di riciclo trova voli in righe con numeri dispari partiti a gennaio e voli in righe con numeri pari partiti a febbraio.
+E sfortunatamente non c'è avvertimento perché `flights` ha un numero pari di righe.
 
-To protect you from this type of silent failure, most tidyverse functions use a stricter form of recycling that only recycles single values.
-Unfortunately that doesn't help here, or in many other cases, because the key computation is performed by the base R function `==`, not `filter()`.
+Per proteggerti da questo tipo di fallimento silenzioso, la maggior parte delle funzioni tidyverse usa una forma più rigorosa di riciclo che ricicla solo valori singoli.
+Sfortunatamente questo non aiuta qui, o in molti altri casi, perché il calcolo chiave è eseguito dalla funzione base R `==`, non `filter()`.
 
-### Minimum and maximum
+### Minimo e massimo
 
-The arithmetic functions work with pairs of variables.
-Two closely related functions are `pmin()` and `pmax()`, which when given two or more variables will return the smallest or largest value in each row:
+Le funzioni aritmetiche funzionano con coppie di variabili.
+Due funzioni strettamente correlate sono `pmin()` e `pmax()`, che quando date due o più variabili restituiranno il valore più piccolo o più grande in ogni riga:
 
 ```{r}
 df <- tribble(
@@ -199,8 +199,8 @@ df |>
   )
 ```
 
-Note that these are different to the summary functions `min()` and `max()` which take multiple observations and return a single value.
-You can tell that you've used the wrong form when all the minimums and all the maximums have the same value:
+Nota che queste sono diverse dalle funzioni di riassunto `min()` e `max()` che prendono osservazioni multiple e restituiscono un singolo valore.
+Puoi capire che hai usato la forma sbagliata quando tutti i minimi e tutti i massimi hanno lo stesso valore:
 
 ```{r}
 df |> 
@@ -210,17 +210,17 @@ df |>
   )
 ```
 
-### Modular arithmetic
+### Aritmetica modulare
 
-Modular arithmetic is the technical name for the type of math you did before you learned about decimal places, i.e. division that yields a whole number and a remainder.
-In R, `%/%` does integer division and `%%` computes the remainder:
+L'aritmetica modulare è il nome tecnico per il tipo di matematica che facevi prima di imparare le posizioni decimali, cioè divisione che produce un numero intero e un resto.
+In R, `%/%` fa la divisione intera e `%%` calcola il resto:
 
 ```{r}
 1:10 %/% 3
 1:10 %% 3
 ```
 
-Modular arithmetic is handy for the `flights` dataset, because we can use it to unpack the `sched_dep_time` variable into `hour` and `minute`:
+L'aritmetica modulare è utile per il dataset `flights`, perché possiamo usarla per spacchettare la variabile `sched_dep_time` in `hour` e `minute`:
 
 ```{r}
 flights |> 
@@ -231,8 +231,8 @@ flights |>
   )
 ```
 
-We can combine that with the `mean(is.na(x))` trick from @sec-logical-summaries to see how the proportion of cancelled flights varies over the course of the day.
-The results are shown in @fig-prop-cancelled.
+Possiamo combinare questo con il trucco `mean(is.na(x))` da @sec-logical-summaries per vedere come la proporzione di voli cancellati varia nel corso della giornata.
+I risultati sono mostrati in @fig-prop-cancelled.
 
 ```{r}
 #| label: fig-prop-cancelled
@@ -256,43 +256,43 @@ flights |>
   geom_point(aes(size = n))
 ```
 
-### Logarithms
+### Logaritmi
 
-Logarithms are an incredibly useful transformation for dealing with data that ranges across multiple orders of magnitude and converting exponential growth to linear growth.
-In R, you have a choice of three logarithms: `log()` (the natural log, base e), `log2()` (base 2), and `log10()` (base 10).
-We recommend using `log2()` or `log10()`.
-`log2()` is easy to interpret because a difference of 1 on the log scale corresponds to doubling on the original scale and a difference of -1 corresponds to halving; whereas `log10()` is easy to back-transform because (e.g.) 3 is 10\^3 = 1000.
-The inverse of `log()` is `exp()`; to compute the inverse of `log2()` or `log10()` you'll need to use `2^` or `10^`.
+I logaritmi sono una trasformazione incredibilmente utile per gestire dati che variano attraverso più ordini di grandezza e convertire crescita esponenziale in crescita lineare.
+In R, hai una scelta di tre logaritmi: `log()` (il logaritmo naturale, base e), `log2()` (base 2), e `log10()` (base 10).
+Raccomandiamo di usare `log2()` o `log10()`.
+`log2()` è facile da interpretare perché una differenza di 1 sulla scala logaritmica corrisponde a raddoppiare sulla scala originale e una differenza di -1 corrisponde a dimezzare; mentre `log10()` è facile da ri-trasformare perché (es.) 3 è 10\^3 = 1000.
+L'inverso di `log()` è `exp()`; per calcolare l'inverso di `log2()` o `log10()` dovrai usare `2^` o `10^`.
 
-### Rounding {#sec-rounding}
+### Arrotondamento {#sec-rounding}
 
-Use `round(x)` to round a number to the nearest integer:
+Usa `round(x)` per arrotondare un numero al più vicino intero:
 
 ```{r}
 round(123.456)
 ```
 
-You can control the precision of the rounding with the second argument, `digits`.
-`round(x, digits)` rounds to the nearest `10^-n` so `digits = 2` will round to the nearest 0.01.
-This definition is useful because it implies `round(x, -3)` will round to the nearest thousand, which indeed it does:
+Puoi controllare la precisione dell'arrotondamento con il secondo argomento, `digits`.
+`round(x, digits)` arrotonda al più vicino `10^-n` quindi `digits = 2` arrotonderà al più vicino 0.01.
+Questa definizione è utile perché implica che `round(x, -3)` arrotonderà al più vicino migliaio, che infatti fa:
 
 ```{r}
-round(123.456, 2)  # two digits
-round(123.456, 1)  # one digit
-round(123.456, -1) # round to nearest ten
-round(123.456, -2) # round to nearest hundred
+round(123.456, 2)  # due cifre
+round(123.456, 1)  # una cifra
+round(123.456, -1) # arrotonda alla decina più vicina
+round(123.456, -2) # arrotonda al centinaio più vicino
 ```
 
-There's one weirdness with `round()` that seems surprising at first glance:
+C'è una stranezza con `round()` che sembra sorprendente a prima vista:
 
 ```{r}
 round(c(1.5, 2.5))
 ```
 
-`round()` uses what's known as "round half to even" or Banker's rounding: if a number is half way between two integers, it will be rounded to the **even** integer.
-This is a good strategy because it keeps the rounding unbiased: half of all 0.5s are rounded up, and half are rounded down.
+`round()` usa quello che è conosciuto come "arrotondamento alla metà pari" o arrotondamento del banchiere: se un numero è a metà strada tra due interi, sarà arrotondato all'intero **pari**.
+Questa è una buona strategia perché mantiene l'arrotondamento imparziale: metà di tutti gli 0.5 sono arrotondati per eccesso, e metà sono arrotondati per difetto.
 
-`round()` is paired with `floor()` which always rounds down and `ceiling()` which always rounds up:
+`round()` è abbinato con `floor()` che arrotonda sempre per difetto e `ceiling()` che arrotonda sempre per eccesso:
 
 ```{r}
 x <- 123.456
@@ -301,45 +301,45 @@ floor(x)
 ceiling(x)
 ```
 
-These functions don't have a `digits` argument, so you can instead scale down, round, and then scale back up:
+Queste funzioni non hanno un argomento `digits`, quindi puoi invece ridurre la scala, arrotondare, e poi riportare alla scala originale:
 
 ```{r}
-# Round down to nearest two digits
+# Arrotonda per difetto alle due cifre più vicine
 floor(x / 0.01) * 0.01
-# Round up to nearest two digits
+# Arrotonda per eccesso alle due cifre più vicine
 ceiling(x / 0.01) * 0.01
 ```
 
-You can use the same technique if you want to `round()` to a multiple of some other number:
+Puoi usare la stessa tecnica se vuoi `round()` a un multiplo di qualche altro numero:
 
 ```{r}
-# Round to nearest multiple of 4
+# Arrotonda al multiplo più vicino di 4
 round(x / 4) * 4
 
-# Round to nearest 0.25
+# Arrotonda al più vicino 0.25
 round(x / 0.25) * 0.25
 ```
 
-### Cutting numbers into ranges
+### Tagliare numeri in intervalli
 
-Use `cut()`[^numbers-1] to break up (aka bin) a numeric vector into discrete buckets:
+Usa `cut()`[^numbers-1] per suddividere (cioè raggruppare) un vettore numerico in secchielli discreti:
 
-[^numbers-1]: ggplot2 provides some helpers for common cases in `cut_interval()`, `cut_number()`, and `cut_width()`.
-    ggplot2 is an admittedly weird place for these functions to live, but they are useful as part of histogram computation and were written before any other parts of the tidyverse existed.
+[^numbers-1]: ggplot2 fornisce alcuni aiuti per casi comuni in `cut_interval()`, `cut_number()`, e `cut_width()`.
+    ggplot2 è ammettibilmente un posto strano per queste funzioni, ma sono utili come parte del calcolo dell'istogramma e sono state scritte prima che esistessero altre parti del tidyverse.
 
 ```{r}
 x <- c(1, 2, 5, 10, 15, 20)
 cut(x, breaks = c(0, 5, 10, 15, 20))
 ```
 
-The breaks don't need to be evenly spaced:
+Le interruzioni non devono essere equamente distribuite:
 
 ```{r}
 cut(x, breaks = c(0, 5, 10, 100))
 ```
 
-You can optionally supply your own `labels`.
-Note that there should be one less `labels` than `breaks`.
+Puoi opzionalmente fornire le tue `labels`.
+Nota che dovrebbero esserci una `labels` in meno rispetto alle `breaks`.
 
 ```{r}
 cut(x, 
@@ -348,38 +348,38 @@ cut(x,
 )
 ```
 
-Any values outside of the range of the breaks will become `NA`:
+Qualsiasi valore fuori dal range delle interruzioni diventerà `NA`:
 
 ```{r}
 y <- c(NA, -10, 5, 10, 30)
 cut(y, breaks = c(0, 5, 10, 15, 20))
 ```
 
-See the documentation for other useful arguments like `right` and `include.lowest`, which control if the intervals are `[a, b)` or `(a, b]` and if the lowest interval should be `[a, b]`.
+Vedi la documentazione per altri argomenti utili come `right` e `include.lowest`, che controllano se gli intervalli sono `[a, b)` o `(a, b]` e se l'intervallo più basso dovrebbe essere `[a, b]`.
 
-### Cumulative and rolling aggregates {#sec-cumulative-and-rolling-aggregates}
+### Aggregazioni cumulative e scorrevoli {#sec-cumulative-and-rolling-aggregates}
 
-Base R provides `cumsum()`, `cumprod()`, `cummin()`, `cummax()` for running, or cumulative, sums, products, mins and maxes.
-dplyr provides `cummean()` for cumulative means.
-Cumulative sums tend to come up the most in practice:
+Base R fornisce `cumsum()`, `cumprod()`, `cummin()`, `cummax()` per somme, prodotti, minimi e massimi correnti, o cumulativi.
+dplyr fornisce `cummean()` per medie cumulative.
+Le somme cumulative tendono ad apparire di più nella pratica:
 
 ```{r}
 x <- 1:10
 cumsum(x)
 ```
 
-If you need more complex rolling or sliding aggregates, try the [slider](https://slider.r-lib.org/) package.
+Se hai bisogno di aggregazioni scorrevoli o slittanti più complesse, prova il pacchetto [slider](https://slider.r-lib.org/).
 
-### Exercises
+### Esercizi
 
-1.  Explain in words what each line of the code used to generate @fig-prop-cancelled does.
+1.  Spiega a parole cosa fa ogni riga del codice usato per generare @fig-prop-cancelled.
 
-2.  What trigonometric functions does R provide?
-    Guess some names and look up the documentation.
-    Do they use degrees or radians?
+2.  Quali funzioni trigonometriche fornisce R?
+    Indovina alcuni nomi e consulta la documentazione.
+    Usano gradi o radianti?
 
-3.  Currently `dep_time` and `sched_dep_time` are convenient to look at, but hard to compute with because they're not really continuous numbers.
-    You can see the basic problem by running the code below: there's a gap between each hour.
+3.  Attualmente `dep_time` e `sched_dep_time` sono comodi da guardare, ma difficili da calcolare perché non sono realmente numeri continui.
+    Puoi vedere il problema di base eseguendo il codice qui sotto: c'è un gap tra ogni ora.
 
     ```{r}
     #| eval: false
@@ -389,32 +389,32 @@ If you need more complex rolling or sliding aggregates, try the [slider](https:/
       geom_point()
     ```
 
-    Convert them to a more truthful representation of time (either fractional hours or minutes since midnight).
+    Convertili in una rappresentazione più veritiera del tempo (ore frazionarie o minuti dalla mezzanotte).
 
-4.  Round `dep_time` and `arr_time` to the nearest five minutes.
+4.  Arrotonda `dep_time` e `arr_time` ai cinque minuti più vicini.
 
-## General transformations
+## Trasformazioni generali
 
-The following sections describe some general transformations which are often used with numeric vectors, but can be applied to all other column types.
+Le seguenti sezioni descrivono alcune trasformazioni generali che sono spesso usate con vettori numerici, ma possono essere applicate a tutti gli altri tipi di colonna.
 
-### Ranks
+### Classifiche
 
-dplyr provides a number of ranking functions inspired by SQL, but you should always start with `dplyr::min_rank()`.
-It uses the typical method for dealing with ties, e.g., 1st, 2nd, 2nd, 4th.
+dplyr fornisce un numero di funzioni di classificazione ispirate da SQL, ma dovresti sempre iniziare con `dplyr::min_rank()`.
+Usa il metodo tipico per gestire i pareggi, es., 1°, 2°, 2°, 4°.
 
 ```{r}
 x <- c(1, 2, 2, 3, 4, NA)
 min_rank(x)
 ```
 
-Note that the smallest values get the lowest ranks; use `desc(x)` to give the largest values the smallest ranks:
+Nota che i valori più piccoli ottengono i ranghi più bassi; usa `desc(x)` per dare ai valori più grandi i ranghi più piccoli:
 
 ```{r}
 min_rank(desc(x))
 ```
 
-If `min_rank()` doesn't do what you need, look at the variants `dplyr::row_number()`, `dplyr::dense_rank()`, `dplyr::percent_rank()`, and `dplyr::cume_dist()`.
-See the documentation for details.
+Se `min_rank()` non fa quello di cui hai bisogno, guarda le varianti `dplyr::row_number()`, `dplyr::dense_rank()`, `dplyr::percent_rank()`, e `dplyr::cume_dist()`.
+Vedi la documentazione per i dettagli.
 
 ```{r}
 df <- tibble(x = x)
@@ -560,21 +560,21 @@ df |>
 8.  Find all destinations that are flown by at least two carriers.
     Use those destinations to come up with a relative ranking of the carriers based on their performance for the same destination.
 
-## Numeric summaries
+## Riassunti numerici
 
-Just using the counts, means, and sums that we've introduced already can get you a long way, but R provides many other useful summary functions.
-Here is a selection that you might find useful.
+Solo usando i conteggi, le medie e le somme che abbiamo già introdotto puoi andare lontano, ma R fornisce molte altre funzioni di riassunto utili.
+Ecco una selezione che potresti trovare utile.
 
-### Center
+### Centro
 
-So far, we've mostly used `mean()` to summarize the center of a vector of values.
-As we've seen in @sec-sample-size, because the mean is the sum divided by the count, it is sensitive to even just a few unusually high or low values.
-An alternative is to use the `median()`, which finds a value that lies in the "middle" of the vector, i.e. 50% of the values are above it and 50% are below it.
-Depending on the shape of the distribution of the variable you're interested in, mean or median might be a better measure of center.
-For example, for symmetric distributions we generally report the mean while for skewed distributions we usually report the median.
+Finora, abbiamo principalmente usato `mean()` per riassumere il centro di un vettore di valori.
+Come abbiamo visto in @sec-sample-size, poiché la media è la somma divisa per il conteggio, è sensibile anche solo a pochi valori insolitamente alti o bassi.
+Un'alternativa è usare `median()`, che trova un valore che giace nel "mezzo" del vettore, cioè il 50% dei valori è sopra di esso e il 50% è sotto.
+A seconda della forma della distribuzione della variabile che ti interessa, media o mediana potrebbero essere una misura migliore del centro.
+Per esempio, per distribuzioni simmetriche generalmente riportiamo la media mentre per distribuzioni asimmetriche di solito riportiamo la mediana.
 
-@fig-mean-vs-median compares the mean vs. the median departure delay (in minutes) for each destination.
-The median delay is always smaller than the mean delay because flights sometimes leave multiple hours late, but never leave multiple hours early.
+@fig-mean-vs-median confronta la media vs. la mediana del ritardo di partenza (in minuti) per ogni destinazione.
+Il ritardo mediano è sempre più piccolo del ritardo medio perché i voli a volte partono con ore di ritardo, ma non partono mai con ore di anticipo.
 
 ```{r}
 #| label: fig-mean-vs-median
@@ -764,11 +764,11 @@ For example:
     Can you find any evidence that the airport moved locations?
     Can you find another variable that might explain the difference?
 
-## Summary
+## Riassunto
 
-You're already familiar with many tools for working with numbers, and after reading this chapter you now know how to use them in R.
-You've also learned a handful of useful general transformations that are commonly, but not exclusively, applied to numeric vectors like ranks and offsets.
-Finally, you worked through a number of numeric summaries, and discussed a few of the statistical challenges that you should consider.
+Sei già familiare con molti strumenti per lavorare con i numeri, e dopo aver letto questo capitolo ora sai come usarli in R.
+Hai anche imparato una manciata di trasformazioni generali utili che sono comunemente, ma non esclusivamente, applicate ai vettori numerici come classifiche e offset.
+Infine, hai lavorato attraverso un numero di riassunti numerici, e discusso alcune delle sfide statistiche che dovresti considerare.
 
-Over the next two chapters, we'll dive into working with strings with the stringr package.
-Strings are a big topic so they get two chapters, one on the fundamentals of strings and one on regular expressions.
+Nei prossimi due capitoli, ci immergeremo nel lavorare con le stringhe con il pacchetto stringr.
+Le stringhe sono un argomento importante quindi ottengono due capitoli, uno sui fondamenti delle stringhe e uno sulle espressioni regolari.
