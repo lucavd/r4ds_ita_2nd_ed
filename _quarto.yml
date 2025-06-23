@@ -3,15 +3,15 @@ project:
   output-dir: _book
 
 book:
-  title: "R for Data Science (2e)"
+  title: "R for Data Science (2e) - Italian Edition"
   reader-mode: true
 
   page-footer:
     left: |
-      R for Data Science (2e) was written by Hadley Wickham, Mine
-      Çetinkaya-Rundel, and Garrett Grolemund.
+      R for Data Science (2e) è stato scritto da Hadley Wickham, Mine
+      Çetinkaya-Rundel e Garrett Grolemund.
     right: |
-      This book was built with <a href="https://quarto.org/">Quarto</a>.
+      Questo libro è stato realizzato con <a href="https://quarto.org/">Quarto</a>.
   cover-image: cover.jpg
   favicon: cover.jpg
   site-url: https://r4ds.hadley.nz/

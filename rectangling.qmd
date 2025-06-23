@@ -423,7 +423,7 @@ chars |>
   unnest_wider(json)
 ```
 
-And selecting a few columns to make it easier to read:
+E selezionando alcune colonne per renderle più facili da leggere:
 
 ```{r}
 characters <- chars |> 
@@ -432,7 +432,7 @@ characters <- chars |>
 characters
 ```
 
-This dataset contains also many list-columns:
+Questo dataset contiene anche molte colonne-lista:
 
 ```{r}
 chars |> 
@@ -440,8 +440,8 @@ chars |>
   select(id, where(is.list))
 ```
 
-Let's explore the `titles` column.
-It's an unnamed list-column, so we'll unnest it into rows:
+Esploriamo la colonna `titles`.
+È una colonna-lista non nominata, quindi la disinniesteremo in righe:
 
 ```{r}
 chars |> 
@@ -450,8 +450,8 @@ chars |>
   unnest_longer(titles)
 ```
 
-You might expect to see this data in its own table because it would be easy to join to the characters data as needed.
-Let's do that, which requires little cleaning: removing the rows containing empty strings and renaming `titles` to `title` since each row now only contains a single title.
+Potresti aspettarti di vedere questi dati nella loro tabella separata perché sarebbe facile fare join con i dati dei personaggi secondo necessità.
+Facciamolo, il che richiede un po' di pulizia: rimuovere le righe contenenti stringhe vuote e rinominare `titles` in `title` dato che ogni riga ora contiene solo un singolo titolo.
 
 ```{r}
 titles <- chars |> 
@@ -463,27 +463,27 @@ titles <- chars |>
 titles
 ```
 
-You could imagine creating a table like this for each of the list-columns, then using joins to combine them with the character data as you need it.
+Potresti immaginare di creare una tabella come questa per ognuna delle colonne-lista, poi usando join per combinarle con i dati dei personaggi quando ne hai bisogno.
 
-### Deeply nested
+### Profondamente nidificati
 
-We'll finish off these case studies with a list-column that's very deeply nested and requires repeated rounds of `unnest_wider()` and `unnest_longer()` to unravel: `gmaps_cities`.
-This is a two column tibble containing five city names and the results of using Google's [geocoding API](https://developers.google.com/maps/documentation/geocoding) to determine their location:
+Finiremo questi casi di studio con una colonna-lista che è molto profondamente nidificata e richiede giri ripetuti di `unnest_wider()` e `unnest_longer()` per essere districata: `gmaps_cities`.
+Questo è un tibble di due colonne contenente cinque nomi di città e i risultati dell'uso dell'[API di geocoding](https://developers.google.com/maps/documentation/geocoding) di Google per determinare la loro posizione:
 
 ```{r}
 gmaps_cities
 ```
 
-`json` is a list-column with internal names, so we start with an `unnest_wider()`:
+`json` è una colonna-lista con nomi interni, quindi iniziamo con un `unnest_wider()`:
 
 ```{r}
 gmaps_cities |> 
   unnest_wider(json)
 ```
 
-This gives us the `status` and the `results`.
-We'll drop the status column since they're all `OK`; in a real analysis, you'd also want to capture all the rows where `status != "OK"` and figure out what went wrong.
-`results` is an unnamed list, with either one or two elements (we'll see why shortly) so we'll unnest it into rows:
+Questo ci dà `status` e `results`.
+Elimineremo la colonna status dato che sono tutte `OK`; in un'analisi reale, vorresti anche catturare tutte le righe dove `status != "OK"` e capire cosa è andato storto.
+`results` è una lista non nominata, con uno o due elementi (vedremo perché a breve) quindi la disinniesteremo in righe:
 
 ```{r}
 gmaps_cities |> 
@@ -492,7 +492,7 @@ gmaps_cities |>
   unnest_longer(results)
 ```
 
-Now `results` is a named list, so we'll use `unnest_wider()`:
+Ora `results` è una lista nominata, quindi useremo `unnest_wider()`:
 
 ```{r}
 locations <- gmaps_cities |> 
@@ -503,10 +503,10 @@ locations <- gmaps_cities |>
 locations
 ```
 
-Now we can see why two cities got two results: Washington matched both Washington state and Washington, DC, and Arlington matched Arlington, Virginia and Arlington, Texas.
+Ora possiamo vedere perché due città hanno ottenuto due risultati: Washington ha fatto match sia con lo stato di Washington che con Washington, DC, e Arlington ha fatto match con Arlington, Virginia e Arlington, Texas.
 
-There are a few different places we could go from here.
-We might want to determine the exact location of the match, which is stored in the `geometry` list-column:
+Ci sono alcuni posti diversi dove potremmo andare da qui.
+Potremmo voler determinare la posizione esatta del match, che è memorizzata nella colonna-lista `geometry`:
 
 ```{r}
 locations |> 
@@ -514,8 +514,8 @@ locations |>
   unnest_wider(geometry)
 ```
 
-That gives us new `bounds` (a rectangular region) and `location` (a point).
-We can unnest `location` to see the latitude (`lat`) and longitude (`lng`):
+Questo ci dà nuovi `bounds` (una regione rettangolare) e `location` (un punto).
+Possiamo disinnestare `location` per vedere la latitudine (`lat`) e la longitudine (`lng`):
 
 ```{r}
 locations |> 
@@ -524,7 +524,7 @@ locations |>
   unnest_wider(location)
 ```
 
-Extracting the bounds requires a few more steps:
+Estrarre i bounds richiede alcuni passi aggiuntivi:
 
 ```{r}
 locations |> 
@@ -535,7 +535,7 @@ locations |>
   unnest_wider(bounds)
 ```
 
-We then rename `southwest` and `northeast` (the corners of the rectangle) so we can use `names_sep` to create short but evocative names:
+Quindi rinominiamo `southwest` e `northeast` (gli angoli del rettangolo) così possiamo usare `names_sep` per creare nomi brevi ma evocativi:
 
 ```{r}
 locations |> 
@@ -547,9 +547,9 @@ locations |>
   unnest_wider(c(ne, sw), names_sep = "_") 
 ```
 
-Note how we unnest two columns simultaneously by supplying a vector of variable names to `unnest_wider()`.
+Nota come disinnidestiamo due colonne simultaneamente fornendo un vettore di nomi di variabili a `unnest_wider()`.
 
-Once you've discovered the path to get to the components you're interested in, you can extract them directly using another tidyr function, `hoist()`:
+Una volta che hai scoperto il percorso per arrivare ai componenti che ti interessano, puoi estrarli direttamente usando un'altra funzione tidyr, `hoist()`:
 
 ```{r}
 #| results: false
@@ -564,22 +564,22 @@ locations |>
   )
 ```
 
-If these case studies have whetted your appetite for more real-life rectangling, you can see a few more examples in `vignette("rectangling", package = "tidyr")`.
+Se questi casi di studio ti hanno fatto venire l'appetito per più rectangling della vita reale, puoi vedere alcuni esempi in più in `vignette("rectangling", package = "tidyr")`.
 
-### Exercises
+### Esercizi
 
-1.  Roughly estimate when `gh_repos` was created.
-    Why can you only roughly estimate the date?
+1.  Stima approssimativamente quando è stato creato `gh_repos`.
+    Perché puoi solo stimare approssimativamente la data?
 
-2.  The `owner` column of `gh_repo` contains a lot of duplicated information because each owner can have many repos.
-    Can you construct an `owners` data frame that contains one row for each owner?
-    (Hint: does `distinct()` work with `list-cols`?)
+2.  La colonna `owner` di `gh_repo` contiene molte informazioni duplicate perché ogni proprietario può avere molti repository.
+    Puoi costruire un data frame `owners` che contenga una riga per ogni proprietario?
+    (Suggerimento: `distinct()` funziona con le list-cols?)
 
-3.  Follow the steps used for `titles` to create similar tables for the aliases, allegiances, books, and TV series for the Game of Thrones characters.
+3.  Segui i passi usati per `titles` per creare tabelle simili per aliases, allegiances, books e serie TV per i personaggi del Trono di Spade.
 
-4.  Explain the following code line-by-line.
-    Why is it interesting?
-    Why does it work for `got_chars` but might not work in general?
+4.  Spiega il seguente codice riga per riga.
+    Perché è interessante?
+    Perché funziona per `got_chars` ma potrebbe non funzionare in generale?
 
     ```{r}
     #| results: false
@@ -594,11 +594,10 @@ If these case studies have whetted your appetite for more real-life rectangling,
       unnest_longer(value)
     ```
 
-5.  In `gmaps_cities`, what does `address_components` contain?
-    Why does the length vary between rows?
-    Unnest it appropriately to figure it out.
-    (Hint: `types` always appears to contain two elements. Does `unnest_wider()` make it easier to work with than `unnest_longer()`?)
-    .
+5.  In `gmaps_cities`, cosa contiene `address_components`?
+    Perché la lunghezza varia tra le righe?
+    Disinnestalo appropriatamente per capirlo.
+    (Suggerimento: `types` sembra sempre contenere due elementi. `unnest_wider()` lo rende più facile da gestire rispetto a `unnest_longer()`?).
 
 ## JSON
 
@@ -709,7 +708,7 @@ df |>
   unnest_wider(results)
 ```
 
-### Exercises
+### Esercizi
 
 1.  Rettangola `df_col` e `df_row` sotto.
     Rappresentano i due modi di codificare un data frame in JSON.

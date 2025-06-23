@@ -1,4 +1,4 @@
-# Strings {#sec-strings}
+# Stringhe {#sec-strings}
 
 ```{r}
 #| echo: false
