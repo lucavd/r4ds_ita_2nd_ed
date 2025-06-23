@@ -29,3 +29,19 @@ Segue un breve riassunto dei cambiamenti più importanti:
 
 -   La parte "Comunicare" rimane, ma è stata completamente aggiornata per presentare [Quarto](https://quarto.org/) invece di R Markdown.
     Questa edizione del libro è stata scritta in Quarto, ed è chiaramente lo strumento del futuro.
+
+## Nota sulla traduzione italiana {.unnumbered}
+
+**Ultimo Aggiornamento** `r format(Sys.time(), '%d %B, %Y')`
+
+La traduzione italiana del libro R4DS è stata condotta da [Luca Vedovelli](https://lucavd.netlify.app/) su [esplicita autorizzazione]{.underline} dell'autore (Hadley Wickam) e dell'editore O'Reilly che detiene i diritti di traduzione.
+
+Il motivo che mi ha spinto alla traduzione di un testo fondamentale per chi si avvicina all'ambiente di R e della *data science* è la volontà di abbattere almeno uno scoglio (la lingua) lungo il loro apprendimento, per permettere al lettore (che io immagino essere una mia studentessa o studente) di concentrarsi sui concetti e tecniche.
+
+Ho cercato di cambiare il minimo possibile dal libro originale mantenendo i termini inglesi dove i corrispondenti italiani suonavano desueti o ridicoli.
+Anche link, autori, ringraziamenti sono rimasti inalterati.
+Anche il codice è rimasto inalterato (ho tradotto solo le note di testo interne al codice).
+
+La traduzione è stata effettuata sulla **seconda edizione** (aggiornata a Giugno 2025).
+
+Potete segnalare errori o suggerimenti (molto apprezzati!) aprendo una issue o un pull request alla [repository GitHub](https://https://github.com/lucavd/r4ds_ita_2nd_ed) della traduzione.

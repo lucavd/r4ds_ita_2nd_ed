@@ -1,4 +1,4 @@
-# R for Data Science
+# R for Data Science (Edizione Italiana)
 
 <!-- badges: start -->
 
@@ -6,19 +6,33 @@
 
 <!-- badges: end -->
 
-This repository contains the source of [R for Data Science](http://r4ds.hadley.nz) book.
-The book is built using [Quarto](https://quarto.org/).
+Questo repository contiene il codice sorgente della traduzione italiana del libro [R for Data Science](http://r4ds.hadley.nz).
+Il libro è costruito usando [Quarto](https://quarto.org/).
 
-## Images
+## Traduzione Italiana
 
-### Omnigraffle drawings
+Questa è la traduzione italiana completa della seconda edizione di "R for Data Science" di Hadley Wickham, Mine Çetinkaya-Rundel e Garrett Grolemund.
+
+**Stato della traduzione:** ✅ **100% Completata** (34/34 capitoli tradotti)
+
+### Linee Guida della Traduzione
+
+- Tutto il contenuto descrittivo è tradotto in italiano
+- I termini tecnici rimangono in inglese quando appropriato (es. "data science", "workflow")
+- Il codice R rimane inalterato
+- I commenti nei blocchi di codice R sono tradotti in italiano
+- I nomi di pacchetti, funzioni e variabili rimangono invariati
+
+## Immagini
+
+### Disegni Omnigraffle
 
 -   Font: 12pt Guardian Sans Condensed / Ubuntu mono
 
--   Export as 300 dpi png.
+-   Esporta come png a 300 dpi.
 
--   Website font is 18 px = 13.5 pt, so scale dpi to match font sizes: 270 = 300 \* 12 / 13.5.
-    (I also verified this empirically by screenshotting.)
+-   Il font del sito web è 18 px = 13.5 pt, quindi scala dpi per far corrispondere le dimensioni del font: 270 = 300 \* 12 / 13.5.
+    (Ho anche verificato questo empiricamente facendo screenshot.)
 
     ``` r
     #| echo: FALSE
@@ -26,14 +40,14 @@ The book is built using [Quarto](https://quarto.org/).
     knitr::include_graphics("diagrams/transform.png", dpi = 270)
     ```
 
-### Screenshots
+### Screenshot
 
--   Make sure you're using a light theme.
-    For small interface elements (eg. toolbars), zoom in twice.
+-   Assicurati di usare un tema chiaro.
+    Per elementi di interfaccia piccoli (es. barre degli strumenti), ingrandisci due volte.
 
--   Screenshot with Cmd + Shift + 4.
+-   Screenshot con Cmd + Shift + 4.
 
--   Don't need to set dpi:
+-   Non è necessario impostare dpi:
 
     ``` r
     #| echo: FALSE
@@ -43,7 +57,7 @@ The book is built using [Quarto](https://quarto.org/).
 
 ### O'Reilly
 
-To generate book for O'Reilly, build the book then:
+Per generare il libro per O'Reilly, costruisci il libro e poi:
 
 ```{r}
 # pak::pak("hadley/htmlbook")
@@ -58,9 +72,9 @@ fs::dir_create(unique(dirname(dest)))
 file.copy(pngs, dest, overwrite = TRUE)
 ```
 
-Then commit and push to atlas.
+Poi commit e push su atlas.
 
-## Code of Conduct
+## Codice di Condotta
 
-Please note that r4ds uses a [Contributor Code of Conduct](https://contributor-covenant.org/version/2/0/CODE_OF_CONDUCT.html).
-By contributing to this book, you agree to abide by its terms.
+Si prega di notare che r4ds usa un [Codice di Condotta per Contributori](https://contributor-covenant.org/version/2/0/CODE_OF_CONDUCT.html).
+Contribuendo a questo libro, accetti di rispettare i suoi termini.
