@@ -13,16 +13,6 @@ Il libro è costruito usando [Quarto](https://quarto.org/).
 
 Questa è la traduzione italiana completa della seconda edizione di "R for Data Science" di Hadley Wickham, Mine Çetinkaya-Rundel e Garrett Grolemund.
 
-**Stato della traduzione:** ✅ **100% Completata** (34/34 capitoli tradotti)
-
-### Linee Guida della Traduzione
-
-- Tutto il contenuto descrittivo è tradotto in italiano
-- I termini tecnici rimangono in inglese quando appropriato (es. "data science", "workflow")
-- Il codice R rimane inalterato
-- I commenti nei blocchi di codice R sono tradotti in italiano
-- I nomi di pacchetti, funzioni e variabili rimangono invariati
-
 ## Immagini
 
 ### Disegni Omnigraffle
