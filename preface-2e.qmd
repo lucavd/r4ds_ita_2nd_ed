@@ -6,20 +6,20 @@ Siamo anche molto entusiasti di dare il benvenuto a una nuova co-autrice: Mine �
 
 Segue un breve riassunto dei cambiamenti più importanti:
 
--   La prima parte del libro è stata rinominata "Whole game".
+-   La prima parte del libro è stata rinominata "Gioco Completo".
     L'obiettivo di questa sezione è dare i dettagli generali del "gioco completo" della data science prima di immergerci nei dettagli.
 
--   La seconda parte del libro è "Visualize".
+-   La seconda parte del libro è "Visualizzare".
     Questa parte fornisce una copertura più approfondita degli strumenti di visualizzazione dei dati e delle migliori pratiche rispetto alla prima edizione.
     Il posto migliore per ottenere tutti i dettagli rimane il [libro su ggplot2](http://ggplot2-book.org/), ma ora R4DS copre più delle tecniche più importanti.
 
--   La terza parte del libro si chiama ora "Transform" e guadagna nuovi capitoli sui numeri, vettori logici e valori mancanti.
+-   La terza parte del libro si chiama ora "Transformazione" e guadagna nuovi capitoli sui numeri, vettori logici e valori mancanti.
     Questi erano precedentemente parti del capitolo sulla trasformazione dei dati, ma avevano bisogno di molto più spazio per coprire tutti i dettagli.
 
--   La quarta parte del libro si chiama "Import".
+-   La quarta parte del libro si chiama "Importazione".
     È un nuovo insieme di capitoli che va oltre la lettura di file di testo semplici per lavorare con fogli di calcolo, estrarre dati da database, lavorare con big data, strutturare dati gerarchici e fare scraping di dati da siti web.
 
--   La parte "Program" rimane, ma è stata riscritta dall'inizio per concentrarsi sulle parti più importanti della scrittura di funzioni e dell'iterazione.
+-   La parte "Programmare" rimane, ma è stata riscritta dall'inizio per concentrarsi sulle parti più importanti della scrittura di funzioni e dell'iterazione.
     La scrittura di funzioni ora include dettagli su come incapsulare le funzioni del tidyverse (gestendo le sfide della tidy evaluation), dal momento che questo è diventato molto più facile e importante negli ultimi anni.
     Abbiamo aggiunto un nuovo capitolo sulle funzioni importanti di R base che probabilmente vedrai nel codice R trovato "in natura".
 
@@ -27,5 +27,5 @@ Segue un breve riassunto dei cambiamenti più importanti:
     Non abbiamo mai avuto abbastanza spazio per rendere giustizia alla modellazione, e ora ci sono risorse molto migliori disponibili.
     Generalmente raccomandiamo di usare i pacchetti [tidymodels](https://www.tidymodels.org/) e di leggere [Tidy Modeling with R](https://www.tmwr.org/) di Max Kuhn e Julia Silge.
 
--   La parte "Communicate" rimane, ma è stata completamente aggiornata per presentare [Quarto](https://quarto.org/) invece di R Markdown.
+-   La parte "Comunicare" rimane, ma è stata completamente aggiornata per presentare [Quarto](https://quarto.org/) invece di R Markdown.
     Questa edizione del libro è stata scritta in Quarto, ed è chiaramente lo strumento del futuro.

@@ -118,6 +118,7 @@ Se non hai mai programmato, potresti trovare utile affiancare a questo testo [Ha
 Per eseguire il codice di questo libro ti servono quattro cose: R, RStudio, un insieme di pacchetti chiamato **tidyverse** e qualche altro pacchetto.
 I pacchetti sono le unità fondamentali di codice R riproducibile.
 Contengono funzioni riutilizzabili, documentazione che spiega come usarle e dati di esempio.
+
 ### R
 
 Per scaricare R visita CRAN, il **c**omprehensive **R** **a**rchive **n**etwork, all'indirizzo <https://cloud.r-project.org>.
@@ -233,9 +234,9 @@ Queste differenze ti permettono, se stai leggendo una versione elettronica del l
 
 In tutto il libro usiamo un insieme coerente di convenzioni per riferirci al codice:
 
-- Le funzioni sono mostrate con il font del codice e seguite dalle parentesi, come `sum()` o `mean()`.
-- Gli altri oggetti R (come dati o argomenti di funzione) sono in font codice senza parentesi, ad esempio `flights` o `x`.
-- A volte, per chiarire da quale pacchetto provenga un oggetto, usiamo il nome del pacchetto seguito da due punti, come `dplyr::mutate()` o `nycflights13::flights`.
+-   Le funzioni sono mostrate con il font del codice e seguite dalle parentesi, come `sum()` o `mean()`.
+-   Gli altri oggetti R (come dati o argomenti di funzione) sono in font codice senza parentesi, ad esempio `flights` o `x`.
+-   A volte, per chiarire da quale pacchetto provenga un oggetto, usiamo il nome del pacchetto seguito da due punti, come `dplyr::mutate()` o `nycflights13::flights`.
 
 Anche questo è codice R valido.
 
