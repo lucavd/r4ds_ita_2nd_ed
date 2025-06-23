@@ -32,8 +32,6 @@ Segue un breve riassunto dei cambiamenti più importanti:
 
 ## Nota sulla traduzione italiana {.unnumbered}
 
-**Ultimo Aggiornamento** `r format(Sys.time(), '%d %B, %Y')`
-
 La traduzione italiana del libro R4DS è stata condotta da [Luca Vedovelli](https://lucavd.netlify.app/) su [esplicita autorizzazione]{.underline} dell'autore (Hadley Wickam) e dell'editore O'Reilly che detiene i diritti di traduzione.
 
 Il motivo che mi ha spinto alla traduzione di un testo fondamentale per chi si avvicina all'ambiente di R e della *data science* è la volontà di abbattere almeno uno scoglio (la lingua) lungo il loro apprendimento, per permettere al lettore (che io immagino essere una mia studentessa o studente) di concentrarsi sui concetti e tecniche.
