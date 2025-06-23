@@ -16,7 +16,6 @@ Se apprezzi leggere il libro gratuitamente e vorresti ricambiare, per favore fai
 Se parli un'altra lingua, potresti essere interessato alle traduzioni disponibili gratuitamente della prima edizione:
 
 -   [Spagnolo](http://es.r4ds.hadley.nz)
--   [Italiano](https://it.r4ds.hadley.nz)
 -   [Turco](https://tr.r4ds.hadley.nz)
 -   [Portoghese](https://pt.r4ds.hadley.nz)
 

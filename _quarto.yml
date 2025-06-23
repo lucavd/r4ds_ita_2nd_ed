@@ -15,7 +15,7 @@ book:
   cover-image: cover.jpg
   favicon: cover.jpg
   site-url: https://r4ds.hadley.nz/
-  repo-url: https://github.com/hadley/r4ds/
+  repo-url: https://github.com/lucavd/r4ds_ita_2nd_ed/
   repo-branch: main
   repo-actions: [edit, issue]
   chapters:
