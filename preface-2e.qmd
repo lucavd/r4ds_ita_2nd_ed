@@ -1,3 +1,9 @@
+---
+editor: 
+  markdown: 
+    wrap: sentence
+---
+
 # Prefazione alla seconda edizione {.unnumbered}
 
 Benvenuti alla seconda edizione di "R for Data Science"!
@@ -13,7 +19,7 @@ Segue un breve riassunto dei cambiamenti più importanti:
     Questa parte fornisce una copertura più approfondita degli strumenti di visualizzazione dei dati e delle migliori pratiche rispetto alla prima edizione.
     Il posto migliore per ottenere tutti i dettagli rimane il [libro su ggplot2](http://ggplot2-book.org/), ma ora R4DS copre più delle tecniche più importanti.
 
--   La terza parte del libro si chiama ora "Transformazione" e guadagna nuovi capitoli sui numeri, vettori logici e valori mancanti.
+-   La terza parte del libro si chiama ora "Trasformazione" e guadagna nuovi capitoli sui numeri, vettori logici e valori mancanti.
     Questi erano precedentemente parti del capitolo sulla trasformazione dei dati, ma avevano bisogno di molto più spazio per coprire tutti i dettagli.
 
 -   La quarta parte del libro si chiama "Importazione".
