@@ -305,7 +305,7 @@ Questa euristica funziona bene se hai un dataset pulito, ma nella vita reale, in
 Il modo più comune in cui la rilevazione delle colonne fallisce è che una colonna contiene valori inaspettati, e ottieni una colonna carattere invece di un tipo più specifico.
 Una delle cause più comuni per questo è un valore mancante, registrato usando qualcosa di diverso dal `NA` che readr si aspetta.
 
-Take this simple 1 column CSV file as an example:
+Prendi questo semplice file CSV a 1 colonna come esempio:
 
 ```{r}
 simple_csv <- "
@@ -316,17 +316,17 @@ simple_csv <- "
   30"
 ```
 
-If we read it without any additional arguments, `x` becomes a character column:
+Se lo leggiamo senza argomenti aggiuntivi, `x` diventa una colonna carattere:
 
 ```{r}
 #| message: false
 read_csv(simple_csv)
 ```
 
-In this very small case, you can easily see the missing value `.`.
-But what happens if you have thousands of rows with only a few missing values represented by `.`s sprinkled among them?
-One approach is to tell readr that `x` is a numeric column, and then see where it fails.
-You can do that with the `col_types` argument, which takes a named list where the names match the column names in the CSV file:
+In questo caso molto piccolo, puoi facilmente vedere il valore mancante `.`.
+Ma cosa succede se hai migliaia di righe con solo pochi valori mancanti rappresentati da `.` sparsi tra di essi?
+Un approccio è dire a readr che `x` è una colonna numerica, e poi vedere dove fallisce.
+Puoi farlo con l'argomento `col_types`, che prende una lista nominata dove i nomi corrispondono ai nomi delle colonne nel file CSV:
 
 ```{r}
 df <- read_csv(
@@ -335,15 +335,15 @@ df <- read_csv(
 )
 ```
 
-Now `read_csv()` reports that there was a problem, and tells us we can find out more with `problems()`:
+Ora `read_csv()` riporta che c'è stato un problema, e ci dice che possiamo scoprire di più con `problems()`:
 
 ```{r}
 problems(df)
 ```
 
-This tells us that there was a problem in row 3, col 1 where readr expected a double but got a `.`.
-That suggests this dataset uses `.` for missing values.
-So then we set `na = "."`, the automatic guessing succeeds, giving us the numeric column that we want:
+Questo ci dice che c'è stato un problema nella riga 3, colonna 1 dove readr si aspettava un double ma ha ottenuto un `.`.
+Questo suggerisce che questo dataset usa `.` per i valori mancanti.
+Quindi impostiamo `na = "."`, l'indovinare automatico riesce, dandoci la colonna numerica che vogliamo:
 
 ```{r}
 #| message: false
@@ -387,7 +387,7 @@ read_csv(
 
 A volte i tuoi dati sono divisi tra file multipli invece di essere contenuti in un singolo file.
 Per esempio, potresti avere dati di vendita per mesi multipli, con i dati di ogni mese in un file separato: `01-sales.csv` per gennaio, `02-sales.csv` per febbraio, e `03-sales.csv` per marzo.
-With `read_csv()` you can read these data in at once and stack them on top of each other in a single data frame.
+Con `read_csv()` puoi leggere questi dati tutti in una volta e impilarli uno sopra l'altro in un singolo data frame.
 
 ```{r}
 #| message: false
@@ -395,8 +395,8 @@ sales_files <- c("data/01-sales.csv", "data/02-sales.csv", "data/03-sales.csv")
 read_csv(sales_files, id = "file")
 ```
 
-Once again, the code above will work if you have the CSV files in a `data` folder in your project.
-You can download these files from <https://pos.it/r4ds-01-sales>, <https://pos.it/r4ds-02-sales>, and <https://pos.it/r4ds-03-sales> or you can read them directly with:
+Ancora una volta, il codice sopra funzionerà se hai i file CSV in una cartella `data` nel tuo progetto.
+Puoi scaricare questi file da <https://pos.it/r4ds-01-sales>, <https://pos.it/r4ds-02-sales>, e <https://pos.it/r4ds-03-sales> o puoi leggerli direttamente con:
 
 ```{r}
 #| eval: false
@@ -408,12 +408,12 @@ sales_files <- c(
 read_csv(sales_files, id = "file")
 ```
 
-The `id` argument adds a new column called `file` to the resulting data frame that identifies the file the data come from.
-This is especially helpful in circumstances where the files you're reading in do not have an identifying column that can help you trace the observations back to their original sources.
+L'argomento `id` aggiunge una nuova colonna chiamata `file` al data frame risultante che identifica il file da cui provengono i dati.
+Questo è particolarmente utile in circostanze dove i file che stai leggendo non hanno una colonna identificativa che può aiutarti a tracciare le osservazioni alle loro fonti originali.
 
-If you have many files you want to read in, it can get cumbersome to write out their names as a list.
-Instead, you can use the base `list.files()` function to find the files for you by matching a pattern in the file names.
-You'll learn more about these patterns in @sec-regular-expressions.
+Se hai molti file che vuoi leggere, può diventare ingombrante scrivere i loro nomi come lista.
+Invece, puoi usare la funzione base `list.files()` per trovare i file per te facendo corrispondere un pattern nei nomi dei file.
+Imparerai di più su questi pattern in @sec-regular-expressions.
 
 ```{r}
 sales_files <- list.files("data", pattern = "sales\\.csv$", full.names = TRUE)
@@ -495,9 +495,9 @@ tibble(
 )
 ```
 
-Laying out the data by column can make it hard to see how the rows are related, so an alternative is `tribble()`, short for **tr**ansposed t**ibble**, which lets you lay out your data row by row.
-`tribble()` is customized for data entry in code: column headings start with `~` and entries are separated by commas.
-This makes it possible to lay out small amounts of data in an easy to read form:
+Disporre i dati per colonna può rendere difficile vedere come le righe sono correlate, quindi un'alternativa è `tribble()`, abbreviazione di **tr**ansposed t**ibble**, che ti permette di disporre i tuoi dati riga per riga.
+`tribble()` è personalizzato per l'inserimento dati nel codice: le intestazioni delle colonne iniziano con `~` e le voci sono separate da virgole.
+Questo rende possibile disporre piccole quantità di dati in una forma facile da leggere:
 
 ```{r}
 tribble(

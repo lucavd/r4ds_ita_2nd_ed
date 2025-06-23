@@ -57,7 +57,7 @@ Ci sono tre regole interconnesse che rendono un dataset ordinato:
 2.  Ogni osservazione è una riga; ogni riga è un'osservazione.
 3.  Ogni valore è una cella; ogni cella è un singolo valore.
 
-@fig-tidy-structure shows the rules visually.
+@fig-tidy-structure mostra le regole visivamente.
 
 ```{r}
 #| label: fig-tidy-structure
@@ -186,11 +186,11 @@ Nota che nel codice `"week"` e `"rank"` sono tra virgolette perché sono nuove v
 
 Ora rivolgiamo la nostra attenzione al data frame risultante, più lungo.
 Cosa succede se una canzone è nella top 100 per meno di 76 settimane?
-Take 2 Pac's "Baby Don't Cry", for example.
-The above output suggests that it was only in the top 100 for 7 weeks, and all the remaining weeks are filled in with missing values.
-These `NA`s don't really represent unknown observations; they were forced to exist by the structure of the dataset[^data-tidy-2], so we can ask `pivot_longer()` to get rid of them by setting `values_drop_na = TRUE`:
+Prendi "Baby Don't Cry" di 2Pac, per esempio.
+L'output sopra suggerisce che era nella top 100 solo per 7 settimane, e tutte le settimane rimanenti sono riempite con valori mancanti.
+Questi `NA` non rappresentano realmente osservazioni sconosciute; sono stati forzati ad esistere dalla struttura del dataset[^data-tidy-2], quindi possiamo chiedere a `pivot_longer()` di liberarsene impostando `values_drop_na = TRUE`:
 
-[^data-tidy-2]: We'll come back to this idea in @sec-missing-values.
+[^data-tidy-2]: Torneremo su questa idea in @sec-missing-values.
 
 ```{r}
 billboard |> 
@@ -202,14 +202,14 @@ billboard |>
   )
 ```
 
-The number of rows is now much lower, indicating that many rows with `NA`s were dropped.
+Il numero di righe è ora molto più basso, indicando che molte righe con `NA` sono state eliminate.
 
-You might also wonder what happens if a song is in the top 100 for more than 76 weeks?
-We can't tell from this data, but you might guess that additional columns `wk77`, `wk78`, ...
-would be added to the dataset.
+Potresti anche chiederti cosa succede se una canzone è nella top 100 per più di 76 settimane?
+Non possiamo dirlo da questi dati, ma potresti immaginare che colonne aggiuntive `wk77`, `wk78`, ...
+verrebbero aggiunte al dataset.
 
-This data is now tidy, but we could make future computation a bit easier by converting values of `week` from character strings to numbers using `mutate()` and `readr::parse_number()`.
-`parse_number()` is a handy function that will extract the first number from a string, ignoring all other text.
+Questi dati sono ora ordinati, ma potremmo rendere i calcoli futuri un po' più facili convertendo i valori di `week` da stringhe di caratteri a numeri usando `mutate()` e `readr::parse_number()`.
+`parse_number()` è una funzione utile che estrarrà il primo numero da una stringa, ignorando tutto l'altro testo.
 
 ```{r}
 billboard_longer <- billboard |> 
@@ -225,9 +225,9 @@ billboard_longer <- billboard |>
 billboard_longer
 ```
 
-Now that we have all the week numbers in one variable and all the rank values in another, we're in a good position to visualize how song ranks vary over time.
-The code is shown below and the result is in @fig-billboard-ranks.
-We can see that very few songs stay in the top 100 for more than 20 weeks.
+Ora che abbiamo tutti i numeri delle settimane in una variabile e tutti i valori di classifica in un'altra, siamo in una buona posizione per visualizzare come le classifiche delle canzoni variano nel tempo.
+Il codice è mostrato sotto e il risultato è in @fig-billboard-ranks.
+Possiamo vedere che molto poche canzoni rimangono nella top 100 per più di 20 settimane.
 
 ```{r}
 #| label: fig-billboard-ranks
@@ -308,9 +308,9 @@ Devono essere ripetuti una volta per ogni riga nel dataset originale.
 knitr::include_graphics("diagrams/tidy-data/column-names.png", dpi = 270)
 ```
 
-The cell values also become values in a new variable, with a name defined by `values_to`.
-They are unwound row by row.
-@fig-pivot-values illustrates the process.
+I valori delle celle diventano anche valori in una nuova variabile, con un nome definito da `values_to`.
+Vengono srotolati riga per riga.
+@fig-pivot-values illustra il processo.
 
 ```{r}
 #| label: fig-pivot-values
@@ -327,24 +327,24 @@ They are unwound row by row.
 knitr::include_graphics("diagrams/tidy-data/cell-values.png", dpi = 270)
 ```
 
-### Many variables in column names
+### Molte variabili nei nomi delle colonne
 
-A more challenging situation occurs when you have multiple pieces of information crammed into the column names, and you would like to store these in separate new variables.
-For example, take the `who2` dataset, the source of `table1` and friends that you saw above:
+Una situazione più impegnativa si verifica quando hai molteplici pezzi di informazione compressi nei nomi delle colonne, e vorresti memorizzare questi in nuove variabili separate.
+Per esempio, prendi il dataset `who2`, la fonte di `table1` e amici che hai visto sopra:
 
 ```{r}
 who2
 ```
 
-This dataset, collected by the World Health Organisation, records information about tuberculosis diagnoses.
-There are two columns that are already variables and are easy to interpret: `country` and `year`.
-They are followed by 56 columns like `sp_m_014`, `ep_m_4554`, and `rel_m_3544`.
-If you stare at these columns for long enough, you'll notice there's a pattern.
-Each column name is made up of three pieces separated by `_`.
-The first piece, `sp`/`rel`/`ep`, describes the method used for the diagnosis, the second piece, `m`/`f` is the `gender` (coded as a binary variable in this dataset), and the third piece, `014`/`1524`/`2534`/`3544`/`4554`/`5564`/`65` is the `age` range (`014` represents 0-14, for example).
+Questo dataset, raccolto dall'Organizzazione Mondiale della Sanità, registra informazioni sulle diagnosi di tubercolosi.
+Ci sono due colonne che sono già variabili e sono facili da interpretare: `country` e `year`.
+Sono seguite da 56 colonne come `sp_m_014`, `ep_m_4554`, e `rel_m_3544`.
+Se fissi queste colonne abbastanza a lungo, noterai che c'è un pattern.
+Ogni nome di colonna è composto da tre pezzi separati da `_`.
+Il primo pezzo, `sp`/`rel`/`ep`, descrive il metodo usato per la diagnosi, il secondo pezzo, `m`/`f` è il `gender` (codificato come variabile binaria in questo dataset), e il terzo pezzo, `014`/`1524`/`2534`/`3544`/`4554`/`5564`/`65` è l'intervallo di `age` (`014` rappresenta 0-14, per esempio).
 
-So in this case we have six pieces of information recorded in `who2`: the country and the year (already columns); the method of diagnosis, the gender category, and the age range category (contained in the other column names); and the count of patients in that category (cell values).
-To organize these six pieces of information in six separate columns, we use `pivot_longer()` with a vector of column names for `names_to` and instructors for splitting the original variable names into pieces for `names_sep` as well as a column name for `values_to`:
+Quindi in questo caso abbiamo sei pezzi di informazione registrati in `who2`: il paese e l'anno (già colonne); il metodo di diagnosi, la categoria di genere, e la categoria di intervallo di età (contenuti negli altri nomi di colonna); e il conteggio di pazienti in quella categoria (valori delle celle).
+Per organizzare questi sei pezzi di informazione in sei colonne separate, usiamo `pivot_longer()` con un vettore di nomi di colonna per `names_to` e istruzioni per dividere i nomi di variabile originali in pezzi per `names_sep` così come un nome di colonna per `values_to`:
 
 ```{r}
 who2 |> 
@@ -356,11 +356,11 @@ who2 |>
   )
 ```
 
-An alternative to `names_sep` is `names_pattern`, which you can use to extract variables from more complicated naming scenarios, once you've learned about regular expressions in @sec-regular-expressions.
+Un'alternativa a `names_sep` è `names_pattern`, che puoi usare per estrarre variabili da scenari di denominazione più complicati, una volta che hai imparato sulle espressioni regolari in @sec-regular-expressions.
 
-Conceptually, this is only a minor variation on the simpler case you've already seen.
-@fig-pivot-multiple-names shows the basic idea: now, instead of the column names pivoting into a single column, they pivot into multiple columns.
-You can imagine this happening in two steps (first pivoting and then separating) but under the hood it happens in a single step because that's faster.
+Concettualmente, questa è solo una variazione minore del caso più semplice che hai già visto.
+@fig-pivot-multiple-names mostra l'idea di base: ora, invece che i nomi delle colonne ruotino in una singola colonna, ruotano in molteplici colonne.
+Puoi immaginare che questo accada in due passi (prima ruotando e poi separando) ma sotto il cofano accade in un singolo passo perché è più veloce.
 
 ```{r}
 #| label: fig-pivot-multiple-names
@@ -379,19 +379,19 @@ You can imagine this happening in two steps (first pivoting and then separating)
 knitr::include_graphics("diagrams/tidy-data/multiple-names.png", dpi = 270)
 ```
 
-### Data and variable names in the column headers
+### Dati e nomi di variabili nelle intestazioni delle colonne
 
-The next step up in complexity is when the column names include a mix of variable values and variable names.
-For example, take the `household` dataset:
+Il prossimo passo in complessità è quando i nomi delle colonne includono un mix di valori di variabili e nomi di variabili.
+Per esempio, prendi il dataset `household`:
 
 ```{r}
 household
 ```
 
-This dataset contains data about five families, with the names and dates of birth of up to two children.
-The new challenge in this dataset is that the column names contain the names of two variables (`dob`, `name`) and the values of another (`child`, with values 1 or 2).
-To solve this problem we again need to supply a vector to `names_to` but this time we use the special `".value"` sentinel; this isn't the name of a variable but a unique value that tells `pivot_longer()` to do something different.
-This overrides the usual `values_to` argument to use the first component of the pivoted column name as a variable name in the output.
+Questo dataset contiene dati su cinque famiglie, con i nomi e le date di nascita di fino a due bambini.
+La nuova sfida in questo dataset è che i nomi delle colonne contengono i nomi di due variabili (`dob`, `name`) e i valori di un'altra (`child`, con valori 1 o 2).
+Per risolvere questo problema dobbiamo di nuovo fornire un vettore a `names_to` ma questa volta usiamo la sentinella speciale `".value"`; questo non è il nome di una variabile ma un valore unico che dice a `pivot_longer()` di fare qualcosa di diverso.
+Questo sovrascrive il solito argomento `values_to` per usare il primo componente del nome della colonna ruotata come nome di variabile nell'output.
 
 ```{r}
 household |> 
@@ -403,10 +403,10 @@ household |>
   )
 ```
 
-We again use `values_drop_na = TRUE`, since the shape of the input forces the creation of explicit missing variables (e.g., for families with only one child).
+Usiamo di nuovo `values_drop_na = TRUE`, dato che la forma dell'input forza la creazione di variabili mancanti esplicite (es., per famiglie con solo un bambino).
 
-@fig-pivot-names-and-values illustrates the basic idea with a simpler example.
-When you use `".value"` in `names_to`, the column names in the input contribute to both values and variable names in the output.
+@fig-pivot-names-and-values illustra l'idea di base con un esempio più semplice.
+Quando usi `".value"` in `names_to`, i nomi delle colonne nell'input contribuiscono sia ai valori che ai nomi delle variabili nell'output.
 
 ```{r}
 #| label: fig-pivot-names-and-values
@@ -474,7 +474,7 @@ Questo ci dà l'output che stiamo cercando.
 ### Come funziona `pivot_wider()`?
 
 Per capire come funziona `pivot_wider()`, iniziamo di nuovo con un dataset molto semplice.
-This time we have two patients with `id`s A and B, we have three blood pressure measurements on patient A and two on patient B:
+Questa volta abbiamo due pazienti con `id` A e B, abbiamo tre misurazioni della pressione sanguigna sul paziente A e due sul paziente B:
 
 ```{r}
 df <- tribble(
@@ -487,7 +487,7 @@ df <- tribble(
 )
 ```
 
-We'll take the values from the `value` column and the names from the `measurement` column:
+Prenderemo i valori dalla colonna `value` e i nomi dalla colonna `measurement`:
 
 ```{r}
 df |> 
@@ -497,8 +497,8 @@ df |>
   )
 ```
 
-To begin the process `pivot_wider()` needs to first figure out what will go in the rows and columns.
-The new column names will be the unique values of `measurement`.
+Per iniziare il processo `pivot_wider()` deve prima capire cosa andrà nelle righe e nelle colonne.
+I nuovi nomi delle colonne saranno i valori unici di `measurement`.
 
 ```{r}
 df |> 
@@ -506,9 +506,9 @@ df |>
   pull()
 ```
 
-By default, the rows in the output are determined by all the variables that aren't going into the new names or values.
-These are called the `id_cols`.
-Here there is only one column, but in general there can be any number.
+Per default, le righe nell'output sono determinate da tutte le variabili che non vanno nei nuovi nomi o valori.
+Queste sono chiamate `id_cols`.
+Qui c'è solo una colonna, ma in generale ce ne possono essere quante se ne vuole.
 
 ```{r}
 df |> 
@@ -516,7 +516,7 @@ df |>
   distinct()
 ```
 
-`pivot_wider()` then combines these results to generate an empty data frame:
+`pivot_wider()` poi combina questi risultati per generare un data frame vuoto:
 
 ```{r}
 df |> 
@@ -525,12 +525,12 @@ df |>
   mutate(x = NA, y = NA, z = NA)
 ```
 
-It then fills in all the missing values using the data in the input.
-In this case, not every cell in the output has a corresponding value in the input as there's no third blood pressure measurement for patient B, so that cell remains missing.
-We'll come back to this idea that `pivot_wider()` can "make" missing values in @sec-missing-values.
+Poi riempie tutti i valori mancanti usando i dati nell'input.
+In questo caso, non ogni cella nell'output ha un valore corrispondente nell'input dato che non c'è una terza misurazione della pressione sanguigna per il paziente B, quindi quella cella rimane mancante.
+Torneremo su questa idea che `pivot_wider()` può "creare" valori mancanti in @sec-missing-values.
 
-You might also wonder what happens if there are multiple rows in the input that correspond to one cell in the output.
-The example below has two rows that correspond to `id` "A" and `measurement` "bp1":
+Potresti anche chiederti cosa succede se ci sono righe multiple nell'input che corrispondono a una cella nell'output.
+L'esempio sotto ha due righe che corrispondono a `id` "A" e `measurement` "bp1":
 
 ```{r}
 df <- tribble(
@@ -543,7 +543,7 @@ df <- tribble(
 )
 ```
 
-If we attempt to pivot this we get an output that contains list-columns, which you'll learn more about in @sec-rectangling:
+Se tentiamo di ruotare questo otteniamo un output che contiene list-columns, delle quali imparerai di più in @sec-rectangling:
 
 ```{r}
 df |>
@@ -553,7 +553,7 @@ df |>
   )
 ```
 
-Since you don't know how to work with this sort of data yet, you'll want to follow the hint in the warning to figure out where the problem is:
+Dato che non sai ancora come lavorare con questo tipo di dati, vorrai seguire il suggerimento nell'avvertimento per capire dov'è il problema:
 
 ```{r}
 df |> 
@@ -562,7 +562,7 @@ df |>
   filter(n > 1)
 ```
 
-It's then up to you to figure out what's gone wrong with your data and either repair the underlying damage or use your grouping and summarizing skills to ensure that each combination of row and column values only has a single row.
+Sta poi a te capire cosa è andato storto con i tuoi dati e o riparare il danno sottostante o usare le tue abilità di raggruppamento e riassunto per assicurarti che ogni combinazione di valori di riga e colonna abbia solo una singola riga.
 
 ## Riassunto
 

@@ -530,7 +530,7 @@ Extracting the bounds requires a few more steps:
 locations |> 
   select(city, formatted_address, geometry) |> 
   unnest_wider(geometry) |> 
-  # focus on the variables of interest
+  # concentrarsi sulle variabili di interesse
   select(!location:viewport) |>
   unnest_wider(bounds)
 ```
@@ -640,13 +640,13 @@ Nella vita reale, userai `read_json()` per leggere un file JSON dal disco.
 Per esempio, il pacchetto repurrsive fornisce anche la fonte per `gh_user` come file JSON e puoi leggerlo con `read_json()`:
 
 ```{r}
-# A path to a json file inside the package:
+# Un percorso a un file json dentro il pacchetto:
 gh_users_json()
 
-# Read it with read_json()
+# Leggilo con read_json()
 gh_users2 <- read_json(gh_users_json())
 
-# Check it's the same as the data we were using previously
+# Controlla che sia lo stesso dei dati che stavamo usando prima
 identical(gh_users, gh_users2)
 ```
 

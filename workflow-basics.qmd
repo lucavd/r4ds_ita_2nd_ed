@@ -185,9 +185,9 @@ Digita il seguente codice e nota che RStudio fornisce assistenza simile con le v
 x <- "hello world"
 ```
 
-Quotation marks and parentheses must always come in a pair.
-RStudio does its best to help you, but it's still possible to mess up and end up with a mismatch.
-If this happens, R will show you the continuation character "+":
+Le virgolette e le parentesi devono sempre venire in coppia.
+RStudio fa del suo meglio per aiutarti, ma è ancora possibile commettere errori e finire con una mancata corrispondenza.
+Se questo accade, R ti mostrerà il carattere di continuazione "+":
 
 ```         
 > x <- "hello

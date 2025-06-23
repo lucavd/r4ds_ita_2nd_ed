@@ -1,30 +1,30 @@
-# A field guide to base R {#sec-base-r}
+# Una guida pratica a base R {#sec-base-r}
 
 ```{r}
 #| echo: false
 source("_common.R")
 ```
 
-## Introduction
+## Introduzione
 
-To finish off the programming section, we're going to give you a quick tour of the most important base R functions that we don't otherwise discuss in the book.
-These tools are particularly useful as you do more programming and will help you read code you'll encounter in the wild.
+Per concludere la sezione sulla programmazione, ti daremo un rapido tour delle funzioni di base R più importanti che non discutiamo altrimenti nel libro.
+Questi strumenti sono particolarmente utili quando fai più programmazione e ti aiuteranno a leggere il codice che incontrerai in natura.
 
-This is a good place to remind you that the tidyverse is not the only way to solve data science problems.
-We teach the tidyverse in this book because tidyverse packages share a common design philosophy, increasing the consistency across functions, and making each new function or package a little easier to learn and use.
-It's not possible to use the tidyverse without using base R, so we've actually already taught you a **lot** of base R functions: from `library()` to load packages, to `sum()` and `mean()` for numeric summaries, to the factor, date, and POSIXct data types, and of course all the basic operators like `+`, `-`, `/`, `*`, `|`, `&`, and `!`.
-What we haven't focused on so far is base R workflows, so we will highlight a few of those in this chapter.
+Questo è un buon posto per ricordarti che il tidyverse non è l'unico modo per risolvere problemi di data science.
+Insegniamo il tidyverse in questo libro perché i pacchetti tidyverse condividono una filosofia di design comune, aumentando la coerenza tra le funzioni, e rendendo ogni nuova funzione o pacchetto un po' più facile da imparare e usare.
+Non è possibile usare il tidyverse senza usare base R, quindi ti abbiamo già insegnato **molte** funzioni di base R: da `library()` per caricare i pacchetti, a `sum()` e `mean()` per riepiloghi numerici, ai tipi di dati factor, date e POSIXct, e ovviamente tutti gli operatori di base come `+`, `-`, `/`, `*`, `|`, `&`, e `!`.
+Su quello che non ci siamo concentrati finora sono i workflow di base R, quindi evidenzieremo alcuni di quelli in questo capitolo.
 
-After you read this book, you'll learn other approaches to the same problems using base R, data.table, and other packages.
-You'll undoubtedly encounter these other approaches when you start reading R code written by others, particularly if you're using StackOverflow.
-It's 100% okay to write code that uses a mix of approaches, and don't let anyone tell you otherwise!
+Dopo aver letto questo libro, imparerai altri approcci agli stessi problemi usando base R, data.table, e altri pacchetti.
+Indubbiamente incontrerai questi altri approcci quando inizierai a leggere il codice R scritto da altri, particolarmente se stai usando StackOverflow.
+È perfettamente okay scrivere codice che usa un mix di approcci, e non lasciare che nessuno ti dica il contrario!
 
-In this chapter, we'll focus on four big topics: subsetting with `[`, subsetting with `[[` and `$`, the apply family of functions, and `for` loops.
-To finish off, we'll briefly discuss two essential plotting functions.
+In questo capitolo, ci concentreremo su quattro grandi argomenti: subsetting con `[`, subsetting con `[[` e `$`, la famiglia di funzioni apply, e i loop `for`.
+Per finire, discuteremo brevemente due funzioni di plotting essenziali.
 
-### Prerequisites
+### Prerequisiti
 
-This package focuses on base R so doesn't have any real prerequisites, but we'll load the tidyverse in order to explain some of the differences.
+Questo pacchetto si concentra su base R quindi non ha prerequisiti reali, ma caricheremo il tidyverse per spiegare alcune delle differenze.
 
 ```{r}
 #| label: setup
@@ -32,75 +32,75 @@ This package focuses on base R so doesn't have any real prerequisites, but we'll
 library(tidyverse)
 ```
 
-## Selecting multiple elements with `[` {#sec-subset-many}
+## Selezionare elementi multipli con `[` {#sec-subset-many}
 
-`[` is used to extract sub-components from vectors and data frames, and is called like `x[i]` or `x[i, j]`.
-In this section, we'll introduce you to the power of `[`, first showing you how you can use it with vectors, then how the same principles extend in a straightforward way to two-dimensional (2d) structures like data frames.
-We'll then help you cement that knowledge by showing how various dplyr verbs are special cases of `[`.
+`[` è usato per estrarre sotto-componenti da vettori e data frame, ed è chiamato come `x[i]` o `x[i, j]`.
+In questa sezione, ti introdurremo alla potenza di `[`, prima mostrandoti come puoi usarlo con i vettori, poi come gli stessi principi si estendono in modo diretto a strutture bidimensionali (2d) come i data frame.
+Ti aiuteremo poi a cementare quella conoscenza mostrando come vari verbi dplyr sono casi speciali di `[`.
 
-### Subsetting vectors
+### Subsetting di vettori
 
-There are five main types of things that you can subset a vector with, i.e., that can be the `i` in `x[i]`:
+Ci sono cinque tipi principali di cose con cui puoi fare il subsetting di un vettore, cioè, che possono essere la `i` in `x[i]`:
 
-1.  **A vector of positive integers**.
-    Subsetting with positive integers keeps the elements at those positions:
+1.  **Un vettore di interi positivi**.
+    Il subsetting con interi positivi mantiene gli elementi in quelle posizioni:
 
     ```{r}
     x <- c("one", "two", "three", "four", "five")
     x[c(3, 2, 5)]
     ```
 
-    By repeating a position, you can actually make a longer output than input, making the term "subsetting" a bit of a misnomer.
+    Ripetendo una posizione, puoi effettivamente creare un output più lungo dell'input, rendendo il termine "subsetting" un po' improprio.
 
     ```{r}
     x[c(1, 1, 5, 5, 5, 2)]
     ```
 
-2.  **A vector of negative integers**.
-    Negative values drop the elements at the specified positions:
+2.  **Un vettore di interi negativi**.
+    I valori negativi rimuovono gli elementi alle posizioni specificate:
 
     ```{r}
     x[c(-1, -3, -5)]
     ```
 
-3.  **A logical vector**.
-    Subsetting with a logical vector keeps all values corresponding to a `TRUE` value.
-    This is most often useful in conjunction with the comparison functions.
+3.  **Un vettore logico**.
+    Il subsetting con un vettore logico mantiene tutti i valori corrispondenti a un valore `TRUE`.
+    Questo è spesso utile in congiunzione con le funzioni di confronto.
 
     ```{r}
     x <- c(10, 3, NA, 5, 8, 1, NA)
 
-    # All non-missing values of x
+    # Tutti i valori non mancanti di x
     x[!is.na(x)]
 
-    # All even (or missing!) values of x
+    # Tutti i valori pari (o mancanti!) di x
     x[x %% 2 == 0]
     ```
 
-    Unlike `filter()`, `NA` indices will be included in the output as `NA`s.
+    A differenza di `filter()`, gli indici `NA` saranno inclusi nell'output come `NA`.
 
-4.  **A character vector**.
-    If you have a named vector, you can subset it with a character vector:
+4.  **Un vettore di caratteri**.
+    Se hai un vettore nominato, puoi fare il subsetting con un vettore di caratteri:
 
     ```{r}
     x <- c(abc = 1, def = 2, xyz = 5)
     x[c("xyz", "def")]
     ```
 
-    As with subsetting with positive integers, you can use a character vector to duplicate individual entries.
+    Come con il subsetting con interi positivi, puoi usare un vettore di caratteri per duplicare singole voci.
 
-5.  **Nothing**.
-    The final type of subsetting is nothing, `x[]`, which returns the complete `x`.
-    This is not useful for subsetting vectors, but as we'll see shortly, it is useful when subsetting 2d structures like tibbles.
+5.  **Niente**.
+    Il tipo finale di subsetting è niente, `x[]`, che restituisce la `x` completa.
+    Questo non è utile per il subsetting di vettori, ma come vedremo tra poco, è utile quando si fa il subsetting di strutture 2d come i tibble.
 
-### Subsetting data frames
+### Subsetting di data frame
 
-There are quite a few different ways[^base-r-1] that you can use `[` with a data frame, but the most important way is to select rows and columns independently with `df[rows, cols]`. Here `rows` and `cols` are vectors as described above.
-For example, `df[rows, ]` and `df[, cols]` select just rows or just columns, using the empty subset to preserve the other dimension.
+Ci sono diversi modi[^base-r-1] in cui puoi usare `[` con un data frame, ma il modo più importante è selezionare righe e colonne indipendentemente con `df[rows, cols]`. Qui `rows` e `cols` sono vettori come descritto sopra.
+Per esempio, `df[rows, ]` e `df[, cols]` selezionano solo righe o solo colonne, usando il subset vuoto per preservare l'altra dimensione.
 
-[^base-r-1]: Read <https://adv-r.hadley.nz/subsetting.html#subset-multiple> to see how you can also subset a data frame like it is a 1d object and how you can subset it with a matrix.
+[^base-r-1]: Leggi <https://adv-r.hadley.nz/subsetting.html#subset-multiple> per vedere come puoi anche fare il subsetting di un data frame come se fosse un oggetto 1d e come puoi fare il subsetting con una matrice.
 
-Here are a couple of examples:
+Ecco un paio di esempi:
 
 ```{r}
 df <- tibble(
@@ -109,24 +109,24 @@ df <- tibble(
   z = runif(3)
 )
 
-# Select first row and second column
+# Seleziona prima riga e seconda colonna
 df[1, 2]
 
-# Select all rows and columns x and y
+# Seleziona tutte le righe e le colonne x e y
 df[, c("x" , "y")]
 
-# Select rows where `x` is greater than 1 and all columns
+# Seleziona righe dove `x` è maggiore di 1 e tutte le colonne
 df[df$x > 1, ]
 ```
 
-We'll come back to `$` shortly, but you should be able to guess what `df$x` does from the context: it extracts the `x` variable from `df`.
-We need to use it here because `[` doesn't use tidy evaluation, so you need to be explicit about the source of the `x` variable.
+Torneremo su `$` tra poco, ma dovresti essere in grado di indovinare cosa fa `df$x` dal contesto: estrae la variabile `x` da `df`.
+Dobbiamo usarlo qui perché `[` non usa tidy evaluation, quindi devi essere esplicito sulla fonte della variabile `x`.
 
-There's an important difference between tibbles and data frames when it comes to `[`.
-In this book, we've mainly used tibbles, which *are* data frames, but they tweak some behaviors to make your life a little easier.
-In most places, you can use "tibble" and "data frame" interchangeably, so when we want to draw particular attention to R's built-in data frame, we'll write `data.frame`.
-If `df` is a `data.frame`, then `df[, cols]` will return a vector if `col` selects a single column and a data frame if it selects more than one column.
-If `df` is a tibble, then `[` will always return a tibble.
+C'è una differenza importante tra tibble e data frame quando si tratta di `[`.
+In questo libro, abbiamo principalmente usato tibble, che *sono* data frame, ma modificano alcuni comportamenti per rendere la tua vita un po' più facile.
+Nella maggior parte dei posti, puoi usare "tibble" e "data frame" in modo intercambiabile, quindi quando vogliamo attirare particolare attenzione al data frame integrato di R, scriveremo `data.frame`.
+Se `df` è un `data.frame`, allora `df[, cols]` restituirà un vettore se `col` seleziona una singola colonna e un data frame se seleziona più di una colonna.
+Se `df` è un tibble, allora `[` restituirà sempre un tibble.
 
 ```{r}
 df1 <- data.frame(x = 1:3)
@@ -136,17 +136,17 @@ df2 <- tibble(x = 1:3)
 df2[, "x"]
 ```
 
-One way to avoid this ambiguity with `data.frame`s is to explicitly specify `drop = FALSE`:
+Un modo per evitare questa ambiguità con i `data.frame` è specificare esplicitamente `drop = FALSE`:
 
 ```{r}
 df1[, "x" , drop = FALSE]
 ```
 
-### dplyr equivalents
+### Equivalenti dplyr
 
-Several dplyr verbs are special cases of `[`:
+Diversi verbi dplyr sono casi speciali di `[`:
 
--   `filter()` is equivalent to subsetting the rows with a logical vector, taking care to exclude missing values:
+-   `filter()` è equivalente a fare il subsetting delle righe con un vettore logico, avendo cura di escludere i valori mancanti:
 
     ```{r}
     #| results: false
@@ -157,37 +157,37 @@ Several dplyr verbs are special cases of `[`:
     )
     df |> filter(x > 1)
 
-    # same as
+    # stesso di
     df[!is.na(df$x) & df$x > 1, ]
     ```
 
-    Another common technique in the wild is to use `which()` for its side-effect of dropping missing values: `df[which(df$x > 1), ]`.
+    Un'altra tecnica comune in natura è usare `which()` per il suo effetto collaterale di eliminare i valori mancanti: `df[which(df$x > 1), ]`.
 
--   `arrange()` is equivalent to subsetting the rows with an integer vector, usually created with `order()`:
+-   `arrange()` è equivalente a fare il subsetting delle righe con un vettore intero, di solito creato con `order()`:
 
     ```{r}
     #| results: false
     df |> arrange(x, y)
 
-    # same as
+    # stesso di
     df[order(df$x, df$y), ]
     ```
 
-    You can use `order(decreasing = TRUE)` to sort all columns in descending order or `-rank(col)` to sort columns in decreasing order individually.
+    Puoi usare `order(decreasing = TRUE)` per ordinare tutte le colonne in ordine decrescente o `-rank(col)` per ordinare le colonne in ordine decrescente individualmente.
 
--   Both `select()` and `relocate()` are similar to subsetting the columns with a character vector:
+-   Sia `select()` che `relocate()` sono simili a fare il subsetting delle colonne con un vettore di caratteri:
 
     ```{r}
     #| results: false
     df |> select(x, z)
 
-    # same as
+    # stesso di
     df[, c("x", "z")]
     ```
 
-Base R also provides a function that combines the features of `filter()` and `select()`[^base-r-2] called `subset()`:
+Base R fornisce anche una funzione che combina le caratteristiche di `filter()` e `select()`[^base-r-2] chiamata `subset()`:
 
-[^base-r-2]: But it doesn't handle grouped data frames differently and it doesn't support selection helper functions like `starts_with()`.
+[^base-r-2]: Ma non gestisce i data frame raggruppati diversamente e non supporta le funzioni helper di selezione come `starts_with()`.
 
 ```{r}
 df |> 
@@ -197,15 +197,15 @@ df |>
 
 ```{r}
 #| results: false
-# same as
+# stesso di
 df |> subset(x > 1, c(y, z))
 ```
 
-This function was the inspiration for much of dplyr's syntax.
+Questa funzione è stata l'ispirazione per gran parte della sintassi di dplyr.
 
-### Exercises
+### Esercizi
 
-1.  Create funzioni che prendono un vettore come input e restituiscono:
+1.  Crea funzioni che prendono un vettore come input e restituiscono:
 
     a.  Gli elementi nelle posizioni pari.
     b.  Ogni elemento eccetto l'ultimo valore.
@@ -270,7 +270,7 @@ diamonds |> pull(cut) |> levels()
 ### Tibble
 
 Ci sono un paio di differenze importanti tra tibble e `data.frame` base quando si tratta di `$`.
-I data frame corrispondono al prefisso di qualsiasi nome di variabile (cosiddetto **partial matching**) e non si lamentano se una colonna non existe:
+I data frame corrispondono al prefisso di qualsiasi nome di variabile (cosiddetto **partial matching**) e non si lamentano se una colonna non esiste:
 
 ```{r}
 df <- data.frame(x1 = 1)

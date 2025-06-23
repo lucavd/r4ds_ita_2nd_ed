@@ -1,4 +1,4 @@
-# Dates and times {#sec-dates-and-times}
+# Date e orari {#sec-dates-and-times}
 
 ```{r}
 #| echo: false
@@ -100,25 +100,25 @@ Il formato date-time usato da readr è uno standard usato in molti linguaggi di 
 Ad esempio, `%Y-%m-%d` specifica una data che è un anno, `-`, mese (come numero) `-`, giorno.
 La Tabella @tbl-date-formats elenca tutte le opzioni.
 
-| Type  | Code  | Meaning                        | Example         |
-|-------|-------|--------------------------------|-----------------|
-| Year  | `%Y`  | 4 digit year                   | 2021            |
-|       | `%y`  | 2 digit year                   | 21              |
-| Month | `%m`  | Number                         | 2               |
-|       | `%b`  | Abbreviated name               | Feb             |
-|       | `%B`  | Full name                      | February        |
-| Day   | `%d`  | One or two digits              | 2               |
-|       | `%e`  | Two digits                     | 02              |
-| Time  | `%H`  | 24-hour hour                   | 13              |
-|       | `%I`  | 12-hour hour                   | 1               |
-|       | `%p`  | AM/PM                          | pm              |
-|       | `%M`  | Minutes                        | 35              |
-|       | `%S`  | Seconds                        | 45              |
-|       | `%OS` | Seconds with decimal component | 45.35           |
-|       | `%Z`  | Time zone name                 | America/Chicago |
-|       | `%z`  | Offset from UTC                | +0800           |
-| Other | `%.`  | Skip one non-digit             | :               |
-|       | `%*`  | Skip any number of non-digits  |                 |
+| Tipo  | Codice | Significato                    | Esempio         |
+|-------|--------|--------------------------------|-----------------|
+| Anno  | `%Y`   | Anno a 4 cifre                | 2021            |
+|       | `%y`   | Anno a 2 cifre                | 21              |
+| Mese  | `%m`   | Numero                         | 2               |
+|       | `%b`   | Nome abbreviato               | Feb             |
+|       | `%B`   | Nome completo                 | February        |
+| Giorno| `%d`   | Una o due cifre               | 2               |
+|       | `%e`   | Due cifre                     | 02              |
+| Ora   | `%H`   | Ora formato 24 ore            | 13              |
+|       | `%I`   | Ora formato 12 ore            | 1               |
+|       | `%p`   | AM/PM                         | pm              |
+|       | `%M`   | Minuti                        | 35              |
+|       | `%S`   | Secondi                       | 45              |
+|       | `%OS`  | Secondi con componente decimale| 45.35           |
+|       | `%Z`   | Nome fuso orario              | America/Chicago |
+|       | `%z`   | Offset da UTC                 | +0800           |
+| Altro | `%.`   | Salta un non-cifra            | :               |
+|       | `%*`   | Salta un numero qualsiasi di non-cifre |      |
 
 : Tutti i formati data compresi da readr {#tbl-date-formats}
 
@@ -364,7 +364,7 @@ flights_dt |>
   geom_line()
 ```
 
-Interestingly, if we look at the *scheduled* departure time we don't see such a strong pattern:
+Interessantemente, se guardiamo l'orario di partenza *programmato* non vediamo un pattern così forte:
 
 ```{r}
 #| fig-alt: | 
@@ -384,9 +384,9 @@ ggplot(sched_dep, aes(x = minute, y = avg_delay)) +
   geom_line()
 ```
 
-So why do we see that pattern with the actual departure times?
-Well, like much data collected by humans, there's a strong bias towards flights leaving at "nice" departure times, as @fig-human-rounding shows.
-Always be alert for this sort of pattern whenever you work with data that involves human judgement!
+Quindi perché vediamo quel pattern con gli orari di partenza effettivi?
+Bene, come molti dati raccolti da esseri umani, c'è un forte bias verso voli che partono in orari di partenza "carini", come mostra @fig-human-rounding.
+Sii sempre attento a questo tipo di pattern ogni volta che lavori con dati che coinvolgono il giudizio umano!
 
 ```{r}
 #| label: fig-human-rounding
@@ -497,47 +497,47 @@ update(ymd("2023-02-01"), hour = 400)
     (Suggerimento: considera la posizione dell'aeroporto.)
 
 4.  Come cambia il tempo medio di ritardo durante il corso di un giorno?
-    Should you use `dep_time` or `sched_dep_time`?
-    Why?
+    Dovresti usare `dep_time` o `sched_dep_time`?
+    Perché?
 
-5.  On what day of the week should you leave if you want to minimise the chance of a delay?
+5.  In che giorno della settimana dovresti partire se vuoi minimizzare la possibilità di un ritardo?
 
-6.  What makes the distribution of `diamonds$carat` and `flights$sched_dep_time` similar?
+6.  Cosa rende simile la distribuzione di `diamonds$carat` e `flights$sched_dep_time`?
 
-7.  Confirm our hypothesis that the early departures of flights in minutes 20-30 and 50-60 are caused by scheduled flights that leave early.
-    Hint: create a binary variable that tells you whether or not a flight was delayed.
+7.  Conferma la nostra ipotesi che le partenze anticipate dei voli nei minuti 20-30 e 50-60 sono causate da voli programmati che partono in anticipo.
+    Suggerimento: crea una variabile binaria che ti dice se un volo era in ritardo o no.
 
-## Time spans
+## Intervalli di tempo
 
-Next you'll learn about how arithmetic with dates works, including subtraction, addition, and division.
-Along the way, you'll learn about three important classes that represent time spans:
+Successivamente imparerai come funziona l'aritmetica con le date, incluse sottrazione, addizione e divisione.
+Lungo la strada, imparerai tre classi importanti che rappresentano intervalli di tempo:
 
--   **Durations**, which represent an exact number of seconds.
--   **Periods**, which represent human units like weeks and months.
--   **Intervals**, which represent a starting and ending point.
+-   **Durations**, che rappresentano un numero esatto di secondi.
+-   **Periods**, che rappresentano unità umane come settimane e mesi.
+-   **Intervals**, che rappresentano un punto di inizio e fine.
 
-How do you pick between duration, periods, and intervals?
-As always, pick the simplest data structure that solves your problem.
-If you only care about physical time, use a duration; if you need to add human times, use a period; if you need to figure out how long a span is in human units, use an interval.
+Come scegli tra duration, periods e intervals?
+Come sempre, scegli la struttura dati più semplice che risolve il tuo problema.
+Se ti importa solo del tempo fisico, usa una duration; se hai bisogno di aggiungere tempi umani, usa un period; se hai bisogno di capire quanto è lungo un intervallo in unità umane, usa un interval.
 
 ### Durations
 
-In R, when you subtract two dates, you get a difftime object:
+In R, quando sottrai due date, ottieni un oggetto difftime:
 
 ```{r}
-# How old is Hadley?
+# Quanti anni ha Hadley?
 h_age <- today() - ymd("1979-10-14")
 h_age
 ```
 
-A `difftime` class object records a time span of seconds, minutes, hours, days, or weeks.
-This ambiguity can make difftimes a little painful to work with, so lubridate provides an alternative which always uses seconds: the **duration**.
+Un oggetto di classe `difftime` registra un intervallo di tempo di secondi, minuti, ore, giorni o settimane.
+Questa ambiguità può rendere i difftimes un po' fastidiosi con cui lavorare, quindi lubridate fornisce un'alternativa che usa sempre i secondi: la **duration**.
 
 ```{r}
 as.duration(h_age)
 ```
 
-Durations come with a bunch of convenient constructors:
+Le durations vengono con un mucchio di costruttori convenienti:
 
 ```{r}
 dseconds(15)
@@ -548,27 +548,27 @@ dweeks(3)
 dyears(1)
 ```
 
-Durations always record the time span in seconds.
-Larger units are created by converting minutes, hours, days, weeks, and years to seconds: 60 seconds in a minute, 60 minutes in an hour, 24 hours in a day, and 7 days in a week.
-Larger time units are more problematic.
-A year uses the "average" number of days in a year, i.e. 365.25.
-There's no way to convert a month to a duration, because there's just too much variation.
+Le durations registrano sempre l'intervallo di tempo in secondi.
+Unità più grandi sono create convertendo minuti, ore, giorni, settimane e anni in secondi: 60 secondi in un minuto, 60 minuti in un'ora, 24 ore in un giorno e 7 giorni in una settimana.
+Unità di tempo più grandi sono più problematiche.
+Un anno usa il numero "medio" di giorni in un anno, cioè 365.25.
+Non c'è modo di convertire un mese in una duration, perché c'è troppa variazione.
 
-You can add and multiply durations:
+Puoi aggiungere e moltiplicare durations:
 
 ```{r}
 2 * dyears(1)
 dyears(1) + dweeks(12) + dhours(15)
 ```
 
-You can add and subtract durations to and from days:
+Puoi aggiungere e sottrarre durations a e da giorni:
 
 ```{r}
 tomorrow <- today() + ddays(1)
 last_year <- today() - dyears(1)
 ```
 
-However, because durations represent an exact number of seconds, sometimes you might get an unexpected result:
+Tuttavia, poiché le durations rappresentano un numero esatto di secondi, a volte potresti ottenere un risultato inaspettato:
 
 ```{r}
 one_am <- ymd_hms("2026-03-08 01:00:00", tz = "America/New_York")
@@ -577,22 +577,22 @@ one_am
 one_am + ddays(1)
 ```
 
-Why is one day after 1am March 8, 2am March 9?
-If you look carefully at the date you might also notice that the time zones have changed.
-March 8 only has 23 hours because it's when DST starts, so if we add a full days worth of seconds we end up with a different time.
+Perché un giorno dopo l'1am dell'8 marzo sono le 2am del 9 marzo?
+Se guardi attentamente la data potresti anche notare che i fusi orari sono cambiati.
+L'8 marzo ha solo 23 ore perché è quando inizia l'ora legale, quindi se aggiungiamo il valore in secondi di un giorno completo finiamo con un orario diverso.
 
 ### Periods
 
-To solve this problem, lubridate provides **periods**.
-Periods are time spans but don't have a fixed length in seconds, instead they work with "human" times, like days and months.
-That allows them to work in a more intuitive way:
+Per risolvere questo problema, lubridate fornisce i **periods**.
+I periods sono intervalli di tempo ma non hanno una lunghezza fissa in secondi, invece lavorano con tempi "umani", come giorni e mesi.
+Questo permette loro di lavorare in un modo più intuitivo:
 
 ```{r}
 one_am
 one_am + days(1)
 ```
 
-Like durations, periods can be created with a number of friendly constructor functions.
+Come le durations, i periods possono essere creati con un numero di funzioni costruttrici amichevoli.
 
 ```{r}
 hours(c(12, 24))
@@ -600,37 +600,37 @@ days(7)
 months(1:6)
 ```
 
-You can add and multiply periods:
+Puoi aggiungere e moltiplicare periods:
 
 ```{r}
 10 * (months(6) + days(1))
 days(50) + hours(25) + minutes(2)
 ```
 
-And of course, add them to dates.
-Compared to durations, periods are more likely to do what you expect:
+E naturalmente, aggiungerli alle date.
+Rispetto alle durations, i periods hanno più probabilità di fare quello che ti aspetti:
 
 ```{r}
-# A leap year
+# Un anno bisestile
 ymd("2024-01-01") + dyears(1)
 ymd("2024-01-01") + years(1)
 
-# Daylight saving time
+# Ora legale
 one_am + ddays(1)
 one_am + days(1)
 ```
 
-Let's use periods to fix an oddity related to our flight dates.
-Some planes appear to have arrived at their destination *before* they departed from New York City.
+Usiamo i periods per correggere una stranezza relativa alle nostre date di volo.
+Alcuni aerei sembrano essere arrivati alla loro destinazione *prima* di essere partiti da New York City.
 
 ```{r}
 flights_dt |> 
   filter(arr_time < dep_time) 
 ```
 
-These are overnight flights.
-We used the same date information for both the departure and the arrival times, but these flights arrived on the following day.
-We can fix this by adding `days(1)` to the arrival time of each overnight flight.
+Questi sono voli notturni.
+Abbiamo usato le stesse informazioni sulla data sia per gli orari di partenza che di arrivo, ma questi voli sono arrivati il giorno seguente.
+Possiamo correggere questo aggiungendo `days(1)` all'orario di arrivo di ogni volo notturno.
 
 ```{r}
 flights_dt <- flights_dt |> 
@@ -641,7 +641,7 @@ flights_dt <- flights_dt |>
   )
 ```
 
-Now all of our flights obey the laws of physics.
+Ora tutti i nostri voli obbediscono alle leggi della fisica.
 
 ```{r}
 flights_dt |> 
@@ -650,22 +650,22 @@ flights_dt |>
 
 ### Intervals {#sec-intervals}
 
-What does `dyears(1) / ddays(365)` return?
-It's not quite one, because `dyears()` is defined as the number of seconds per average year, which is 365.25 days.
+Cosa restituisce `dyears(1) / ddays(365)`?
+Non è proprio uno, perché `dyears()` è definito come il numero di secondi per anno medio, che è 365.25 giorni.
 
-What does `years(1) / days(1)` return?
-Well, if the year was 2015 it should return 365, but if it was 2016, it should return 366!
-There's not quite enough information for lubridate to give a single clear answer.
-What it does instead is give an estimate:
+Cosa restituisce `years(1) / days(1)`?
+Bene, se l'anno fosse il 2015 dovrebbe restituire 365, ma se fosse il 2016, dovrebbe restituire 366!
+Non ci sono abbastanza informazioni perché lubridate dia una singola risposta chiara.
+Quello che fa invece è dare una stima:
 
 ```{r}
 years(1) / days(1)
 ```
 
-If you want a more accurate measurement, you'll have to use an **interval**.
-An interval is a pair of starting and ending date times, or you can think of it as a duration with a starting point.
+Se vuoi una misurazione più accurata, dovrai usare un **interval**.
+Un interval è una coppia di date-time di inizio e fine, o puoi pensare ad esso come una duration con un punto di inizio.
 
-You can create an interval by writing `start %--% end`:
+Puoi creare un interval scrivendo `start %--% end`:
 
 ```{r}
 y2023 <- ymd("2023-01-01") %--% ymd("2024-01-01")
@@ -675,7 +675,7 @@ y2023
 y2024
 ```
 
-You could then divide it by `days()` to find out how many days fit in the year:
+Potresti poi dividerlo per `days()` per scoprire quanti giorni ci sono nell'anno:
 
 ```{r}
 y2023 / days(1)
@@ -684,55 +684,55 @@ y2024 / days(1)
 
 ### Exercises
 
-1.  Explain `days(!overnight)` and `days(overnight)` to someone who has just started learning R.
-    What is the key fact you need to know?
+1.  Spiega `days(!overnight)` e `days(overnight)` a qualcuno che ha appena iniziato a imparare R.
+    Qual è il fatto chiave che devi sapere?
 
-2.  Create a vector of dates giving the first day of every month in 2015.
-    Create a vector of dates giving the first day of every month in the *current* year.
+2.  Crea un vettore di date che fornisce il primo giorno di ogni mese nel 2015.
+    Crea un vettore di date che fornisce il primo giorno di ogni mese nell'anno *corrente*.
 
-3.  Write a function that given your birthday (as a date), returns how old you are in years.
+3.  Scrivi una funzione che dato il tuo compleanno (come data), restituisce quanti anni hai.
 
-4.  Why can't `(today() %--% (today() + years(1))) / months(1)` work?
+4.  Perché `(today() %--% (today() + years(1))) / months(1)` non può funzionare?
 
-## Time zones
+## Fusi orari
 
-Time zones are an enormously complicated topic because of their interaction with geopolitical entities.
-Fortunately we don't need to dig into all the details as they're not all important for data analysis, but there are a few challenges we'll need to tackle head on.
+I fusi orari sono un argomento enormemente complicato a causa della loro interazione con entità geopolitiche.
+Fortunamente non abbiamo bisogno di scavare in tutti i dettagli dato che non sono tutti importanti per l'analisi dei dati, ma ci sono alcune sfide che dovremo affrontare di petto.
 
 <!--# https://www.ietf.org/timezones/tzdb-2018a/theory.html -->
 
-The first challenge is that everyday names of time zones tend to be ambiguous.
-For example, if you're American you're probably familiar with EST, or Eastern Standard Time.
-However, both Australia and Canada also have EST!
-To avoid confusion, R uses the international standard IANA time zones.
-These use a consistent naming scheme `{area}/{location}`, typically in the form `{continent}/{city}` or `{ocean}/{city}`.
-Examples include "America/New_York", "Europe/Paris", and "Pacific/Auckland".
+La prima sfida è che i nomi quotidiani dei fusi orari tendono ad essere ambigui.
+Per esempio, se sei americano probabilmente conosci EST, o Eastern Standard Time.
+Tuttavia, sia l'Australia che il Canada hanno anche EST!
+Per evitare confusione, R usa lo standard internazionale IANA per i fusi orari.
+Questi usano uno schema di denominazione consistente `{area}/{località}`, tipicamente nella forma `{continente}/{città}` o `{oceano}/{città}`.
+Esempi includono "America/New_York", "Europe/Paris", e "Pacific/Auckland".
 
-You might wonder why the time zone uses a city, when typically you think of time zones as associated with a country or region within a country.
-This is because the IANA database has to record decades worth of time zone rules.
-Over the course of decades, countries change names (or break apart) fairly frequently, but city names tend to stay the same.
-Another problem is that the name needs to reflect not only the current behavior, but also the complete history.
-For example, there are time zones for both "America/New_York" and "America/Detroit".
-These cities both currently use Eastern Standard Time but in 1969-1972 Michigan (the state in which Detroit is located), did not follow DST, so it needs a different name.
-It's worth reading the raw time zone database (available at <https://www.iana.org/time-zones>) just to read some of these stories!
+Potresti chiederti perché il fuso orario usa una città, quando tipicamente pensi ai fusi orari come associati a un paese o regione all'interno di un paese.
+Questo è perché il database IANA deve registrare decenni di regole sui fusi orari.
+Nel corso di decenni, i paesi cambiano nomi (o si dividono) abbastanza frequentemente, ma i nomi delle città tendono a rimanere gli stessi.
+Un altro problema è che il nome deve riflettere non solo il comportamento corrente, ma anche la storia completa.
+Per esempio, ci sono fusi orari sia per "America/New_York" che per "America/Detroit".
+Queste città attualmente usano entrambe l'Eastern Standard Time ma nel 1969-1972 il Michigan (lo stato in cui si trova Detroit), non seguiva l'ora legale, quindi ha bisogno di un nome diverso.
+Vale la pena leggere il database grezzo dei fusi orari (disponibile su <https://www.iana.org/time-zones>) solo per leggere alcune di queste storie!
 
-You can find out what R thinks your current time zone is with `Sys.timezone()`:
+Puoi scoprire quale R pensa sia il tuo fuso orario corrente con `Sys.timezone()`:
 
 ```{r}
 Sys.timezone()
 ```
 
-(If R doesn't know, you'll get an `NA`.)
+(Se R non lo sa, otterrai un `NA`.)
 
-And see the complete list of all time zone names with `OlsonNames()`:
+E vedi la lista completa di tutti i nomi dei fusi orari con `OlsonNames()`:
 
 ```{r}
 length(OlsonNames())
 head(OlsonNames())
 ```
 
-In R, the time zone is an attribute of the date-time that only controls printing.
-For example, these three objects represent the same instant in time:
+In R, il fuso orario è un attributo della date-time che controlla solo la stampa.
+Per esempio, questi tre oggetti rappresentano lo stesso istante nel tempo:
 
 ```{r}
 x1 <- ymd_hms("2024-06-01 12:00:00", tz = "America/New_York")
@@ -745,7 +745,7 @@ x3 <- ymd_hms("2024-06-02 04:00:00", tz = "Pacific/Auckland")
 x3
 ```
 
-You can verify that they're the same time using subtraction:
+Puoi verificare che siano lo stesso orario usando la sottrazione:
 
 ```{r}
 x1 - x2

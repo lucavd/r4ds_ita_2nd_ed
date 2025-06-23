@@ -295,7 +295,7 @@ contributors <- contributors |>
     desc = ifelse(is.na(name), login, paste0(name, " (", login, ")"))
   )
 
-cat("This book was written in the open, and many people contributed via pull requests. A special thanks to all ",nrow(contributors), " of you who contributed improvements via GitHub pull requests (in alphabetical order by username): ", sep = "")
+cat("Questo libro è stato scritto apertamente, e molte persone hanno contribuito tramite pull request. Un ringraziamento speciale a tutte le ",nrow(contributors), " persone che hanno contribuito con miglioramenti tramite pull request di GitHub (in ordine alfabetico per nome utente): ", sep = "")
 cat(paste0(contributors$desc, collapse = ", "))
 cat(".\n")
 ```

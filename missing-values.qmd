@@ -297,5 +297,5 @@ I valori mancanti sono strani!
 A volte sono registrati come un `NA` esplicito ma altre volte li noti solo per la loro assenza.
 Questo capitolo ti ha dato alcuni strumenti per lavorare con valori mancanti espliciti, strumenti per scoprire valori mancanti impliciti, e ha discusso alcuni dei modi in cui l'implicito può diventare esplicito e viceversa.
 
-In the next chapter, we tackle the final chapter in this part of the book: joins.
-This is a bit of a change from the chapters so far because we're going to discuss tools that work with data frames as a whole, not something that you put inside a data frame.
+Nel prossimo capitolo, affrontiamo il capitolo finale di questa parte del libro: i join.
+Questo è un po' un cambiamento rispetto ai capitoli finora perché discuteremo strumenti che lavorano con i data frame nel loro insieme, non qualcosa che metti dentro un data frame.

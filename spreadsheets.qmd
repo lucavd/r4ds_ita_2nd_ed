@@ -16,13 +16,13 @@ Le migliori pratiche presentate in questo articolo ti faranno risparmiare molti 
 
 ## Excel
 
-Microsoft Excel is a widely used spreadsheet software program where data are organized in worksheets inside of spreadsheet files.
+Microsoft Excel è un programma software per fogli di calcolo ampiamente utilizzato dove i dati sono organizzati in fogli di lavoro all'interno di file di fogli di calcolo.
 
-### Prerequisites
+### Prerequisiti
 
-In this section, you'll learn how to load data from Excel spreadsheets in R with the **readxl** package.
-This package is non-core tidyverse, so you need to load it explicitly, but it is installed automatically when you install the tidyverse package.
-Later, we'll also use the writexl package, which allows us to create Excel spreadsheets.
+In questa sezione, imparerai come caricare dati da fogli di calcolo Excel in R con il pacchetto **readxl**.
+Questo pacchetto non è nel core del tidyverse, quindi devi caricarlo esplicitamente, ma viene installato automaticamente quando installi il pacchetto tidyverse.
+Più tardi, useremo anche il pacchetto writexl, che ci permette di creare fogli di calcolo Excel.
 
 ```{r}
 #| message: false
@@ -31,52 +31,52 @@ library(tidyverse)
 library(writexl)
 ```
 
-### Getting started
+### Iniziare
 
-Most of readxl's functions allow you to load Excel spreadsheets into R:
+La maggior parte delle funzioni di readxl ti permette di caricare fogli di calcolo Excel in R:
 
--   `read_xls()` reads Excel files with `xls` format.
--   `read_xlsx()` read Excel files with `xlsx` format.
--   `read_excel()` can read files with both `xls` and `xlsx` format. It guesses the file type based on the input.
+-   `read_xls()` legge file Excel con formato `xls`.
+-   `read_xlsx()` legge file Excel con formato `xlsx`.
+-   `read_excel()` può leggere file con entrambi i formati `xls` e `xlsx`. Indovina il tipo di file basandosi sull'input.
 
-These functions all have similar syntax just like other functions we have previously introduced for reading other types of files, e.g., `read_csv()`, `read_table()`, etc.
-For the rest of the chapter we will focus on using `read_excel()`.
+Queste funzioni hanno tutte una sintassi simile proprio come altre funzioni che abbiamo precedentemente introdotto per leggere altri tipi di file, es., `read_csv()`, `read_table()`, ecc.
+Per il resto del capitolo ci concentreremo sull'uso di `read_excel()`.
 
-### Reading Excel spreadsheets {#sec-reading-spreadsheets-excel}
+### Leggere fogli di calcolo Excel {#sec-reading-spreadsheets-excel}
 
-@fig-students-excel shows what the spreadsheet we're going to read into R looks like in Excel.
-This spreadsheet can be downloaded as an Excel file from <https://docs.google.com/spreadsheets/d/1V1nPp1tzOuutXFLb3G9Eyxi3qxeEhnOXUzL5_BcCQ0w/>.
+@fig-students-excel mostra come appare in Excel il foglio di calcolo che leggeremo in R.
+Questo foglio di calcolo può essere scaricato come file Excel da <https://docs.google.com/spreadsheets/d/1V1nPp1tzOuutXFLb3G9Eyxi3qxeEhnOXUzL5_BcCQ0w/>.
 
 ```{r}
 #| label: fig-students-excel
 #| echo: false
 #| fig-width: 5
 #| fig-cap: |
-#|   Spreadsheet called students.xlsx in Excel.
+#|   Foglio di calcolo chiamato students.xlsx in Excel.
 #| fig-alt: |
-#|   A look at the students spreadsheet in Excel. The spreadsheet contains 
-#|   information on 6 students, their ID, full name, favourite food, meal plan, 
-#|   and age.
+#|   Uno sguardo al foglio di calcolo students in Excel. Il foglio di calcolo contiene 
+#|   informazioni su 6 studenti, il loro ID, nome completo, cibo preferito, piano pasti, 
+#|   ed età.
 knitr::include_graphics("screenshots/import-spreadsheets-students.png")
 ```
 
-The first argument to `read_excel()` is the path to the file to read.
+Il primo argomento di `read_excel()` è il percorso del file da leggere.
 
 ```{r}
 students <- read_excel("data/students.xlsx")
 ```
 
-`read_excel()` will read the file in as a tibble.
+`read_excel()` leggerà il file come un tibble.
 
 ```{r}
 students
 ```
 
-We have six students in the data and five variables on each student.
-However there are a few things we might want to address in this dataset:
+Abbiamo sei studenti nei dati e cinque variabili per ogni studente.
+Tuttavia ci sono alcune cose che potremmo voler affrontare in questo dataset:
 
-1.  The column names are all over the place.
-    You can provide column names that follow a consistent format; we recommend `snake_case` using the `col_names` argument.
+1.  I nomi delle colonne sono tutti sparsi.
+    Puoi fornire nomi di colonne che seguono un formato coerente; raccomandiamo `snake_case` usando l'argomento `col_names`.
 
     ```{r}
     #| include: false
@@ -101,9 +101,9 @@ However there are a few things we might want to address in this dataset:
     )
     ```
 
-    Unfortunately, this didn't quite do the trick.
-    We now have the variable names we want, but what was previously the header row now shows up as the first observation in the data.
-    You can explicitly skip that row using the `skip` argument.
+    Sfortunatamente, questo non ha funzionato del tutto.
+    Ora abbiamo i nomi delle variabili che vogliamo, ma quella che prima era la riga di intestazione ora appare come la prima osservazione nei dati.
+    Puoi saltare esplicitamente quella riga usando l'argomento `skip`.
 
     ```{r}
     read_excel(
@@ -113,9 +113,9 @@ However there are a few things we might want to address in this dataset:
     )
     ```
 
-2.  In the `favourite_food` column, one of the observations is `N/A`, which stands for "not available" but it's currently not recognized as an `NA` (note the contrast between this `N/A` and the age of the fourth student in the list).
-    You can specify which character strings should be recognized as `NA`s with the `na` argument.
-    By default, only `""` (empty string, or, in the case of reading from a spreadsheet, an empty cell or a cell with the formula `=NA()`) is recognized as an `NA`.
+2.  Nella colonna `favourite_food`, una delle osservazioni è `N/A`, che sta per "non disponibile" ma attualmente non è riconosciuta come un `NA` (nota il contrasto tra questo `N/A` e l'età del quarto studente nella lista).
+    Puoi specificare quali stringhe di caratteri dovrebbero essere riconosciute come `NA` con l'argomento `na`.
+    Di default, solo `""` (stringa vuota, o, nel caso di lettura da un foglio di calcolo, una cella vuota o una cella con la formula `=NA()`) è riconosciuta come un `NA`.
 
     ```{r}
     read_excel(
@@ -126,10 +126,10 @@ However there are a few things we might want to address in this dataset:
     )
     ```
 
-3.  One other remaining issue is that `age` is read in as a character variable, but it really should be numeric.
-    Just like with `read_csv()` and friends for reading data from flat files, you can supply a `col_types` argument to `read_excel()` and specify the column types for the variables you read in.
-    The syntax is a bit different, though.
-    Your options are `"skip"`, `"guess"`, `"logical"`, `"numeric"`, `"date"`, `"text"` or `"list"`.
+3.  Un altro problema rimanente è che `age` viene letta come una variabile carattere, ma dovrebbe essere numerica.
+    Proprio come con `read_csv()` e compagni per leggere dati da file piatti, puoi fornire un argomento `col_types` a `read_excel()` e specificare i tipi di colonna per le variabili che leggi.
+    La sintassi è un po' diversa, però.
+    Le tue opzioni sono `"skip"`, `"guess"`, `"logical"`, `"numeric"`, `"date"`, `"text"` o `"list"`.
 
     ```{r}
     read_excel(
@@ -141,9 +141,9 @@ However there are a few things we might want to address in this dataset:
     )
     ```
 
-    However, this didn't quite produce the desired result either.
-    By specifying that `age` should be numeric, we have turned the one cell with the non-numeric entry (which had the value `five`) into an `NA`.
-    In this case, we should read age in as `"text"` and then make the change once the data is loaded in R.
+    Tuttavia, neanche questo ha prodotto il risultato desiderato.
+    Specificando che `age` dovrebbe essere numerica, abbiamo trasformato l'unica cella con il valore non numerico (che aveva il valore `five`) in un `NA`.
+    In questo caso, dovremmo leggere age come `"text"` e poi fare il cambiamento una volta che i dati sono caricati in R.
 
     ```{r}
     students <- read_excel(
@@ -163,42 +163,42 @@ However there are a few things we might want to address in this dataset:
     students
     ```
 
-It took us multiple steps and trial-and-error to load the data in exactly the format we want, and this is not unexpected.
-Data science is an iterative process, and the process of iteration can be even more tedious when reading data in from spreadsheets compared to other plain text, rectangular data files because humans tend to input data into spreadsheets and use them not just for data storage but also for sharing and communication.
+Ci sono voluti diversi passaggi e tentativi ed errori per caricare i dati esattamente nel formato che vogliamo, e questo non è inaspettato.
+La data science è un processo iterativo, e il processo di iterazione può essere ancora più tedioso quando si leggono dati da fogli di calcolo rispetto ad altri file di dati rettangolari di testo semplice perché gli esseri umani tendono a inserire dati nei fogli di calcolo e usarli non solo per l'archiviazione di dati ma anche per la condivisione e comunicazione.
 
-There is no way to know exactly what the data will look like until you load it and take a look at it.
-Well, there is one way, actually.
-You can open the file in Excel and take a peek.
-If you're going to do so, we recommend making a copy of the Excel file to open and browse interactively while leaving the original data file untouched and reading into R from the untouched file.
-This will ensure you don't accidentally overwrite anything in the spreadsheet while inspecting it.
-You should also not be afraid of doing what we did here: load the data, take a peek, make adjustments to your code, load it again, and repeat until you're happy with the result.
+Non c'è modo di sapere esattamente come saranno i dati finché non li carichi e non dai un'occhiata.
+Beh, c'è un modo, in realtà.
+Puoi aprire il file in Excel e dare una sbirciatina.
+Se hai intenzione di farlo, raccomandiamo di fare una copia del file Excel da aprire e sfogliare interattivamente mentre lasci il file di dati originale intatto e leggi in R dal file intatto.
+Questo assicurerà che non sovrascriva accidentalmente nulla nel foglio di calcolo mentre lo ispezioni.
+Non dovresti anche aver paura di fare quello che abbiamo fatto qui: caricare i dati, dare un'occhiata, fare aggiustamenti al tuo codice, caricarli di nuovo, e ripetere finché non sei soddisfatto del risultato.
 
-### Reading worksheets
+### Leggere fogli di lavoro
 
-An important feature that distinguishes spreadsheets from flat files is the notion of multiple sheets, called worksheets.
-@fig-penguins-islands shows an Excel spreadsheet with multiple worksheets.
-The data come from the **palmerpenguins** package, and you can download this spreadsheet as an Excel file from <https://docs.google.com/spreadsheets/d/1aFu8lnD_g0yjF5O-K6SFgSEWiHPpgvFCF0NY9D6LXnY/>.
-Each worksheet contains information on penguins from a different island where data were collected.
+Una caratteristica importante che distingue i fogli di calcolo dai file piatti è la nozione di fogli multipli, chiamati fogli di lavoro.
+@fig-penguins-islands mostra un foglio di calcolo Excel con fogli di lavoro multipli.
+I dati provengono dal pacchetto **palmerpenguins**, e puoi scaricare questo foglio di calcolo come file Excel da <https://docs.google.com/spreadsheets/d/1aFu8lnD_g0yjF5O-K6SFgSEWiHPpgvFCF0NY9D6LXnY/>.
+Ogni foglio di lavoro contiene informazioni sui pinguini di un'isola diversa dove sono stati raccolti i dati.
 
 ```{r}
 #| label: fig-penguins-islands
 #| echo: false
 #| fig-cap: |
-#|   Spreadsheet called penguins.xlsx in Excel containing three worksheets.
+#|   Foglio di calcolo chiamato penguins.xlsx in Excel contenente tre fogli di lavoro.
 #| fig-alt: |
-#|   A look at the penguins spreadsheet in Excel. The spreadsheet contains has 
-#|   three worksheets: Torgersen Island, Biscoe Island, and Dream Island.
+#|   Uno sguardo al foglio di calcolo penguins in Excel. Il foglio di calcolo contiene 
+#|   tre fogli di lavoro: Torgersen Island, Biscoe Island, e Dream Island.
 knitr::include_graphics("screenshots/import-spreadsheets-penguins-islands.png")
 ```
 
-You can read a single worksheet from a spreadsheet with the `sheet` argument in `read_excel()`.
-The default, which we've been relying on up until now, is the first sheet.
+Puoi leggere un singolo foglio di lavoro da un foglio di calcolo con l'argomento `sheet` in `read_excel()`.
+Il default, su cui ci siamo basati finora, è il primo foglio.
 
 ```{r}
 read_excel("data/penguins.xlsx", sheet = "Torgersen Island")
 ```
 
-Some variables that appear to contain numerical data are read in as characters due to the character string `"NA"` not being recognized as a true `NA`.
+Alcune variabili che sembrano contenere dati numerici sono lette come caratteri a causa della stringa di caratteri `"NA"` che non viene riconosciuta come un vero `NA`.
 
 ```{r}
 penguins_torgersen <- read_excel("data/penguins.xlsx", sheet = "Torgersen Island", na = "NA")
@@ -206,21 +206,21 @@ penguins_torgersen <- read_excel("data/penguins.xlsx", sheet = "Torgersen Island
 penguins_torgersen
 ```
 
-Alternatively, you can use `excel_sheets()` to get information on all worksheets in an Excel spreadsheet, and then read the one(s) you're interested in.
+In alternativa, puoi usare `excel_sheets()` per ottenere informazioni su tutti i fogli di lavoro in un foglio di calcolo Excel, e poi leggere quello/quelli che ti interessano.
 
 ```{r}
 excel_sheets("data/penguins.xlsx")
 ```
 
-Once you know the names of the worksheets, you can read them in individually with `read_excel()`.
+Una volta che conosci i nomi dei fogli di lavoro, puoi leggerli individualmente con `read_excel()`.
 
 ```{r}
 penguins_biscoe <- read_excel("data/penguins.xlsx", sheet = "Biscoe Island", na = "NA")
 penguins_dream  <- read_excel("data/penguins.xlsx", sheet = "Dream Island", na = "NA")
 ```
 
-In this case the full penguins dataset is spread across three worksheets in the spreadsheet.
-Each worksheet has the same number of columns but different numbers of rows.
+In questo caso il dataset completo dei pinguini è distribuito su tre fogli di lavoro nel foglio di calcolo.
+Ogni foglio di lavoro ha lo stesso numero di colonne ma numeri diversi di righe.
 
 ```{r}
 dim(penguins_torgersen)
@@ -228,41 +228,41 @@ dim(penguins_biscoe)
 dim(penguins_dream)
 ```
 
-We can put them together with `bind_rows()`.
+Possiamo metterli insieme con `bind_rows()`.
 
 ```{r}
 penguins <- bind_rows(penguins_torgersen, penguins_biscoe, penguins_dream)
 penguins
 ```
 
-In @sec-iteration we'll talk about ways of doing this sort of task without repetitive code.
+In @sec-iteration parleremo di modi per fare questo tipo di compito senza codice ripetitivo.
 
-### Reading part of a sheet
+### Leggere parte di un foglio
 
-Since many use Excel spreadsheets for presentation as well as for data storage, it's quite common to find cell entries in a spreadsheet that are not part of the data you want to read into R.
-@fig-deaths-excel shows such a spreadsheet: in the middle of the sheet is what looks like a data frame but there is extraneous text in cells above and below the data.
+Poiché molti usano i fogli di calcolo Excel per la presentazione oltre che per l'archiviazione dei dati, è abbastanza comune trovare voci di celle in un foglio di calcolo che non fanno parte dei dati che vuoi leggere in R.
+@fig-deaths-excel mostra un tale foglio di calcolo: nel mezzo del foglio c'è quello che sembra un data frame ma c'è testo estraneo nelle celle sopra e sotto i dati.
 
 ```{r}
 #| label: fig-deaths-excel
 #| echo: false
 #| fig-cap: |
-#|   Spreadsheet called deaths.xlsx in Excel.
+#|   Foglio di calcolo chiamato deaths.xlsx in Excel.
 #| fig-alt: |
-#|   A look at the deaths spreadsheet in Excel. The spreadsheet has four rows 
-#|   on top that contain non-data information; the text 'For the same of 
-#|   consistency in the data layout, which is really a beautiful thing, I will 
-#|   keep making notes up here.' is spread across cells in these top four rows. 
-#|   Then, there is a data frame that includes information on deaths of 10 
-#|   famous people, including their names, professions, ages, whether they have 
-#|   kids or not, date of birth and death. At the bottom, there are four more 
-#|   rows of non-data information; the text 'This has been really fun, but 
-#|   we're signing off now!' is spread across cells in these bottom four rows.
+#|   Uno sguardo al foglio di calcolo deaths in Excel. Il foglio di calcolo ha quattro righe 
+#|   in alto che contengono informazioni non-dati; il testo 'Per la stessa 
+#|   coerenza nel layout dei dati, che è davvero una cosa bella, continuerò 
+#|   a fare note qui sopra.' è distribuito tra le celle in queste quattro righe superiori. 
+#|   Poi, c'è un data frame che include informazioni sui decessi di 10 
+#|   persone famose, inclusi i loro nomi, professioni, età, se hanno 
+#|   figli o no, data di nascita e morte. In fondo, ci sono altre quattro 
+#|   righe di informazioni non-dati; il testo 'È stato davvero divertente, ma 
+#|   ora ci stiamo congedando!' è distribuito tra le celle in queste quattro righe inferiori.
 knitr::include_graphics("screenshots/import-spreadsheets-deaths.png")
 ```
 
-This spreadsheet is one of the example spreadsheets provided in the readxl package.
-You can use the `readxl_example()` function to locate the spreadsheet on your system in the directory where the package is installed.
-This function returns the path to the spreadsheet, which you can use in `read_excel()` as usual.
+Questo foglio di calcolo è uno dei fogli di calcolo di esempio forniti nel pacchetto readxl.
+Puoi usare la funzione `readxl_example()` per localizzare il foglio di calcolo sul tuo sistema nella directory dove è installato il pacchetto.
+Questa funzione restituisce il percorso del foglio di calcolo, che puoi usare in `read_excel()` come al solito.
 
 ```{r}
 deaths_path <- readxl_example("deaths.xlsx")
@@ -270,62 +270,62 @@ deaths <- read_excel(deaths_path)
 deaths
 ```
 
-The top three rows and the bottom four rows are not part of the data frame.
-It's possible to eliminate these extraneous rows using the `skip` and `n_max` arguments, but we recommend using cell ranges.
-In Excel, the top left cell is `A1`.
-As you move across columns to the right, the cell label moves down the alphabet, i.e.
-`B1`, `C1`, etc.
-And as you move down a column, the number in the cell label increases, i.e.
-`A2`, `A3`, etc.
+Le prime tre righe e le ultime quattro righe non fanno parte del data frame.
+È possibile eliminare queste righe estranee usando gli argomenti `skip` e `n_max`, ma raccomandiamo di usare i range di celle.
+In Excel, la cella in alto a sinistra è `A1`.
+Mentre ti sposti attraverso le colonne verso destra, l'etichetta della cella si sposta giù nell'alfabeto, cioè
+`B1`, `C1`, ecc.
+E mentre ti sposti giù per una colonna, il numero nell'etichetta della cella aumenta, cioè
+`A2`, `A3`, ecc.
 
-Here the data we want to read in starts in cell `A5` and ends in cell `F15`.
-In spreadsheet notation, this is `A5:F15`, which we supply to the `range` argument:
+Qui i dati che vogliamo leggere iniziano nella cella `A5` e finiscono nella cella `F15`.
+Nella notazione del foglio di calcolo, questo è `A5:F15`, che forniamo all'argomento `range`:
 
 ```{r}
 read_excel(deaths_path, range = "A5:F15")
 ```
 
-### Data types
+### Tipi di dati
 
-In CSV files, all values are strings.
-This is not particularly true to the data, but it is simple: everything is a string.
+Nei file CSV, tutti i valori sono stringhe.
+Questo non è particolarmente fedele ai dati, ma è semplice: tutto è una stringa.
 
-The underlying data in Excel spreadsheets is more complex.
-A cell can be one of four things:
+I dati sottostanti nei fogli di calcolo Excel sono più complessi.
+Una cella può essere una di quattro cose:
 
--   A boolean, like `TRUE`, `FALSE`, or `NA`.
+-   Un booleano, come `TRUE`, `FALSE`, o `NA`.
 
--   A number, like "10" or "10.5".
+-   Un numero, come "10" o "10.5".
 
--   A datetime, which can also include time like "11/1/21" or "11/1/21 3:00 PM".
+-   Un datetime, che può anche includere l'ora come "11/1/21" o "11/1/21 3:00 PM".
 
--   A text string, like "ten".
+-   Una stringa di testo, come "ten".
 
-When working with spreadsheet data, it's important to keep in mind that the underlying data can be very different than what you see in the cell.
-For example, Excel has no notion of an integer.
-All numbers are stored as floating points, but you can choose to display the data with a customizable number of decimal points.
-Similarly, dates are actually stored as numbers, specifically the number of seconds since January 1, 1970.
-You can customize how you display the date by applying formatting in Excel.
-Confusingly, it's also possible to have something that looks like a number but is actually a string (e.g., type `'10` into a cell in Excel).
+Quando lavori con dati di fogli di calcolo, è importante tenere a mente che i dati sottostanti possono essere molto diversi da quello che vedi nella cella.
+Per esempio, Excel non ha nozione di un intero.
+Tutti i numeri sono memorizzati come punti flottanti, ma puoi scegliere di visualizzare i dati con un numero personalizzabile di punti decimali.
+Similmente, le date sono in realtà memorizzate come numeri, specificamente il numero di secondi dal 1° gennaio 1970.
+Puoi personalizzare come visualizzi la data applicando la formattazione in Excel.
+Confusamente, è anche possibile avere qualcosa che sembra un numero ma è in realtà una stringa (es., digita `'10` in una cella in Excel).
 
-These differences between how the underlying data are stored vs. how they're displayed can cause surprises when the data are loaded into R.
-By default readxl will guess the data type in a given column.
-A recommended workflow is to let readxl guess the column types, confirm that you're happy with the guessed column types, and if not, go back and re-import specifying `col_types` as shown in @sec-reading-spreadsheets-excel.
+Queste differenze tra come i dati sottostanti sono memorizzati vs. come vengono visualizzati possono causare sorprese quando i dati sono caricati in R.
+Di default readxl indovinerà il tipo di dati in una data colonna.
+Un flusso di lavoro raccomandato è lasciare che readxl indovini i tipi di colonna, confermare che sei soddisfatto dei tipi di colonna indovinati, e se no, tornare indietro e re-importare specificando `col_types` come mostrato in @sec-reading-spreadsheets-excel.
 
-Another challenge is when you have a column in your Excel spreadsheet that has a mix of these types, e.g., some cells are numeric, others text, others dates.
-When importing the data into R readxl has to make some decisions.
-In these cases you can set the type for this column to `"list"`, which will load the column as a list of length 1 vectors, where the type of each element of the vector is guessed.
+Un'altra sfida è quando hai una colonna nel tuo foglio di calcolo Excel che ha un mix di questi tipi, es., alcune celle sono numeriche, altre testo, altre date.
+Quando importi i dati in R readxl deve prendere alcune decisioni.
+In questi casi puoi impostare il tipo per questa colonna a `"list"`, che caricherà la colonna come una lista di vettori di lunghezza 1, dove il tipo di ogni elemento del vettore è indovinato.
 
 ::: callout-note
-Sometimes data is stored in more exotic ways, like the color of the cell background, or whether or not the text is bold.
-In such cases, you might find the [tidyxl package](https://nacnudus.github.io/tidyxl/) useful.
-See <https://nacnudus.github.io/spreadsheet-munging-strategies/> for more on strategies for working with non-tabular data from Excel.
+A volte i dati sono memorizzati in modi più esotici, come il colore dello sfondo della cella, o se il testo è grassetto o no.
+In questi casi, potresti trovare utile il [pacchetto tidyxl](https://nacnudus.github.io/tidyxl/).
+Vedi <https://nacnudus.github.io/spreadsheet-munging-strategies/> per di più sulle strategie per lavorare con dati non tabulari da Excel.
 :::
 
-### Writing to Excel {#sec-writing-to-excel}
+### Scrivere in Excel {#sec-writing-to-excel}
 
-Let's create a small data frame that we can then write out.
-Note that `item` is a factor and `quantity` is an integer.
+Creiamo un piccolo data frame che possiamo poi scrivere.
+Nota che `item` è un fattore e `quantity` è un intero.
 
 ```{r}
 bake_sale <- tibble(
@@ -336,7 +336,7 @@ bake_sale <- tibble(
 bake_sale
 ```
 
-You can write data back to disk as an Excel file using the `write_xlsx()` function from the [writexl package](https://docs.ropensci.org/writexl/):
+Puoi scrivere dati di nuovo su disco come file Excel usando la funzione `write_xlsx()` dal [pacchetto writexl](https://docs.ropensci.org/writexl/):
 
 ```{r}
 #| eval: false
@@ -344,59 +344,59 @@ You can write data back to disk as an Excel file using the `write_xlsx()` functi
 write_xlsx(bake_sale, path = "data/bake-sale.xlsx")
 ```
 
-@fig-bake-sale-excel shows what the data looks like in Excel.
-Note that column names are included and bolded.
-These can be turned off by setting `col_names` and `format_headers` arguments to `FALSE`.
+@fig-bake-sale-excel mostra come appaiono i dati in Excel.
+Nota che i nomi delle colonne sono inclusi e in grassetto.
+Questi possono essere disattivati impostando gli argomenti `col_names` e `format_headers` a `FALSE`.
 
 ```{r}
 #| label: fig-bake-sale-excel
 #| echo: false
 #| fig-width: 5
 #| fig-cap: |
-#|   Spreadsheet called bake-sale.xlsx in Excel.
+#|   Foglio di calcolo chiamato bake-sale.xlsx in Excel.
 #| fig-alt: |
-#|   Bake sale data frame created earlier in Excel.
+#|   Data frame bake sale creato in precedenza in Excel.
 knitr::include_graphics("screenshots/import-spreadsheets-bake-sale.png")
 ```
 
-Just like reading from a CSV, information on data type is lost when we read the data back in.
-This makes Excel files unreliable for caching interim results as well.
-For alternatives, see @sec-writing-to-a-file.
+Proprio come leggere da un CSV, le informazioni sul tipo di dati vengono perse quando rileggiamo i dati.
+Questo rende i file Excel inaffidabili anche per il caching di risultati intermedi.
+Per alternative, vedi @sec-writing-to-a-file.
 
 ```{r}
 read_excel("data/bake-sale.xlsx")
 ```
 
-### Formatted output
+### Output formattato
 
-The writexl package is a light-weight solution for writing a simple Excel spreadsheet, but if you're interested in additional features like writing to sheets within a spreadsheet and styling, you will want to use the [openxlsx package](https://ycphs.github.io/openxlsx).
-We won't go into the details of using this package here, but we recommend reading <https://ycphs.github.io/openxlsx/articles/Formatting.html> for an extensive discussion on further formatting functionality for data written from R to Excel with openxlsx.
+Il pacchetto writexl è una soluzione leggera per scrivere un semplice foglio di calcolo Excel, ma se sei interessato a funzionalità aggiuntive come scrivere in fogli all'interno di un foglio di calcolo e styling, vorrai usare il [pacchetto openxlsx](https://ycphs.github.io/openxlsx).
+Non entreremo nei dettagli dell'uso di questo pacchetto qui, ma raccomandiamo di leggere <https://ycphs.github.io/openxlsx/articles/Formatting.html> per una discussione estesa su ulteriori funzionalità di formattazione per dati scritti da R a Excel con openxlsx.
 
-Note that this package is not part of the tidyverse so the functions and workflows may feel unfamiliar.
-For example, function names are camelCase, multiple functions can't be composed in pipelines, and arguments are in a different order than they tend to be in the tidyverse.
-However, this is ok.
-As your R learning and usage expands outside of this book you will encounter lots of different styles used in various R packages that you might use to accomplish specific goals in R.
-A good way of familiarizing yourself with the coding style used in a new package is to run the examples provided in function documentation to get a feel for the syntax and the output formats as well as reading any vignettes that might come with the package.
+Nota che questo pacchetto non fa parte del tidyverse quindi le funzioni e i flussi di lavoro potrebbero sembrare non familiari.
+Per esempio, i nomi delle funzioni sono camelCase, funzioni multiple non possono essere composte in pipeline, e gli argomenti sono in un ordine diverso da quello che tendono ad essere nel tidyverse.
+Tuttavia, questo va bene.
+Mentre il tuo apprendimento e uso di R si espande al di fuori di questo libro incontrerai molti stili diversi usati in vari pacchetti R che potresti usare per raggiungere obiettivi specifici in R.
+Un buon modo per familiarizzare con lo stile di codifica usato in un nuovo pacchetto è eseguire gli esempi forniti nella documentazione delle funzioni per avere un'idea della sintassi e dei formati di output così come leggere qualsiasi vignette che potrebbe venire con il pacchetto.
 
-### Exercises
+### Esercizi
 
-1.  In an Excel file, create the following dataset and save it as `survey.xlsx`.
-    Alternatively, you can download it as an Excel file from [here](https://docs.google.com/spreadsheets/d/1yc5gL-a2OOBr8M7B3IsDNX5uR17vBHOyWZq6xSTG2G8).
+1.  In un file Excel, crea il seguente dataset e salvalo come `survey.xlsx`.
+    In alternativa, puoi scaricarlo come file Excel da [qui](https://docs.google.com/spreadsheets/d/1yc5gL-a2OOBr8M7B3IsDNX5uR17vBHOyWZq6xSTG2G8).
 
     ```{r}
     #| echo: false
     #| fig-width: 4
     #| fig-alt: |
-    #|   A spreadsheet with 3 columns (group, subgroup, and id) and 12 rows. 
-    #|   The group column has two values: 1 (spanning 7 merged rows) and 2 
-    #|   (spanning 5 merged rows). The subgroup column has four values: A 
-    #|   (spanning 3 merged rows), B (spanning 4 merged rows), A (spanning 2 
-    #|   merged rows), and B (spanning 3 merged rows). The id column has twelve 
-    #|   values, numbers 1 through 12.
+    #|   Un foglio di calcolo con 3 colonne (group, subgroup, e id) e 12 righe. 
+    #|   La colonna group ha due valori: 1 (che copre 7 righe unite) e 2 
+    #|   (che copre 5 righe unite). La colonna subgroup ha quattro valori: A 
+    #|   (che copre 3 righe unite), B (che copre 4 righe unite), A (che copre 2 
+    #|   righe unite), e B (che copre 3 righe unite). La colonna id ha dodici 
+    #|   valori, numeri da 1 a 12.
     knitr::include_graphics("screenshots/import-spreadsheets-survey.png")
     ```
 
-    Then, read it into R, with `survey_id` as a character variable and `n_pets` as a numerical variable.
+    Poi, leggilo in R, con `survey_id` come variabile carattere e `n_pets` come variabile numerica.
 
     ```{r}
     #| echo: false
@@ -411,24 +411,24 @@ A good way of familiarizing yourself with the coding style used in a new package
       )
     ```
 
-2.  In another Excel file, create the following dataset and save it as `roster.xlsx`.
-    Alternatively, you can download it as an Excel file from [here](https://docs.google.com/spreadsheets/d/1LgZ0Bkg9d_NK8uTdP2uHXm07kAlwx8-Ictf8NocebIE).
+2.  In un altro file Excel, crea il seguente dataset e salvalo come `roster.xlsx`.
+    In alternativa, puoi scaricarlo come file Excel da [qui](https://docs.google.com/spreadsheets/d/1LgZ0Bkg9d_NK8uTdP2uHXm07kAlwx8-Ictf8NocebIE).
 
     ```{r}
     #| echo: false
     #| fig-width: 4
     #| fig-alt: |
-    #|   A spreadsheet with 3 columns (group, subgroup, and id) and 12 rows. The 
-    #|   group column has two values: 1 (spanning 7 merged rows) and 2 (spanning 
-    #|   5 merged rows). The subgroup column has four values: A (spanning 3 merged 
-    #|   rows), B (spanning 4 merged rows), A (spanning 2 merged rows), and B 
-    #|   (spanning 3 merged rows). The id column has twelve values, numbers 1 
-    #|   through 12.
+    #|   Un foglio di calcolo con 3 colonne (group, subgroup, e id) e 12 righe. La 
+    #|   colonna group ha due valori: 1 (che copre 7 righe unite) e 2 (che copre 
+    #|   5 righe unite). La colonna subgroup ha quattro valori: A (che copre 3 righe unite), 
+    #|   B (che copre 4 righe unite), A (che copre 2 righe unite), e B 
+    #|   (che copre 3 righe unite). La colonna id ha dodici valori, numeri da 1 
+    #|   a 12.
     knitr::include_graphics("screenshots/import-spreadsheets-roster.png")
     ```
 
-    Then, read it into R.
-    The resulting data frame should be called `roster` and should look like the following.
+    Poi, leggilo in R.
+    Il data frame risultante dovrebbe essere chiamato `roster` e dovrebbe apparire come segue.
 
     ```{r}
     #| echo: false
@@ -438,23 +438,23 @@ A good way of familiarizing yourself with the coding style used in a new package
       print(n = 12)
     ```
 
-3.  In a new Excel file, create the following dataset and save it as `sales.xlsx`.
-    Alternatively, you can download it as an Excel file from [here](https://docs.google.com/spreadsheets/d/1oCqdXUNO8JR3Pca8fHfiz_WXWxMuZAp3YiYFaKze5V0).
+3.  In un nuovo file Excel, crea il seguente dataset e salvalo come `sales.xlsx`.
+    In alternativa, puoi scaricarlo come file Excel da [qui](https://docs.google.com/spreadsheets/d/1oCqdXUNO8JR3Pca8fHfiz_WXWxMuZAp3YiYFaKze5V0).
 
     ```{r}
     #| echo: false
     #| fig-alt: |
-    #|   A spreadsheet with 2 columns and 13 rows. The first two rows have text 
-    #|   containing information about the sheet. Row 1 says "This file contains
-    #|   information on sales". Row 2 says "Data are organized by brand name, and 
-    #|   for each brand, we have the ID number for the item sold, and how many are 
-    #|   sold.". Then there are two empty rows, and then 9 rows of data.
+    #|   Un foglio di calcolo con 2 colonne e 13 righe. Le prime due righe hanno testo 
+    #|   contenente informazioni sul foglio. La riga 1 dice "Questo file contiene
+    #|   informazioni sulle vendite". La riga 2 dice "I dati sono organizzati per nome 
+    #|   del marchio, e per ogni marchio, abbiamo il numero ID dell'articolo venduto, 
+    #|   e quanti ne sono stati venduti.". Poi ci sono due righe vuote, e poi 9 righe di dati.
     knitr::include_graphics("screenshots/import-spreadsheets-sales.png")
     ```
 
     a\.
-    Read `sales.xlsx` in and save as `sales`.
-    The data frame should look like the following, with `id` and `n` as column names and with 9 rows.
+    Leggi `sales.xlsx` e salvalo come `sales`.
+    Il data frame dovrebbe apparire come segue, con `id` e `n` come nomi delle colonne e con 9 righe.
 
     ```{r}
     #| echo: false
@@ -464,8 +464,8 @@ A good way of familiarizing yourself with the coding style used in a new package
     ```
 
     b\.
-    Modify `sales` further to get it into the following tidy format with three columns (`brand`, `id`, and `n`) and 7 rows of data.
-    Note that `id` and `n` are numeric, `brand` is a character variable.
+    Modifica ulteriormente `sales` per ottenerlo nel seguente formato tidy con tre colonne (`brand`, `id`, e `n`) e 7 righe di dati.
+    Nota che `id` e `n` sono numeriche, `brand` è una variabile carattere.
 
     ```{r}
     #| echo: false
@@ -482,63 +482,63 @@ A good way of familiarizing yourself with the coding style used in a new package
       print(n = 7)
     ```
 
-4.  Recreate the `bake_sale` data frame, write it out to an Excel file using the `write.xlsx()` function from the openxlsx package.
+4.  Ricrea il data frame `bake_sale`, scrivilo in un file Excel usando la funzione `write.xlsx()` dal pacchetto openxlsx.
 
-5.  In @sec-data-import you learned about the `janitor::clean_names()` function to turn column names into snake case.
-    Read the `students.xlsx` file that we introduced earlier in this section and use this function to "clean" the column names.
+5.  In @sec-data-import hai imparato la funzione `janitor::clean_names()` per trasformare i nomi delle colonne in snake case.
+    Leggi il file `students.xlsx` che abbiamo introdotto in precedenza in questa sezione e usa questa funzione per "pulire" i nomi delle colonne.
 
-6.  What happens if you try to read in a file with `.xlsx` extension with `read_xls()`?
+6.  Cosa succede se provi a leggere un file con estensione `.xlsx` con `read_xls()`?
 
 ## Google Sheets
 
-Google Sheets is another widely used spreadsheet program.
-It's free and web-based.
-Just like with Excel, in Google Sheets data are organized in worksheets (also called sheets) inside of spreadsheet files.
+Google Sheets è un altro programma per fogli di calcolo ampiamente utilizzato.
+È gratuito e basato sul web.
+Proprio come con Excel, in Google Sheets i dati sono organizzati in fogli di lavoro (chiamati anche sheets) all'interno di file di fogli di calcolo.
 
-### Prerequisites
+### Prerequisiti
 
-This section will also focus on spreadsheets, but this time you'll be loading data from a Google Sheet with the **googlesheets4** package.
-This package is non-core tidyverse as well, you need to load it explicitly.
+Questa sezione si concentrerà anche sui fogli di calcolo, ma questa volta caricherai dati da un Google Sheet con il pacchetto **googlesheets4**.
+Anche questo pacchetto non è nel core del tidyverse, devi caricarlo esplicitamente.
 
 ```{r}
 library(googlesheets4)
 library(tidyverse)
 ```
 
-A quick note about the name of the package: googlesheets4 uses v4 of the [Sheets API v4](https://developers.google.com/sheets/api/) to provide an R interface to Google Sheets, hence the name.
+Una nota veloce sul nome del pacchetto: googlesheets4 usa v4 della [Sheets API v4](https://developers.google.com/sheets/api/) per fornire un'interfaccia R a Google Sheets, da qui il nome.
 
-### Getting started
+### Iniziare
 
-The main function of the googlesheets4 package is `read_sheet()`, which reads a Google Sheet from a URL or a file id.
-This function also goes by the name `range_read()`.
+La funzione principale del pacchetto googlesheets4 è `read_sheet()`, che legge un Google Sheet da un URL o un file id.
+Questa funzione è conosciuta anche col nome `range_read()`.
 
-You can also create a brand new sheet with `gs4_create()` or write to an existing sheet with `sheet_write()` and friends.
+Puoi anche creare un foglio completamente nuovo con `gs4_create()` o scrivere in un foglio esistente con `sheet_write()` e compagni.
 
-In this section we'll work with the same datasets as the ones in the Excel section to highlight similarities and differences between workflows for reading data from Excel and Google Sheets.
-readxl and googlesheets4 packages are both designed to mimic the functionality of the readr package, which provides the `read_csv()` function you've seen in @sec-data-import.
-Therefore, many of the tasks can be accomplished with simply swapping out `read_excel()` for `read_sheet()`.
-However you'll also see that Excel and Google Sheets don't behave in exactly the same way, therefore other tasks may require further updates to the function calls.
+In questa sezione lavoreremo con gli stessi dataset di quelli nella sezione Excel per evidenziare somiglianze e differenze tra i flussi di lavoro per leggere dati da Excel e Google Sheets.
+I pacchetti readxl e googlesheets4 sono entrambi progettati per imitare la funzionalità del pacchetto readr, che fornisce la funzione `read_csv()` che hai visto in @sec-data-import.
+Quindi, molti dei compiti possono essere realizzati semplicemente sostituendo `read_excel()` con `read_sheet()`.
+Tuttavia vedrai anche che Excel e Google Sheets non si comportano esattamente nello stesso modo, quindi altri compiti potrebbero richiedere ulteriori aggiornamenti alle chiamate di funzione.
 
-### Reading Google Sheets
+### Leggere Google Sheets
 
-@fig-students-googlesheets shows what the spreadsheet we're going to read into R looks like in Google Sheets.
-This is the same dataset as in @fig-students-excel, except it's stored in a Google Sheet instead of Excel.
+@fig-students-googlesheets mostra come appare in Google Sheets il foglio di calcolo che leggeremo in R.
+Questo è lo stesso dataset di @fig-students-excel, tranne che è memorizzato in un Google Sheet invece che in Excel.
 
 ```{r}
 #| label: fig-students-googlesheets
 #| echo: false
 #| fig-cap: |
-#|   Google Sheet called students in a browser window.
+#|   Google Sheet chiamato students in una finestra del browser.
 #| fig-alt: |
-#|   A look at the students spreadsheet in Google Sheets. The spreadsheet contains 
-#|   information on 6 students, their ID, full name, favourite food, meal plan, 
-#|   and age.
+#|   Uno sguardo al foglio di calcolo students in Google Sheets. Il foglio di calcolo contiene 
+#|   informazioni su 6 studenti, il loro ID, nome completo, cibo preferito, piano pasti, 
+#|   ed età.
 knitr::include_graphics("screenshots/import-googlesheets-students.png")
 ```
 
-The first argument to `read_sheet()` is the URL of the file to read, and it returns a tibble:\
+Il primo argomento di `read_sheet()` è l'URL del file da leggere, e restituisce un tibble:\
 <https://docs.google.com/spreadsheets/d/1V1nPp1tzOuutXFLb3G9Eyxi3qxeEhnOXUzL5_BcCQ0w>.
-These URLs are not pleasant to work with, so you'll often want to identify a sheet by its ID.
+Questi URL non sono piacevoli con cui lavorare, quindi spesso vorrai identificare un foglio tramite il suo ID.
 
 ```{r}
 gs4_deauth()
@@ -550,7 +550,7 @@ students <- read_sheet(students_sheet_id)
 students
 ```
 
-Just like we did with `read_excel()`, we can supply column names, NA strings, and column types to `read_sheet()`.
+Proprio come abbiamo fatto con `read_excel()`, possiamo fornire nomi di colonne, stringhe NA, e tipi di colonne a `read_sheet()`.
 
 ```{r}
 students <- read_sheet(
@@ -564,25 +564,25 @@ students <- read_sheet(
 students
 ```
 
-Note that we defined column types a bit differently here, using short codes.
-For example, "dcccc" stands for "double, character, character, character, character".
+Nota che abbiamo definito i tipi di colonne un po' diversamente qui, usando codici brevi.
+Per esempio, "dcccc" sta per "double, character, character, character, character".
 
-It's also possible to read individual sheets from Google Sheets as well.
-Let's read the "Torgersen Island" sheet from the [penguins Google Sheet](https://pos.it/r4ds-penguins):
+È anche possibile leggere singoli fogli da Google Sheets.
+Leggiamo il foglio "Torgersen Island" dal [Google Sheet penguins](https://pos.it/r4ds-penguins):
 
 ```{r}
 penguins_sheet_id <- "1aFu8lnD_g0yjF5O-K6SFgSEWiHPpgvFCF0NY9D6LXnY"
 read_sheet(penguins_sheet_id, sheet = "Torgersen Island")
 ```
 
-You can obtain a list of all sheets within a Google Sheet with `sheet_names()`:
+Puoi ottenere una lista di tutti i fogli all'interno di un Google Sheet con `sheet_names()`:
 
 ```{r}
 sheet_names(penguins_sheet_id)
 ```
 
-Finally, just like with `read_excel()`, we can read in a portion of a Google Sheet by defining a `range` in `read_sheet()`.
-Note that we're also using the `gs4_example()` function below to locate an example Google Sheet that comes with the googlesheets4 package.
+Infine, proprio come con `read_excel()`, possiamo leggere una porzione di un Google Sheet definendo un `range` in `read_sheet()`.
+Nota che stiamo anche usando la funzione `gs4_example()` sotto per localizzare un Google Sheet di esempio che viene con il pacchetto googlesheets4.
 
 ```{r}
 deaths_url <- gs4_example("deaths")
@@ -590,41 +590,41 @@ deaths <- read_sheet(deaths_url, range = "A5:F15")
 deaths
 ```
 
-### Writing to Google Sheets
+### Scrivere in Google Sheets
 
-You can write from R to Google Sheets with `write_sheet()`.
-The first argument is the data frame to write, and the second argument is the name (or other identifier) of the Google Sheet to write to:
+Puoi scrivere da R a Google Sheets con `write_sheet()`.
+Il primo argomento è il data frame da scrivere, e il secondo argomento è il nome (o altro identificatore) del Google Sheet in cui scrivere:
 
 ```{r}
 #| eval: false
 write_sheet(bake_sale, ss = "bake-sale")
 ```
 
-If you'd like to write your data to a specific (work)sheet inside a Google Sheet, you can specify that with the `sheet` argument as well.
+Se vuoi scrivere i tuoi dati in un foglio di lavoro specifico all'interno di un Google Sheet, puoi specificarlo anche con l'argomento `sheet`.
 
 ```{r}
 #| eval: false
 write_sheet(bake_sale, ss = "bake-sale", sheet = "Sales")
 ```
 
-### Authentication
+### Autenticazione
 
-While you can read from a public Google Sheet without authenticating with your Google account and with `gs4_deauth()`, reading a private sheet or writing to a sheet requires authentication so that googlesheets4 can view and manage *your* Google Sheets.
+Mentre puoi leggere da un Google Sheet pubblico senza autenticarti con il tuo account Google e con `gs4_deauth()`, leggere un foglio privato o scrivere in un foglio richiede autenticazione così che googlesheets4 possa visualizzare e gestire i *tuoi* Google Sheets.
 
-When you attempt to read in a sheet that requires authentication, googlesheets4 will direct you to a web browser with a prompt to sign in to your Google account and grant permission to operate on your behalf with Google Sheets.
-However, if you want to specify a specific Google account, authentication scope, etc. you can do so with `gs4_auth()`, e.g., `gs4_auth(email = "mine@example.com")`, which will force the use of a token associated with a specific email.
-For further authentication details, we recommend reading the documentation googlesheets4 auth vignette: <https://googlesheets4.tidyverse.org/articles/auth.html>.
+Quando tenti di leggere un foglio che richiede autenticazione, googlesheets4 ti indirizzerà a un browser web con un prompt per accedere al tuo account Google e concedere il permesso di operare per tuo conto con Google Sheets.
+Tuttavia, se vuoi specificare un account Google specifico, scope di autenticazione, ecc. puoi farlo con `gs4_auth()`, es., `gs4_auth(email = "mine@example.com")`, che forzerà l'uso di un token associato a un email specifico.
+Per ulteriori dettagli di autenticazione, raccomandiamo di leggere la documentazione vignette auth di googlesheets4: <https://googlesheets4.tidyverse.org/articles/auth.html>.
 
-### Exercises
+### Esercizi
 
-1.  Read the `students` dataset from earlier in the chapter from Excel and also from Google Sheets, with no additional arguments supplied to the `read_excel()` and `read_sheet()` functions.
-    Are the resulting data frames in R exactly the same?
-    If not, how are they different?
+1.  Leggi il dataset `students` dal capitolo precedente da Excel e anche da Google Sheets, senza argomenti aggiuntivi forniti alle funzioni `read_excel()` e `read_sheet()`.
+    I data frame risultanti in R sono esattamente gli stessi?
+    Se no, come sono diversi?
 
-2.  Read the Google Sheet titled survey from <https://pos.it/r4ds-survey>, with `survey_id` as a character variable and `n_pets` as a numerical variable.
+2.  Leggi il Google Sheet intitolato survey da <https://pos.it/r4ds-survey>, con `survey_id` come variabile carattere e `n_pets` come variabile numerica.
 
-3.  Read the Google Sheet titled roster from <https://pos.it/r4ds-roster>.
-    The resulting data frame should be called `roster` and should look like the following.
+3.  Leggi il Google Sheet intitolato roster da <https://pos.it/r4ds-roster>.
+    Il data frame risultante dovrebbe essere chiamato `roster` e dovrebbe apparire come segue.
 
     ```{r}
     #| echo: false
@@ -634,14 +634,14 @@ For further authentication details, we recommend reading the documentation googl
       print(n = 12)
     ```
 
-## Summary
+## Riassunto
 
-Microsoft Excel and Google Sheets are two of the most popular spreadsheet systems.
-Being able to interact with data stored in Excel and Google Sheets files directly from R is a superpower!
-In this chapter you learned how to read data into R from spreadsheets from Excel with `read_excel()` from the readxl package and from Google Sheets with `read_sheet()` from the googlesheets4 package.
-These functions work very similarly to each other and have similar arguments for specifying column names, NA strings, rows to skip on top of the file you're reading in, etc.
-Additionally, both functions make it possible to read a single sheet from a spreadsheet as well.
+Microsoft Excel e Google Sheets sono due dei sistemi di fogli di calcolo più popolari.
+Essere in grado di interagire con dati memorizzati in file Excel e Google Sheets direttamente da R è un superpotere!
+In questo capitolo hai imparato come leggere dati in R da fogli di calcolo da Excel con `read_excel()` dal pacchetto readxl e da Google Sheets con `read_sheet()` dal pacchetto googlesheets4.
+Queste funzioni lavorano molto similmente tra loro e hanno argomenti simili per specificare nomi di colonne, stringhe NA, righe da saltare in cima al file che stai leggendo, ecc.
+Inoltre, entrambe le funzioni rendono possibile anche leggere un singolo foglio da un foglio di calcolo.
 
-On the other hand, writing to an Excel file requires a different package and function (`writexl::write_xlsx()`) while you can write to a Google Sheet with the googlesheets4 package, with `write_sheet()`.
+D'altra parte, scrivere in un file Excel richiede un pacchetto e funzione diversi (`writexl::write_xlsx()`) mentre puoi scrivere in un Google Sheet con il pacchetto googlesheets4, con `write_sheet()`.
 
-In the next chapter, you'll learn about a different data source and how to read data from that source into R: databases.
+Nel prossimo capitolo, imparerai su una fonte di dati diversa e come leggere dati da quella fonte in R: database.

@@ -49,17 +49,17 @@ Innanzitutto, puoi creare una stringa usando sia virgolette singole (`'`) che vi
 Non c'è differenza di comportamento tra le due, quindi nell'interesse della coerenza, la [guida di stile tidyverse](https://style.tidyverse.org/syntax.html#character-vectors) raccomanda di usare `"`, a meno che la stringa non contenga più `"`.
 
 ```{r}
-string1 <- "This is a string"
-string2 <- 'If I want to include a "quote" inside a string, I use single quotes'
+string1 <- "Questa è una stringa"
+string2 <- 'Se voglio includere una "virgoletta" dentro una stringa, uso le virgolette singole'
 ```
 
 Se dimentichi di chiudere una virgoletta, vedrai `+`, il prompt di continuazione:
 
 ```         
-> "This is a string without a closing quote
+> "Questa è una stringa senza virgolette di chiusura
 + 
 + 
-+ HELP I'M STUCK IN A STRING
++ AIUTO SONO BLOCCATO IN UNA STRINGA
 ```
 
 Se ti succede questo e non riesci a capire quale virgoletta chiudere, premi Escape per annullare e riprova.
@@ -147,7 +147,7 @@ Una delle sfide del lavorare con il testo è che ci sono diversi modi in cui gli
     Puoi fare una piccola ricerca su Google per capire cos'è questo carattere speciale?
 
     ```{r}
-    x <- "This\u00a0is\u00a0tricky"
+    x <- "Questo\u00a0è\u00a0complicato"
     ```
 
 ## Creare molte stringhe dai dati
@@ -552,7 +552,7 @@ Ad esempio qui ci sono due CSV inline con encoding inusuali[^strings-8]:
 ```{r}
 #| eval: false
 
-x1 <- "text\nEl Ni\xf1o was particularly bad this year"
+x1 <- "text\nEl Ni\xf1o è stato particolarmente grave quest'anno"
 read_csv(x1)$text
 #> [1] "El Ni\xf1o was particularly bad this year"
 
@@ -566,7 +566,7 @@ Per leggerli correttamente, specifichi l'encoding tramite l'argomento `locale`:
 ```{r}
 #| eval: false
 read_csv(x1, locale = locale(encoding = "Latin1"))$text
-#> [1] "El Niño was particularly bad this year"
+#> [1] "El Niño è stato particolarmente grave quest'anno"
 
 read_csv(x2, locale = locale(encoding = "Shift-JIS"))$text
 #> [1] "こんにちは"

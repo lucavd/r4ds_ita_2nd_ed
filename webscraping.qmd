@@ -97,11 +97,11 @@ HTML sta per **H**yper**T**ext **M**arkup **L**anguage e assomiglia a qualcosa d
 ``` html
 <html>
 <head>
-  <title>Page title</title>
+  <title>Titolo della pagina</title>
 </head>
 <body>
-  <h1 id='first'>A heading</h1>
-  <p>Some text &amp; <b>some bold text.</b></p>
+  <h1 id='first'>Un'intestazione</h1>
+  <p>Del testo &amp; <b>del testo in grassetto.</b></p>
   <img src='myimg.png' width='100' height='100'>
 </body>
 ```
@@ -137,7 +137,7 @@ Ad esempio, il seguente HTML contiene un paragrafo di testo, con una parola in g
 
 ```         
 <p>
-  Hi! My <b>name</b> is Hadley.
+  Ciao! Il mio <b>nome</b> è Hadley.
 </p>
 ```
 
@@ -170,9 +170,9 @@ La useremo molto in questo capitolo mentre insegniamo come le varie funzioni rve
 
 ```{r}
 html <- minimal_html("
-  <p>This is a paragraph</p>
+  <p>Questo è un paragrafo</p>
   <ul>
-    <li>This is a bulleted list</li>
+    <li>Questa è una lista puntata</li>
   </ul>
 ")
 html
@@ -201,8 +201,8 @@ Proviamo questi selettori con un esempio semplice:
 
 ```{r}
 html <- minimal_html("
-  <h1>This is a heading</h1>
-  <p id='first'>This is a paragraph</p>
+  <h1>Questa è un'intestazione</h1>
+  <p id='first'>Questo è un paragrafo</p>
   <p class='important'>This is an important paragraph</p>
 ")
 ```

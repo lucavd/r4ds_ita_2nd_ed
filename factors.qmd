@@ -157,9 +157,9 @@ Ad esempio, immagina di voler esplorare il numero medio di ore trascorse a guard
 
 ```{r}
 #| fig-alt: |
-#|   A scatterplot of with tvhours on the x-axis and religion on the y-axis.
-#|   The y-axis is ordered seemingly aribtrarily making it hard to get
-#|   any sense of overall pattern.
+#|   Un grafico a dispersione con tvhours sull'asse x e religion sull'asse y.
+#|   L'asse y è ordinato apparentemente in modo arbitrario rendendo difficile
+#|   ottenere un senso del pattern generale.
 relig_summary <- gss_cat |>
   group_by(relig) |>
   summarize(
@@ -181,9 +181,9 @@ Possiamo migliorarlo riordinando i livelli di `relig` usando `fct_reorder()`.
 
 ```{r}
 #| fig-alt: |
-#|   The same scatterplot as above, but now the religion is displayed in
-#|   increasing order of tvhours. "Other eastern" has the fewest tvhours
-#|   under 2, and "Don't know" has the highest (over 5).
+#|   Lo stesso grafico a dispersione di sopra, ma ora la religione è visualizzata in
+#|   ordine crescente di tvhours. "Other eastern" ha il minor numero di tvhours
+#|   sotto 2, e "Don't know" ha il più alto (oltre 5).
 ggplot(relig_summary, aes(x = tvhours, y = fct_reorder(relig, tvhours))) +
   geom_point()
 ```
@@ -207,10 +207,10 @@ E se creassimo un grafico simile guardando come l'età media varia tra i livelli
 
 ```{r}
 #| fig-alt: |
-#|   A scatterplot with age on the x-axis and income on the y-axis. Income
-#|   has been reordered in order of average age which doesn't make much
-#|   sense. One section of the y-axis goes from $6000-6999, then <$1000,
-#|   then $8000-9999.
+#|   Un grafico a dispersione con age sull'asse x e income sull'asse y. Income
+#|   è stato riordinato in ordine di età media, il che non ha molto
+#|   senso. Una sezione dell'asse y va da $6000-6999, poi <$1000,
+#|   poi $8000-9999.
 rincome_summary <- gss_cat |>
   group_by(rincome) |>
   summarize(
@@ -232,10 +232,10 @@ Prende un fattore, `.f`, e poi qualsiasi numero di livelli che vuoi spostare all
 
 ```{r}
 #| fig-alt: |
-#|   The same scatterplot but now "Not Applicable" is displayed at the
-#|   bottom of the y-axis. Generally there is a positive association
-#|   between income and age, and the income band with the highethst average
-#|   age is "Not applicable".
+#|   Lo stesso grafico a dispersione ma ora "Not Applicable" è visualizzato in
+#|   fondo all'asse y. In generale c'è un'associazione positiva
+#|   tra reddito ed età, e la fascia di reddito con l'età media più alta
+#|   è "Not applicable".
 ggplot(rincome_summary, aes(x = age, y = fct_relevel(rincome, "Not applicable"))) +
   geom_point()
 ```
@@ -250,16 +250,16 @@ Questo rende il grafico più facile da leggere perché i colori della linea all'
 #| layout-ncol: 2
 #| fig-width: 3
 #| fig-alt: |
-#|     A line plot with age on the x-axis and proportion on the y-axis.
-#|     There is one line for each category of marital status: no answer,
-#|     never married, separated, divorced, widowed, and married. It is
-#|     a little hard to read the plot because the order of the legend is
-#|     unrelated to the lines on the plot. Rearranging the legend makes
-#|     the plot easier to read because the legend colors now match the
-#|     order of the lines on the far right of the plot. You can see some
-#|     unsurprising patterns: the proportion never married decreases with
-#|     age, married forms an upside down U shape, and widowed starts off
-#|     low but increases steeply after age 60.
+#|     Un grafico a linee con age sull'asse x e proportion sull'asse y.
+#|     C'è una linea per ogni categoria di stato civile: no answer,
+#|     never married, separated, divorced, widowed, e married. È
+#|     un po' difficile leggere il grafico perché l'ordine della legenda è
+#|     non correlato alle linee sul grafico. Riorganizzare la legenda rende
+#|     il grafico più facile da leggere perché i colori della legenda ora corrispondono
+#|     all'ordine delle linee all'estrema destra del grafico. Puoi vedere alcuni
+#|     pattern non sorprendenti: la proporzione never married diminuisce con
+#|     l'età, married forma una U capovolta, e widowed inizia
+#|     basso ma aumenta ripidamente dopo i 60 anni.
 by_age <- gss_cat |>
   filter(!is.na(age)) |>
   count(age, marital) |>
@@ -283,7 +283,7 @@ Combinalo con `fct_rev()` se li vuoi in frequenza crescente così che nel grafic
 
 ```{r}
 #| fig-alt: |
-#|   A bar char of marital status ordered from least to most common:
+#|   Un grafico a barre dello stato civile ordinato dal meno al più comune:
 #|   no answer (~0), separated (~1,000), widowed (~2,000), divorced
 #|   (~3,000), never married (~5,000), married (~10,000).
 gss_cat |>
